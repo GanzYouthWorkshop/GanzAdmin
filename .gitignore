@@ -1,0 +1,8 @@
+﻿src/.vs
+src/.vs
+src/GanzAdmin/bin
+src/GanzAdmin/obj
+src/GanzAdmin.Database/obj
+src/GanzAdmin.Database/bin
+src/GanzAdmin.Database/GanzAdmin.Database.csproj.user
+src/GanzAdmin/GanzAdmin.csproj.user

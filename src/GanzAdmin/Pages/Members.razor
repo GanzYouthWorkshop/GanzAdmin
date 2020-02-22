@@ -1,0 +1,80 @@
+﻿@page "/members"
+
+@using GanzAdmin.DataGrid;
+@using GanzAdmin.Database;
+@using GanzAdmin.Database.Models;
+
+<aside class='loading'>
+</aside>
+
+<main>
+    @if (this.MemberList == null)
+    {
+        <p><em>Betöltés...</em></p>
+    }
+    else
+    {
+        <div id='table-wrapper'>
+            <table id='table-header'>
+                <thead>
+                    <tr>
+                        <DataGridHeader IsPinnable IsSortable>Név</DataGridHeader>
+                        <DataGridHeader IsCollapsible IsSortable>Aktív?</DataGridHeader>
+                        <DataGridHeader IsCollapsible IsSortable>Tagdíj befizetve</DataGridHeader>
+                    </tr>
+                </thead>
+            </table>
+
+            <table id='data' class="display nowrap">
+                <thead>
+                    <tr>
+                        <DataGridHeader IsPinnable IsSortable>Név</DataGridHeader>
+                        <DataGridHeader IsCollapsible IsSortable>Aktív?</DataGridHeader>
+                        <DataGridHeader IsCollapsible IsSortable>Tagdíj befizetve</DataGridHeader>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @foreach (var member in this.MemberList)
+                    {
+                        <tr>
+                            <td>@member.Name</td>
+                            <td>@member.Active</td>
+                            <td>@member.PaidUntil</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</main>
+
+@code
+{
+    List<Member> MemberList { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        using (GanzAdminDbContext db = new GanzAdminDbContext())
+        {
+            this.MemberList = db.Members.ToList();
+        }
+    }
+
+    private void AddMember()
+    {
+        using (GanzAdminDbContext db = new GanzAdminDbContext())
+        {
+        }
+    }
+
+    private void ModifMember()
+    {
+
+    }
+
+    private void DeleteMember()
+    {
+
+    }
+}

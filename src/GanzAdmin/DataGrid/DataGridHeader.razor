@@ -1,0 +1,38 @@
+﻿<th class="@this.Classes">
+    @if (this.IsCollapsible)
+    {
+        <i class="collapse"></i>
+    }
+    <span>@ChildContent</span>
+    @if (this.IsSortable)
+    {
+        <i class="sort"></i>
+    }
+    @if (this.IsPinnable)
+    {
+        <i class="pin"></i>
+    }
+</th>
+
+@code
+{
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+
+    [Parameter]
+    public bool IsCollapsible { get; set; }
+
+    [Parameter]
+    public bool IsPinnable { get; set; }
+
+    [Parameter]
+    public bool IsSortable { get; set; }
+
+    public string Classes
+    {
+        get
+        {
+            return this.IsPinnable ? "pinnable" : "";
+        }
+    }
+}
