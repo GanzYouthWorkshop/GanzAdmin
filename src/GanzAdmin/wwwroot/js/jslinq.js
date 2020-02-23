@@ -6,10 +6,8 @@ Array.prototype.select = function(expr)
 	{
 		case 'function':
 			return $.map(arr, expr);
-			break;
 
 		case 'string':
-
 			try
 			{
 				var func = new Function(expr.split('.')[0], 'return ' + expr + ';');
@@ -19,7 +17,6 @@ Array.prototype.select = function(expr)
 			{
 				return null;
 			}
-			break;
 
 		default:
 			throw new ReferenceError('func must be a function or string!');

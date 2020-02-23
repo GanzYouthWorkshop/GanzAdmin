@@ -1,0 +1,41 @@
+﻿@using Microsoft.AspNetCore.Http;
+@using GanzAdmin.Authentication;
+@using GanzAdmin.Database;
+@using GanzAdmin.Database.Models;
+
+@namespace GanzAdmin.Shared
+
+<main class="full dashboard">
+    <EditForm method="post" EditContext="new EditContext(true)" OnValidSubmit="HandleValidSubmit">
+        <input type="text" name="user" @bind-value="this.User" />
+        <input type="password" name="pass" @bind-value="this.Pass" />
+
+        <button type="submit">Submit</button>
+    </EditForm>
+</main>
+
+
+@code
+{
+    [Inject]
+    protected IHttpContextAccessor Context { get; set; }
+
+    private string User { get; set; }
+    private string Pass { get; set; }
+
+    private void HandleValidSubmit()
+    {
+        using (GanzAdminDbContext db = new GanzAdminDbContext())
+        {
+            Member member = db.Members.FirstOrDefault(m => m.Username == this.User);
+            if(member != null && member.Password == this.Pass)
+            {
+                GanzAuthStateProvider.SignIn(this.Context.HttpContext, member);
+            }
+        }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+    }
+}

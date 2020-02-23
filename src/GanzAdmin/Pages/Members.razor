@@ -1,4 +1,5 @@
 ﻿@page "/members"
+@page "/members/{ShowID:int}"
 
 @using GanzAdmin.DataGrid;
 @using GanzAdmin.Database;
@@ -7,12 +8,8 @@
 <aside class='loading'>
 </aside>
 
-<main>
-    @if (this.MemberList == null)
-    {
-        <p><em>Betöltés...</em></p>
-    }
-    else
+<main class='@(this.MemberList == null ? "loading" : "")'>
+    @if (this.MemberList != null)
     {
         <div id='table-wrapper'>
             <table id='table-header'>
@@ -38,7 +35,7 @@
                     @foreach (var member in this.MemberList)
                     {
                         <tr>
-                            <td>@member.Name</td>
+                            <td><NavLink href="@($"/members/{member.MemberId}")">@member.Name</NavLink></td>
                             <td>@member.Active</td>
                             <td>@member.PaidUntil</td>
                         </tr>
@@ -49,16 +46,51 @@
     }
 </main>
 
+@if (this.SelectedMember != null)
+{
+    <section class='popup' id='content'>
+        <div class='shadow'></div>
+        <div class='body'>
+            <NavLink href="/members" class='close'></NavLink>
+            <div class='dynamic'>
+                <table>
+                    <tr>
+                        <td>Név:</td>
+                        <td>@this.SelectedMember.Name</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </section>
+}
+
+
 @code
 {
+    [Parameter]
+    public int ShowID { get; set; }
+
     List<Member> MemberList { get; set; }
+
+    Member SelectedMember { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
-        using (GanzAdminDbContext db = new GanzAdminDbContext())
+        await Task.Run(() =>
         {
-            this.MemberList = db.Members.ToList();
-        }
+            using (GanzAdminDbContext db = new GanzAdminDbContext())
+            {
+                this.MemberList = db.Members.ToList();
+            }
+        });
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await Task.Run(() =>
+        {
+            this.SelectedMember = this.MemberList.FirstOrDefault(m => m.MemberId == this.ShowID);
+        });
     }
 
     private void AddMember()

@@ -424,7 +424,7 @@ main table td:nth-child(10)
 
 .popup
 {
-	display: none;
+	/*display: none;*/
 }
 
 .popup .shadow
@@ -462,6 +462,7 @@ main table td:nth-child(10)
 	right: 3px;
 	cursor: pointer;
 	padding: 2px;
+	color: #343434;
 }
 
 .popup label, #login label
@@ -631,4 +632,23 @@ main table td:nth-child(10)
 	background-color: yellow;
 	z-index: 999;
 	display:none;
+}
+
+.dashboard a.button
+{
+	display: inline-block;
+	border: 1px solid #EEEEEE;
+	padding: 1em;
+	margin: 1em;
+	text-decoration: none;
+	text-transform: uppercase;
+	width: 120px;
+	text-align: center;
+}
+
+.dashboard a.button i
+{
+	display: block;
+	margin: 1em 0;
+	font-size: 2em;
 }

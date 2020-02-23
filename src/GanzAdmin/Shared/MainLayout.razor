@@ -1,38 +1,50 @@
-﻿@inherits LayoutComponentBase
+﻿@namespace GanzAdmin.Shared
+@inherits LayoutComponentBase
 
-<header>
-    <h1>
-        <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-            GanzAdmin
-        </NavLink>
-    </h1>
-    <form>
-        <input type='text' name='search-string' id='search-string' placeholder='Alkatrészkeresés' autocomplete="off">
-        <input type='submit' name='search' id='search' value=''>
+<AuthorizeView>
+    <Authorized>
+        <header>
+            <h1>
+                <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+                    GanzAdmin
+                </NavLink>
+            </h1>
+            <form>
+                <input type='text' name='search-string' id='search-string' placeholder='Alkatrészkeresés' autocomplete="off">
+                <input type='submit' name='search' id='search' value=''>
 
-        <div id='auto-complete'>
-            <div id='auto-complete-pool'>
-                <div class='global selected'>Kategória</div>
-                <div class='global'>Hely</div>
-                <div class='global'>Fontos</div>
-                <div class='global'>Hiányos</div>
-                <!--<?php
-                //Category::list_categories();
-                //Location::list_locations();
-                ?>-->
-            </div>
+                <div id='auto-complete'>
+                    <div id='auto-complete-pool'>
+                        <div class='global selected'>Kategória</div>
+                        <div class='global'>Hely</div>
+                        <div class='global'>Fontos</div>
+                        <div class='global'>Hiányos</div>
+                        <!--<?php
+                        //Category::list_categories();
+                        //Location::list_locations();
+                        ?>-->
+                    </div>
 
-            <div id='auto-complete-display'>
-            </div>
-        </div>
+                    <div id='auto-complete-display'>
+                    </div>
+                </div>
 
-    </form>
-    <NavMenu />
-</header>
+            </form>
+            <NavMenu />
+        </header>
 
-@Body
+        @Body
+    </Authorized>
+    <Authorizing>
+        Éppen jelentkezel be!
+    </Authorizing>
+    <NotAuthorized>
+        <LoginView />
+    </NotAuthorized>
+</AuthorizeView>
 
-<section class='popup' id='form'>
+
+<!--<section class='popup' id='form'>
     <div class='shadow'></div>
     <div class='body'>
         <span class='close'></span>
@@ -51,7 +63,7 @@
         </div>
     </div>
 </section>
-
+    -->
 @code
 {
     [Inject]
@@ -64,7 +76,7 @@
             JsRuntime.InvokeVoidAsync("onBlazorReady");
         }
         else
-        { 
+        {
             JsRuntime.InvokeVoidAsync("onBlazorRender");
         }
     }

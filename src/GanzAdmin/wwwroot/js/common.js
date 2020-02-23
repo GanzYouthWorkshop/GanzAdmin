@@ -10,6 +10,10 @@
 	{
 		$('header nav > ul').hide();
 	});
+
+	alertify.init();
+
+	alertify.alert("A GanzAdmin még erősen fejlesztés alatt áll! Hogy pontosan mik a tervek és most éppen hogy áll a projekt, a Súgóban tudod megnézni!");
 }
 
 function onBlazorRender()

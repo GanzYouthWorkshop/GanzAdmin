@@ -1,0 +1,89 @@
+﻿@page "/help"
+
+<main class="full">
+    <h2>Mi a GanzInv?</h2>
+    A GanzInv egy nyilvántartó program a műhely elektronikai szakkörének. Meg lehet tekinteni benne a jelenleg elérhető
+    alkatrészek, illetve paramétrek alapján kereshetővé teszi őket. Azt is jelezni tudja, ha egy alkatrész beszerzésre szorul.
+
+    <h2>Hogyan tudok keresni?</h2>
+    Keresni kétféleképpen lehet: csak névre, vagy paraméteresen. Ha névre akarunk kerensni egyszerűen írjuk be a keresőmezőbe
+    az alkatrész nevét vagy egy részét. Paraméteres keresésnél zárójel közé írva lehet megadni a feltételeket. Két sepciális feltétel
+    a "Kategória" és "Hely" paraméterek.
+    <h3>Példák</h3>
+    <ul>
+        <li><code>BC</code>: listáz minden alakatrészt, aminek a nevében szerepel a "BC" rész.</li>
+        <li><code>BC(Kategória: NPN tranzisztor)</code>: Minden "BC" tartalmú alkatrészt listáz aminek a kategóriája NPN tranzisztor.</li>
+        <li><code>BC(Kategória: tranzisztor)</code>: Minden "BC" tartalmú alkatrészt listáz aminek a kategóriájának nevében szerepel a "tranzisztor".</li>
+        <li><code>BC(Kategória: NPN tranzisztor; Hely: Oktatói asztal)</code>: Mint az előző, de csak az oktatói asztal helyen lévő alkatrészeket listázza.</li>
+        <li><code>(Kategória: NPN tranzisztor; Hiányos)</code>: Az összes hiányos NPN tranzisztort listázza listázza.</li>
+        <li><code>(Fontos; Hiányos)</code>: Minden fontos, de hiányos alkatrészt listáz.</li>
+        <li><code>(Kategória: Ellenállás; Tolerancia &lt; 1%)</code>: Minden ellenállást listáz, aminek a "Tolerancia" paramétere kisebb, mint 1%.</li>
+        <li><code>(Kategória: Logikai kapu; Típus: TTL)</code>: Minden logikai kaput listáz, aminek a "Típus" paramétere "TTL".</li>
+    </ul>
+
+    <h2>Hogyan tudom szerkeszteni az adatokat?</h2>
+    Szerkeszteni jelenleg csak az oktatók tudnak.
+
+    <h2>Valami hiba történt! Mi lehetett a baj?</h2>
+    Ha a rendszer hibát észlel erről mindig próbál tájékoztatni. A rendszer a következő hibakódokat adja:
+    <ul>
+        <li>404: Az elkért adat nem szerepel az adatbázisban. Lehet, méh nem létezik, vagy már törölték.</li>
+        <li>401: Nem vagy bejelentkezve és ehhez a funckióhoz azonosítás szükséges.</li>
+        <li>400: Ilyen parancs nem létezik. Ha valamelyik gomba kattintottál, kérlek jelezd a hibát!</li>
+    </ul>
+
+    <h2>Frissítési lista</h2>
+    <div id='changelog'>
+        <p>
+            <b>v1.4.0</b> (2016.05.25):
+            <ul>
+                <li>Rendezés oszlop szerint</li>
+                <li>Keresőmező segítség implementálása (béta-verzió)</li>
+            </ul>
+        </p>
+        <p>
+            <b>v1.2.1</b> (2016.05.04):
+            <ul>
+                <li>Adatok frissítése után az aktuális lista jelenik meg</li>
+                <li>Lomex fájlgenerálás dobva, általánis megrendelőlap nyomytatás bevezetve</li>
+            </ul>
+        </p>
+        <p>
+            <b>v1.2.0</b> (2016.05.02):
+            <ul>
+                <li>Hiányos és fontos elemek kereshetők. Szintaxis: <code>(Hiányos;Fontos)</code></li>
+                <li>Alapértelmezett rendezés név szerint</li>
+                <li>Lista frissítésekor töltőikon</li>
+                <li>Alapértelmezett paraméter neve nem jelenik meg javítva</li>
+                <li>Címkekészítő hozzáadva</li>
+            </ul>
+        </p>
+
+        <p>
+            <b>v1.1.1</b> (2016.04.22):
+            <ul>
+                <li>Keresési hiba javítva</li>
+                <li>Paraméteres keresés</li>
+            </ul>
+        </p>
+
+        <p>
+            <b>v1.1.0</b> (2016.04.20):
+            <ul>
+                <li>Mindig látszó fejléc</li>
+                <li>Oszlopok elrejthetők</li>
+                <li>Első oszlop állandóan láthatóvá tehető</li>
+                <li>Lomex termékkód kezelés</li>
+                <li>Kiválasztható elemek</li>
+                <li>HEStore-kosárfájl generálás</li>
+                <li>Paramétereknél alsó index - szintaxis: <code>Jel_alsóindex</code></li>
+                <li>Paramétereknél előre megadott értékek közül választás - szintaxis: <code>[lehetőség1|lehetőség2|lehetőség3]</code></li>
+            </ul>
+        </p>
+
+        <p>
+            <b>v1.0</b> (2016.04.13):
+            Első verzió.
+        </p>
+    </div>
+</main>

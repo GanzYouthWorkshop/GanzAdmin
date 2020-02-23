@@ -1,0 +1,40 @@
+﻿@page "/test-auth"
+
+@using System.IO;
+
+<main class="full dashboard">
+    <AuthorizeView>
+        <Authorized>
+            Be vagy jelentkezve!
+        </Authorized>
+        <Authorizing>
+            Éppen jelentkezel be!
+        </Authorizing>
+        <NotAuthorized>
+            Nem vagy bejelentkezve!
+        </NotAuthorized>
+    </AuthorizeView>
+
+    @if(this.Files != null)
+    {
+        @foreach(string s in this.Files)
+        {
+            <p>@s</p>
+        }
+    }
+
+</main>
+
+
+@code
+{
+    private List<string> Files { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Task.Run(() =>
+        {
+            this.Files = Directory.GetFiles(@"C:\").ToList();
+        });
+    }
+}

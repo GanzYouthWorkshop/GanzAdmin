@@ -2,8 +2,8 @@
 {
 	$('main').delegate('a:not(.ignore)', 'click', function (e)
 	{
-		e.preventDefault();
-		decodeLinkCommand($(this).attr('href'));
+		//e.preventDefault();
+		//decodeLinkCommand($(this).attr('href'));
 	});
 			
 	$('#table-wrapper').scroll(function()
@@ -76,5 +76,33 @@
 		var command = ($(this).parent().parent().hasClass('selected') ? 'un' : '')+'selectpart';
 		decodeLinkCommand(command+':'+$(this).val());
 		$(this).parent().parent().toggleClass('selected');
+	});
+}
+
+function sortTable(selector, column, direction)
+{
+	var rows = $(selector + ' tbody  tr').get();
+	var dir = direction ? 1 : -1;
+
+	rows.sort(function (a, b)
+	{
+		var A = $(a).children('td').eq(column).text().toUpperCase();
+		var B = $(b).children('td').eq(column).text().toUpperCase();
+
+		if (dir == 1) {
+			if (A == '' || A == '-') A = 'ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ';
+			if (B == '' || B == '-') B = 'ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ';
+		}
+		if (dir == -1) {
+			if (A == '' || A == '-') A = '';
+			if (B == '' || B == '-') B = '';
+		}
+
+		return dir * A.localeCompare(B);
+	});
+
+	$.each(rows, function (index, row)
+	{
+		$(selector).children('tbody').append(row);
 	});
 }
