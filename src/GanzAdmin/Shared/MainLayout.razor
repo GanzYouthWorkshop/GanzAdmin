@@ -1,48 +1,44 @@
-﻿@namespace GanzAdmin.Shared
+﻿@using  GanzAdmin.Authentication.Components;
+
+@namespace GanzAdmin.Shared
 @inherits LayoutComponentBase
 
-<AuthorizeView>
-    <Authorized>
-        <header>
-            <h1>
-                <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                    GanzAdmin
-                </NavLink>
-            </h1>
-            <form>
-                <input type='text' name='search-string' id='search-string' placeholder='Alkatrészkeresés' autocomplete="off">
-                <input type='submit' name='search' id='search' value=''>
+<AuthorizedView>
+    <header>
+        <h1>
+            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+                GanzAdmin
+            </NavLink>
+        </h1>
+        <form>
+            <input type='text' name='search-string' id='search-string' placeholder='Alkatrészkeresés' autocomplete="off">
+            <input type='submit' name='search' id='search' value=''>
 
-                <div id='auto-complete'>
-                    <div id='auto-complete-pool'>
-                        <div class='global selected'>Kategória</div>
-                        <div class='global'>Hely</div>
-                        <div class='global'>Fontos</div>
-                        <div class='global'>Hiányos</div>
-                        <!--<?php
-                        //Category::list_categories();
-                        //Location::list_locations();
-                        ?>-->
-                    </div>
-
-                    <div id='auto-complete-display'>
-                    </div>
+            <div id='auto-complete'>
+                <div id='auto-complete-pool'>
+                    <div class='global selected'>Kategória</div>
+                    <div class='global'>Hely</div>
+                    <div class='global'>Fontos</div>
+                    <div class='global'>Hiányos</div>
+                    <!--<?php
+                    //Category::list_categories();
+                    //Location::list_locations();
+                    ?>-->
                 </div>
 
-            </form>
-            <NavMenu />
-        </header>
+                <div id='auto-complete-display'>
+                </div>
+            </div>
 
-        @Body
-    </Authorized>
-    <Authorizing>
-        Éppen jelentkezel be!
-    </Authorizing>
-    <NotAuthorized>
-        <LoginView />
-    </NotAuthorized>
-</AuthorizeView>
+        </form>
+        <NavMenu />
+    </header>
 
+    @Body
+</AuthorizedView>
+<NonAuthorizedView>
+    <LoginView />
+</NonAuthorizedView>
 
 <!--<section class='popup' id='form'>
     <div class='shadow'></div>

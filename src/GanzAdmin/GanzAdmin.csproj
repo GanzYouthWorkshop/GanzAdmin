@@ -13,4 +13,9 @@
     <ProjectReference Include="..\GanzAdmin.Database\GanzAdmin.Database.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Components\FileBrowser\" />
+    <Folder Include="NewFolder\" />
+  </ItemGroup>
+
 </Project>
