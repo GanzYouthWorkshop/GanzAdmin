@@ -1,11 +1,14 @@
 ﻿@page "/members"
-@page "/members/{ShowID:int}"
+@page "/members/{PopupDisplay}"
 
+@using GanzAdmin.Authentication.Components;
+@using GanzAdmin.Components.Edit;
 @using GanzAdmin.Components.DataGrid;
 @using GanzAdmin.Database;
 @using GanzAdmin.Database.Models;
 
 <aside class='loading'>
+    <NavLink class="addlink" href="/members/add">Új tag</NavLink>
 </aside>
 
 <main class='@(this.MemberList == null ? "loading" : "")'>
@@ -35,7 +38,7 @@
                     @foreach (var member in this.MemberList)
                     {
                         <tr>
-                            <td><NavLink href="@($"/members/{member.MemberId}")">@member.Name</NavLink></td>
+                            <td><NavLink href="@($"/members/{member.Id}")">@member.Name</NavLink></td>
                             <td>@member.Active</td>
                             <td>@member.PaidUntil</td>
                         </tr>
@@ -46,6 +49,7 @@
     }
 </main>
 
+@*Ki kéne még jelezni, hogy szerkesztünk vagy hozzáadunk...*@
 @if (this.SelectedMember != null)
 {
     <section class='popup' id='content'>
@@ -53,13 +57,12 @@
         <div class='body'>
             <NavLink href="/members" class='close'></NavLink>
             <div class='dynamic'>
-                <table>
-                    <tr>
-                        <td>Név:</td>
-                        <td>@this.SelectedMember.Name</td>
-                    </tr>
-                </table>
+                <SimpleEditField Type="text" Display="Név" Name="@nameof(Member.Name)" @bind-Value="this.SelectedMember.Name" />
             </div>
+            <AuthorizedView NeededRolesOR="TEEEST">
+                <button>Küldés</button>
+                <button>Mégse</button>
+            </AuthorizedView>
         </div>
     </section>
 }
@@ -68,7 +71,7 @@
 @code
 {
     [Parameter]
-    public int ShowID { get; set; }
+    public string PopupDisplay { get; set; }
 
     List<Member> MemberList { get; set; }
 
@@ -80,7 +83,7 @@
         {
             using (GanzAdminDbContext db = new GanzAdminDbContext())
             {
-                this.MemberList = db.Members.ToList();
+                this.MemberList = db.Members.FindAll().ToList();
             }
         });
     }
@@ -89,7 +92,20 @@
     {
         await Task.Run(() =>
         {
-            this.SelectedMember = this.MemberList.FirstOrDefault(m => m.MemberId == this.ShowID);
+            this.SelectedMember = null;
+
+            if (this.PopupDisplay == "add")
+            {
+                this.SelectedMember = new Member();
+            }
+            else if (this.PopupDisplay != null)
+            {
+                int showId = 0;
+                if (int.TryParse(this.PopupDisplay, out showId))
+                {
+                    this.SelectedMember = this.MemberList.FirstOrDefault(m => m.Id == showId);
+                }
+            }
         });
     }
 
@@ -97,16 +113,23 @@
     {
         using (GanzAdminDbContext db = new GanzAdminDbContext())
         {
+            db.Members.Insert(this.SelectedMember);
         }
     }
 
     private void ModifMember()
     {
-
+        using (GanzAdminDbContext db = new GanzAdminDbContext())
+        {
+            db.Members.Update(this.SelectedMember);
+        }
     }
 
     private void DeleteMember()
     {
-
+        using (GanzAdminDbContext db = new GanzAdminDbContext())
+        {
+            db.Members.Delete(this.SelectedMember.Id);
+        }
     }
 }

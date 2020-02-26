@@ -5,7 +5,6 @@
 
 @namespace GanzAdmin.Shared
 
-@inject NavigationManager NavMan
 <header>
     <h1>
         <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
@@ -15,11 +14,21 @@
 </header>
 
 <main class="full dashboard">
-    <EditForm method="post" EditContext="new EditContext(true)" OnValidSubmit="HandleValidSubmit">
-        <input type="text" name="user" @bind-value="this.User" />
-        <input type="password" name="pass" @bind-value="this.Pass" />
+    <h2>Belépés</h2>
 
-        <button type="submit">Submit</button>
+    <EditForm class='login' method="post" EditContext="new EditContext(true)" OnValidSubmit="HandleValidSubmit">
+        <table>
+            <tr>
+                <td><label for="user">Felhasználónév:</label></td>
+                <td><input type="text" name="user" @bind-value="this.User" /></td>
+            </tr>
+            <tr>
+                <td><label for="pass">Jelszó:</label></td>
+                <td><input type="password" name="pass" @bind-value="this.Pass" /></td>
+            </tr>
+        </table>
+        
+        <center><button type="submit">Belépés</button></center>
     </EditForm>
 </main>
 
@@ -27,17 +36,35 @@
 @code
 {
     [Inject]
-    protected IHttpContextAccessor Context { get; set; }
+    protected GanzAuthProvider AuthProvider { get; set; }
+
+    [Inject]
+    protected IJSRuntime JS { get; set; }
+
+    [Inject]
+    protected NavigationManager NavMan { get; set; }
+
+
 
     private string User { get; set; }
     private string Pass { get; set; }
 
+    private string ErrorMessage { get; set; }
+
     private void HandleValidSubmit()
     {
-        this.NavMan.NavigateTo("/");
+        if (this.AuthProvider.TrySignIn(this.User, this.Pass))
+        {
+            this.NavMan.NavigateTo("/");
+            JS.InvokeVoidAsync("alertify.success", "Sikeres belépés!");
+        }
+        else
+        {
+            JS.InvokeVoidAsync("alertify.error", "Hibás felhasználónév vagy jelszó!");
+        }
     }
 
-    protected override async Task OnInitializedAsync()
-    {
-    }
+    //protected override async Task OnInitializedAsync()
+    //{
+    //}
 }

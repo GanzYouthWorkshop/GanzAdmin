@@ -11,6 +11,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\GanzAdmin.Database\GanzAdmin.Database.csproj" />
+    <ProjectReference Include="..\GanzAdmin.Utils\GanzAdmin.Utils.csproj" />
   </ItemGroup>
 
   <ItemGroup>

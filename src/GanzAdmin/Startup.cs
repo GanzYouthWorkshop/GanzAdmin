@@ -46,7 +46,7 @@ namespace GanzAdmin
         {
             using (GanzAdminDbContext db = new GanzAdminDbContext())
             {
-                db.Database.EnsureCreated();
+                db.EnsureCreated();
             }
 
             if (env.IsDevelopment())

@@ -1,0 +1,62 @@
+﻿@using GanzAdmin.Authentication.Components;
+
+<p>
+    <span>@this.Display:</span>
+    <AuthorizedView NeededRolesOR="@this.AuthOR" NeededRolesAND="@this.AuthAND">
+        @switch (this.Type)
+        {
+            case "text":
+                <input type="text" value="@this.Value" name="@this.Name" />
+                break;
+            case "number":
+                break;
+            case "select":
+                break;
+            case "numeric":
+                break;
+            case "password":
+                break;
+        }
+    </AuthorizedView>
+    <NonAuthorizedView NeededRolesOR="@this.AuthOR" NeededRolesAND="@this.AuthAND">
+        @switch (this.Type)
+        {
+            case "text":
+                <span>@this.Value</span>
+                break;
+            case "number":
+                break;
+            case "select":
+                break;
+            case "numeric":
+                break;
+            case "password":
+                break;
+        }
+
+    </NonAuthorizedView>
+</p>
+
+@code
+{
+    [Parameter]
+    public string AuthOR { get; set; }
+
+    [Parameter]
+    public string AuthAND { get; set; }
+
+    [Parameter]
+    public string Type { get; set; }
+
+    [Parameter]
+    public string Name { get; set; }
+
+    [Parameter]
+    public string Display { get; set; }
+
+    [Parameter]
+    public string Value { get; set; }
+
+    [Parameter]
+    public EventCallback<string>ValueChanged { get; set; }
+}

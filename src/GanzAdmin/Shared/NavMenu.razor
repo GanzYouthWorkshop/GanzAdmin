@@ -1,4 +1,6 @@
-﻿<nav>
+﻿@using GanzAdmin.Authentication;
+
+<nav>
     <span id='selected-items' title='Eszközök'></span>
 
     <span id='menu' title='Menü'></span>
@@ -13,5 +15,25 @@
         </ul>
         <li><a href='getusers'>Admin panel (dev)</a></li>
         <li><NavLink href="/help">Súgó</NavLink></li>
-    </ul>
+        <li><a href="" @onclick="@OnLogOut" @onclick:preventDefault>Kilépés</a></li>
+</ul>
 </nav>
+
+@code
+{
+    [Inject]
+    private GanzAuthProvider AuthProvider { get; set; }
+
+    [Inject]
+    protected NavigationManager NavMan { get; set; }
+
+    [Inject]
+    protected IJSRuntime JS { get; set; }
+
+    private void OnLogOut()
+    {
+        this.AuthProvider.SignOut();
+        this.NavMan.NavigateTo("/");
+        this.JS.InvokeVoidAsync("alertify.success", "Viszontlátásra!");
+    }
+}

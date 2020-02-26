@@ -15,15 +15,16 @@ namespace GanzAdmin.Authentication
             public DateTime ExirationDateUtc { get; set; }
         }
 
-        public object m_Lock;
-        public List<Session> SessionEntries { get; set; }
+        public object m_Lock = false;
+        public List<Session> SessionEntries { get; set; } = new List<Session>();
 
         public List<Session> GetSessionsForMember(int id)
         {
             List<Session> result = null;
             lock (this.m_Lock)
             {
-                this.SessionEntries.RemoveAll(s => s.ExirationDateUtc < DateTime.UtcNow);
+                this.RemoveExpiredSessions();
+
                 result = this.SessionEntries.Where(s => s.MemberId == id).ToList();
             }
             return result;
@@ -46,27 +47,54 @@ namespace GanzAdmin.Authentication
             return result;
         }
 
-        public void RevokeSession(string sessionToken)
+        public void RevokeSession(Session session)
         {
             lock (this.m_Lock)
             {
-                this.SessionEntries.RemoveAll(s => s.SecurityToken == sessionToken);
+                this.SessionEntries.Remove(session);
             }
         }
 
-        public int CheckTokenValidity(string sessionToken)
+        public Session CheckTokenValidity(string sessionToken)
         {
-            int result = 0;
+            Session result = null;
             lock(this.m_Lock)
             {
-                Session sessin = this.SessionEntries.FirstOrDefault(s => s.SecurityToken == sessionToken && s.ExirationDateUtc < DateTime.UtcNow);
-                if(sessin != null)
+                this.RemoveExpiredSessions();
+
+                Session session = this.SessionEntries.FirstOrDefault(s => s.SecurityToken == sessionToken && s.ExirationDateUtc > DateTime.UtcNow);
+                if(session != null)
                 {
-                    result = sessin.MemberId;
+                    result = session;
                 }
             }
 
             return result;
+        }
+
+        public Session CheckSessionValidity(Session session)
+        {
+            Session result = null;
+            lock (this.m_Lock)
+            {
+                this.RemoveExpiredSessions();
+
+                if(this.SessionEntries.Contains(session))
+                {
+                    result = session;
+                }
+            }
+
+            return result;
+        }
+
+
+        private void RemoveExpiredSessions()
+        {
+            lock (this.m_Lock)
+            {
+                this.SessionEntries.RemoveAll(s => s.ExirationDateUtc < DateTime.UtcNow);
+            }
         }
     }
 }

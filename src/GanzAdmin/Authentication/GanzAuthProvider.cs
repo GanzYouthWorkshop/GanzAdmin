@@ -1,9 +1,6 @@
 ﻿using GanzAdmin.Database;
 using GanzAdmin.Database.Models;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Authorization;
+using GanzAdmin.Utils;
 using Microsoft.AspNetCore.Http;
 using System;
 using System.Web;
@@ -12,31 +9,30 @@ using System.Linq;
 using System.Security.Claims;
 using System.Security.Permissions;
 using System.Threading.Tasks;
-using System.Net.Http;
 using Microsoft.JSInterop;
 
 namespace GanzAdmin.Authentication
 {
     public class GanzAuthProvider
     {
-
-        public const string AUTH_COOKIE = "GanzAuth.Session";
-        public const string JS_MAKE_COOKIE = "Blazor.createCookie";
-        public const string JS_REMOVE_COOKIE = "Blazor.deleteCookie";
-
-
-        private SessionManager m_Session { get; set; }
-        public IJSRuntime m_Javascript { get; set; }
-        private IHttpContextAccessor m_Http;
-
         //Folyamat:
         //-initialize-ban meg kell nézni a sütikat, ha van és érvényes -> bejelentkezés
         //-in-scope: ha van bejelentkezés, új süti létrehozása
         //-ha van kijelentkezés süzi törlése, bejelentkezés törlése
 
+        public const string AUTH_COOKIE = "GanzAuth.Session";
+        public const string JS_MAKE_COOKIE = "Blazor0.createCookie";
+        public const string JS_REMOVE_COOKIE = "Blazor0.deleteCookie";
+
+        private SessionManager m_SessionManager { get; set; }
+        public IJSRuntime m_Javascript { get; set; }
+        private IHttpContextAccessor m_Http;
+
+        private SessionManager.Session m_ScopeSession;
+
         public GanzAuthProvider(SessionManager sessionManager, IHttpContextAccessor httpProxy, IJSRuntime jsRuntime)
         {
-            this.m_Session = sessionManager;
+            this.m_SessionManager = sessionManager;
             this.m_Http = httpProxy;
             this.m_Javascript = jsRuntime;
 
@@ -46,23 +42,40 @@ namespace GanzAdmin.Authentication
             {
                 var cookie = cookies[AUTH_COOKIE];
 
-                int member = this.m_Session.CheckTokenValidity(cookie);
-                if(member > 0)
-                {
-                    //TODO: itt tárolni kéne, hogy amúgy ki van belépve
-                }
+                this.m_ScopeSession = this.m_SessionManager.CheckTokenValidity(cookie);
             }
         }
 
         public bool CheckAuth(string OrRoles, string AndRoles)
         {
-            //TODO: meg kell írni rendesen
-            return false;
+            this.m_ScopeSession = this.m_SessionManager.CheckSessionValidity(this.m_ScopeSession);
+
+            if (this.m_ScopeSession != null && this.m_ScopeSession.MemberId > 0)
+            {
+                if(OrRoles != null)
+                {
+                    //TODO
+                    return true;
+                }
+                else if(AndRoles != null)
+                {
+                    //TODO
+                    return true;
+                }
+                else
+                {
+                    return true;
+                }
+            }
+            else
+            {
+                return false;
+            }
         }
 
-        private void MakeCookie(string name, string value, int daysToExpire)
+        private async void MakeCookie(string name, string value, int daysToExpire)
         {
-            this.m_Javascript.InvokeVoidAsync(JS_MAKE_COOKIE, name, value, daysToExpire);
+            await this.m_Javascript.InvokeVoidAsync(JS_MAKE_COOKIE, name, value, daysToExpire);
         }
 
         private void DeleteCookie(string name)
@@ -70,15 +83,33 @@ namespace GanzAdmin.Authentication
             this.m_Javascript.InvokeVoidAsync(JS_REMOVE_COOKIE, name);
         }
 
+        public bool TrySignIn(string user, string pass)
+        {
+            bool result = false;
+
+            using(GanzAdminDbContext db = new GanzAdminDbContext())
+            {
+                Member member = db.Members.FindOne(m => m.Username == user);
+                if(member != null && member.Password == GanzUtils.Sha256(pass))
+                {
+                    this.SignIn(member);
+                    result = true;
+                }
+            }
+
+            return result;
+        }
+
         public async Task SignIn(Member member)
         {
-            SessionManager.Session session = this.m_Session.RegisterNewSession(member.MemberId);
+            SessionManager.Session session = this.m_SessionManager.RegisterNewSession(member.Id);
+            this.m_ScopeSession = session;
             this.MakeCookie(AUTH_COOKIE, session.SecurityToken, 3);
         }
 
         public async Task SignOut()
         {
-            //Itt kéne tudni ki hogyan van belépve mert revoke-olni kéne a sessiont
+            this.m_SessionManager.RevokeSession(this.m_ScopeSession);
             this.DeleteCookie(AUTH_COOKIE);
         }
 
