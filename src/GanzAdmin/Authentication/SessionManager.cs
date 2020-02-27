@@ -88,7 +88,6 @@ namespace GanzAdmin.Authentication
             return result;
         }
 
-
         private void RemoveExpiredSessions()
         {
             lock (this.m_Lock)

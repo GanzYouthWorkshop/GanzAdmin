@@ -6,9 +6,10 @@
 @using GanzAdmin.Components.DataGrid;
 @using GanzAdmin.Database;
 @using GanzAdmin.Database.Models;
+@using GanzAdmin.Utils;
 
 <aside class='loading'>
-    <NavLink class="addlink" href="/members/add">Új tag</NavLink>
+    <NavLink class="addlink" href="@($"/{BASELINK}/add")">Új tag</NavLink>
 </aside>
 
 <main class='@(this.MemberList == null ? "loading" : "")'>
@@ -38,7 +39,7 @@
                     @foreach (var member in this.MemberList)
                     {
                         <tr>
-                            <td><NavLink href="@($"/members/{member.Id}")">@member.Name</NavLink></td>
+                            <td><NavLink href="@($"/{BASELINK}/{member.Id}")">@member.Name</NavLink></td>
                             <td>@member.Active</td>
                             <td>@member.PaidUntil</td>
                         </tr>
@@ -55,14 +56,17 @@
     <section class='popup' id='content'>
         <div class='shadow'></div>
         <div class='body'>
-            <NavLink href="/members" class='close'></NavLink>
-            <div class='dynamic'>
-                <SimpleEditField Type="text" Display="Név" Name="@nameof(Member.Name)" @bind-Value="this.SelectedMember.Name" />
-            </div>
-            <AuthorizedView NeededRolesOR="TEEEST">
-                <button>Küldés</button>
-                <button>Mégse</button>
-            </AuthorizedView>
+            <NavLink href="@($"/{BASELINK}")" class='close'></NavLink>
+            <EditForm method="post" EditContext="new EditContext(true)" OnValidSubmit="OnAddEditSubmit">
+                <h3>@this.PopupTitle</h3>
+                <div class='dynamic'>
+                    <SimpleEditField Type="text" Display="Név" Name="@nameof(Member.Name)" @bind-Value="this.SelectedMember.Temporal.Name" />
+                </div>
+                <AuthorizedView NeededRolesOR="TEEEST">
+                    <button type='submit'>Küldés</button>
+                    <NavLink href='@($"/{BASELINK}")'>Mégse</NavLink>
+                </AuthorizedView>
+            </EditForm>
         </div>
     </section>
 }
@@ -70,12 +74,31 @@
 
 @code
 {
+        #region Közös dolgok
+    private const string BASELINK = "members";
+    private const string DATANAME = "tag";
+
+    [Inject]
+    private NavigationManager NavMan { get; set; }
+
+    [Inject]
+    private IJSRuntime JS { get; set; }
+
     [Parameter]
     public string PopupDisplay { get; set; }
+    #endregion
 
-    List<Member> MemberList { get; set; }
+    #region Oldal-specifikus dolgok
+    private List<Member> MemberList { get; set; }
 
-    Member SelectedMember { get; set; }
+    private TemporalObject<Member> SelectedMember { get; set; }
+
+    private string PopupTitle
+    {
+        get { return this.PopupDisplay == "add" ? $"Új {DATANAME}" : $"{this.SelectedMember.Original.Username} szerkesztése"; }
+    }
+
+    #endregion
 
     protected override async Task OnInitializedAsync()
     {
@@ -96,40 +119,56 @@
 
             if (this.PopupDisplay == "add")
             {
-                this.SelectedMember = new Member();
+                this.SelectedMember = new TemporalObject<Member>(new Member());
             }
             else if (this.PopupDisplay != null)
             {
                 int showId = 0;
                 if (int.TryParse(this.PopupDisplay, out showId))
                 {
-                    this.SelectedMember = this.MemberList.FirstOrDefault(m => m.Id == showId);
+                    Member member = this.MemberList.FirstOrDefault(m => m.Id == showId);
+                    this.SelectedMember = new TemporalObject<Member>(member);
                 }
             }
         });
+    }
+
+    private void OnAddEditSubmit()
+    {
+        if (this.PopupDisplay == "add")
+        {
+            this.AddMember();
+        }
+        else
+        {
+            this.ModifMember();
+        }
+        this.NavMan.NavigateTo($"/{BASELINK}");
     }
 
     private void AddMember()
     {
         using (GanzAdminDbContext db = new GanzAdminDbContext())
         {
-            db.Members.Insert(this.SelectedMember);
+            db.Members.Insert(this.SelectedMember.FoldBack());
         }
+        this.JS.InvokeVoidAsync("alertify.success", "Tag hozzáadva!");
     }
 
     private void ModifMember()
     {
         using (GanzAdminDbContext db = new GanzAdminDbContext())
         {
-            db.Members.Update(this.SelectedMember);
+            db.Members.Update(this.SelectedMember.FoldBack());
         }
+        this.JS.InvokeVoidAsync("alertify.success", "Tag módosítva!");
     }
 
     private void DeleteMember()
     {
         using (GanzAdminDbContext db = new GanzAdminDbContext())
         {
-            db.Members.Delete(this.SelectedMember.Id);
+            db.Members.Delete(this.SelectedMember.Original.Id);
         }
     }
 }

@@ -6,7 +6,7 @@
         @switch (this.Type)
         {
             case "text":
-                <input type="text" value="@this.Value" name="@this.Name" />
+                <input type="text" value="@this.Value" name="@this.Name" @oninput="OnValueChanged"/>
                 break;
             case "number":
                 break;
@@ -59,4 +59,10 @@
 
     [Parameter]
     public EventCallback<string>ValueChanged { get; set; }
+
+    private Task OnValueChanged(ChangeEventArgs e)  
+    {  
+        this.Value = e.Value.ToString();  
+        return ValueChanged.InvokeAsync(Value);  
+    }  
 }
