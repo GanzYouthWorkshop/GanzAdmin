@@ -54,12 +54,12 @@ namespace GanzAdmin.Authentication
             {
                 GanzAdminDbEngine db = GanzAdminDbEngine.Instance;
                 Member member = db.Members.FindById(this.CurrentSesstion.MemberId);
-                if (OrRoles != null && (member.Roles.ContainsAny(OrRoles.Split(',').ToList()) || member.Roles.Contains(Roles.Overlord)))
+                if (OrRoles != null && (member.Roles.ContainsAny(OrRoles.Split(',').ToList()) || member.Roles.Contains(Permissions.Overlord)))
                 {
                     //TODO
                     return true;
                 }
-                else if (AndRoles != null && (member.Roles.ContainsAny(AndRoles.Split(',').ToList()) || member.Roles.Contains(Roles.Overlord)))
+                else if (AndRoles != null && (member.Roles.ContainsAny(AndRoles.Split(',').ToList()) || member.Roles.Contains(Permissions.Overlord)))
                 {
                     //TODO
                     return true;

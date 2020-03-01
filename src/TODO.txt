@@ -1,0 +1,19 @@
+=================
+KÉSZ :)
+=================
+
+=================
+FOLYAMATBAN...
+=================
+-Naptár funkció - mikor hányan voltak jelen és mikor lesznek foglalkozások, nyári táborok
+
+=================
+MÉG NINCS KÉSZ :(
+=================
+-Csinálni kell egy saját profilt szerkesztõ felületet amit mindenkinek el kell tudnia érnie
+-A szerepeket le kell tisztázni
+-A szerepeket ki kell tudni osztani, de csak annyit, amennyit magunk is kapunk
+-Majdnem az összes funkciót be kell rakni authorizedview-ba a megfelelõ role-okkal
+-Kéne egy fejléc alatti breakcrumb-menü
+-GanzInv funkcionalitásátv visszarakni (helyek-kategóriák-alaktrészek) és kibõvítése (projektek, lerakatok, mennyiségek)
+-Fájltár megcsinálása

@@ -18,6 +18,7 @@ namespace GanzAdmin.Database
             member.Attendances.Add(result);
             GanzAdminDbEngine.Instance.Attendances.Insert(result);
             GanzAdminDbEngine.Instance.Members.Update(member);
+            GanzAdminDbEngine.Instance.Transact();
         }
     }
 }

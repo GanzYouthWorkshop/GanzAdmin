@@ -7,7 +7,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GanzAdmin", "GanzAdmin\Ganz
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GanzAdmin.Database", "GanzAdmin.Database\GanzAdmin.Database.csproj", "{5DA2E70B-E684-4498-88B8-13E41C4409B6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GanzAdmin.Utils", "GanzAdmin.Utils\GanzAdmin.Utils.csproj", "{D1F42547-121E-4624-A199-66BFF21EA2F5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GanzAdmin.Utils", "GanzAdmin.Utils\GanzAdmin.Utils.csproj", "{D1F42547-121E-4624-A199-66BFF21EA2F5}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{8A98D0FC-8F47-4B68-9978-AAD60DBC3406}"
+	ProjectSection(SolutionItems) = preProject
+		TODO.txt = TODO.txt
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -3,6 +3,8 @@
 @using GanzAdmin.Database;
 @using GanzAdmin.Database.Models;
 
+@namespace GanzAdmin.Authentication.Components
+
 @if (this.AuthenticationProvider.CheckAuth(this.NeededRolesOR, this.NeededRolesAND))
 {
     @ChildContent

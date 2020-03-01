@@ -1,0 +1,222 @@
+﻿@page "/calendar"
+@page "/calendar/{PopupDisplay}"
+
+@using GanzAdmin.Authentication.Components;
+@using GanzAdmin.Components.Edit;
+@using GanzAdmin.Components.DataGrid;
+@using GanzAdmin.Database;
+@using GanzAdmin.Database.Models;
+@using GanzAdmin.Utils;
+
+<aside class='loading'>
+    <NavLink class="addlink" href="@($"/{BASELINK}/add")">Új @DATANAME</NavLink>
+</aside>
+
+<main class='@(this.ItemList == null ? "loading" : "")'>
+    @if (this.ItemList != null)
+    {
+        <table>
+            <tr>
+                <th>Hétfő</th>
+                <th>Kedd</th>
+                <th>Szerda</th>
+                <th>Csütörtök</th>
+                <th>Péntek</th>
+                <th>Szombat</th>
+                <th>Vasárnap</th>
+            </tr>
+
+            @for(int i = 0; i < this.Days.Count; i++)
+            {
+                if(i % 7 == 0)
+                {
+                    @:<tr>
+                }
+
+                if(this.Days[i] == null)
+                {
+                      <td></td>
+                }
+                else
+                {
+                      <td>@this.GetCellContens((DateTime)this.Days[i])</td>
+                }
+
+                if(i % 7 == 0)
+                {
+                    @:</tr>
+                }
+            }
+        </table>
+    }
+</main>
+
+@if (this.SelectedItem != null)
+{
+<section class='popup' id='content'>
+    <div class='shadow'></div>
+    <div class='body'>
+        <NavLink href="@($"/{BASELINK}")" class='close'></NavLink>
+        <EditForm method="post" EditContext="new EditContext(true)" OnValidSubmit="OnAddEditSubmit">
+            <h3>@this.PopupTitle</h3>
+            <div class='dynamic'>
+                <SimpleEditField Type="text" Display="Név" Name="@nameof(Member.Name)" @bind-Value="this.SelectedItem.Temporal.Name" />
+            </div>
+            <AuthorizedView NeededRolesOR="TEEEST">
+                <button type='submit'>Küldés</button>
+                <NavLink href='@($"/{BASELINK}")'>Mégse</NavLink>
+            </AuthorizedView>
+        </EditForm>
+    </div>
+    @if (this.DialogLoading)
+    {
+        <div class='loading'></div>
+    }
+</section>
+}
+
+
+@code
+{
+        #region Közös dolgok
+    private const string BASELINK = "calendar";
+    private const string DATANAME = "esemény";
+
+    [Inject]
+    private NavigationManager NavMan { get; set; }
+
+    [Inject]
+    private IJSRuntime JS { get; set; }
+
+    [Parameter]
+    public string PopupDisplay { get; set; }
+
+    private bool DialogLoading { get; set; } = false;
+    #endregion
+
+    #region Oldal-specifikus dolgok
+    private List<Event> ItemList { get; set; }
+
+    private TemporalObject<Event> SelectedItem { get; set; }
+
+    private List<DateTime?> Days { get; set; }
+
+    private string PopupTitle
+    {
+        get { return $"Új {DATANAME}"; }
+    }
+
+    #endregion
+
+    #region CRUD metódusok
+    protected override async Task OnInitializedAsync()
+    {
+        await Task.Run(() =>
+        {
+            this.Days = new List<DateTime?>();
+            DateTime firstDayOfTheMonth = DateTime.Today.AddDays(DateTime.Today.Day - 1);
+            int days = DateTime.DaysInMonth(firstDayOfTheMonth.Year, firstDayOfTheMonth.Month);
+            int dow = (int)firstDayOfTheMonth.DayOfWeek - 1;
+            if(dow == -1)
+            {
+                dow = 6;
+            }
+
+            for(int i = 0; i < dow; i++)
+            {
+                this.Days.Add(null);
+            }
+            for(int i = 0; i < days; i++)
+            {
+                this.Days.Add(firstDayOfTheMonth.AddDays(i));
+            }
+            while(this.Days.Count % 7 != 0)
+            {
+                this.Days.Add(null);
+            }
+
+            GanzAdminDbEngine db = GanzAdminDbEngine.Instance;
+            this.ItemList = db.Events.FindAll().ToList();
+        });
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await Task.Run(() =>
+        {
+            this.SelectedItem = null;
+
+            if (this.PopupDisplay == "add")
+            {
+                this.SelectedItem = new TemporalObject<Event>(new Event());
+            }
+            else if (this.PopupDisplay != null)
+            {
+                int showId = 0;
+                if (int.TryParse(this.PopupDisplay, out showId))
+                {
+                    Event item = this.ItemList.FirstOrDefault(m => m.Id == showId);
+                    this.SelectedItem = new TemporalObject<Event>(item);
+                }
+            }
+        });
+    }
+
+    private void OnAddEditSubmit()
+    {
+        Task.Run(() =>
+        {
+            this.DialogLoading = true;
+            if (this.PopupDisplay == "add")
+            {
+                this.Add();
+            }
+            else
+            {
+                //this.Modify();
+            }
+            this.DialogLoading = false;
+            this.NavMan.NavigateTo($"/{BASELINK}");
+        });
+    }
+
+    private void Add()
+    {
+        GanzAdminDbEngine.Instance.Events.Insert(this.SelectedItem.FoldBack());
+
+        this.JS.InvokeVoidAsync("alertify.success", "Tag hozzáadva!");
+    }
+
+    //private void Modify()
+    //{
+    //    GanzAdminDbEngine.Instance.Members.Update(this.SelectedItem.FoldBack());
+
+    //    this.JS.InvokeVoidAsync("alertify.success", "Tag módosítva!");
+    //}
+
+    //TODO
+    //private void Delete()
+    //{
+    //    GanzAdminDbEngine.Instance.Members.Delete(this.SelectedItem.Original.Id);
+
+    //    this.JS.InvokeVoidAsync("alertify.success", "Tag törölev :(");
+    //}
+    #endregion
+
+    #region Egyéb dolgok
+    private string GetCellContens(DateTime dt)
+    {
+        string result = "";
+        result += dt.ToString("MM.dd");
+
+        List<Event> currentEvents = this.ItemList.Where(e => e.Start <= dt & (e.Start + e.Duration) > dt).ToList();
+
+        foreach (Event ev in currentEvents)
+        {
+            //bool userCanSee = G
+            result += ev.Name;
+        }
+    }
+
+    #endregion
+}

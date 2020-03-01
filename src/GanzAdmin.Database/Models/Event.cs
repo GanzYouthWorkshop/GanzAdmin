@@ -5,12 +5,14 @@ using System.Text;
 
 namespace GanzAdmin.Database.Models
 {
-    public class Location
+    public class Event
     {
         [BsonId]
         public int Id { get; set; }
 
         public string Name { get; set; }
-        public Location ParentLocation { get; set; }
+        public DateTime Start { get; set; }
+        public TimeSpan Duration { get; set; }
+        public List<string> Permissions { get; set; }  
     }
 }

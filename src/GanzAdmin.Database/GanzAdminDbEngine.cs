@@ -20,6 +20,8 @@ namespace GanzAdmin.Database
         public ILiteCollection<Member> Members { get { return this.m_InnerDb.GetCollection<Member>().Include(i => i.Attendances); } }
         public ILiteCollection<Attendance> Attendances { get { return this.m_InnerDb.GetCollection<Attendance>(); } }
 
+        public ILiteCollection<Event> Events { get { return this.m_InnerDb.GetCollection<Event>(); } }
+
         public void Dispose()
         {
             this.Transact();
@@ -53,7 +55,7 @@ namespace GanzAdmin.Database
                     Username = "sa",
                     Roles = new List<string>()
                     {
-                        Roles.Overlord,
+                        Permissions.Overlord,
                     }
                 });
             }
