@@ -22,6 +22,7 @@
                         <DataGridHeader IsPinnable IsSortable>Név</DataGridHeader>
                         <DataGridHeader IsCollapsible IsSortable>Aktív?</DataGridHeader>
                         <DataGridHeader IsCollapsible IsSortable>Tagdíj befizetve</DataGridHeader>
+                        <DataGridHeader IsCollapsible IsSortable>Foglalkozásra bejegyzés</DataGridHeader>
                     </tr>
                 </thead>
             </table>
@@ -32,17 +33,24 @@
                         <DataGridHeader IsPinnable IsSortable>Név</DataGridHeader>
                         <DataGridHeader IsCollapsible IsSortable>Aktív?</DataGridHeader>
                         <DataGridHeader IsCollapsible IsSortable>Tagdíj befizetve</DataGridHeader>
+                        <DataGridHeader IsCollapsible IsSortable>Foglalkozásra bejegyzés</DataGridHeader>
                     </tr>
                 </thead>
 
                 <tbody>
                     @foreach (var member in this.MemberList)
                     {
-                        <tr>
-                            <td><NavLink href="@($"/{BASELINK}/{member.Id}")">@member.Name</NavLink></td>
-                            <td>@member.Active</td>
-                            <td>@member.PaidUntil</td>
-                        </tr>
+                    <tr>
+                        <td><NavLink href="@($"/{BASELINK}/{member.Id}")">@member.Name</NavLink></td>
+                        <td>@member.Active</td>
+                        <td>@member.PaidUntil</td>
+                        <td>
+                            @if(!member.Attendances.Exists(a => a.Occasion.Date == DateTime.Today))
+                            {
+                                <a @onclick="() => this.OnLogAttenance(member)">Jelenléti ív kitöltés</a>
+                            }
+                        </td>
+                    </tr>
                     }
                 </tbody>
             </table>
@@ -50,31 +58,38 @@
     }
 </main>
 
-@*Ki kéne még jelezni, hogy szerkesztünk vagy hozzáadunk...*@
 @if (this.SelectedMember != null)
 {
-    <section class='popup' id='content'>
-        <div class='shadow'></div>
-        <div class='body'>
-            <NavLink href="@($"/{BASELINK}")" class='close'></NavLink>
-            <EditForm method="post" EditContext="new EditContext(true)" OnValidSubmit="OnAddEditSubmit">
-                <h3>@this.PopupTitle</h3>
-                <div class='dynamic'>
-                    <SimpleEditField Type="text" Display="Név" Name="@nameof(Member.Name)" @bind-Value="this.SelectedMember.Temporal.Name" />
-                </div>
-                <AuthorizedView NeededRolesOR="TEEEST">
-                    <button type='submit'>Küldés</button>
-                    <NavLink href='@($"/{BASELINK}")'>Mégse</NavLink>
-                </AuthorizedView>
-            </EditForm>
-        </div>
-    </section>
+<section class='popup' id='content'>
+    <div class='shadow'></div>
+    <div class='body'>
+        <NavLink href="@($"/{BASELINK}")" class='close'></NavLink>
+        <EditForm method="post" EditContext="new EditContext(true)" OnValidSubmit="OnAddEditSubmit">
+            <h3>@this.PopupTitle</h3>
+            <div class='dynamic'>
+                <SimpleEditField Type="text" Display="Név" Name="@nameof(Member.Name)" @bind-Value="this.SelectedMember.Temporal.Name" />
+                <SimpleEditField Type="text" Display="Cím" Name="@nameof(Member.Address)" @bind-Value="this.SelectedMember.Temporal.Address" />
+                <SimpleEditField Type="text" Display="Telefon" Name="@nameof(Member.Phone)" @bind-Value="this.SelectedMember.Temporal.Phone" />
+                <SimpleEditField Type="text" Display="Email" Name="@nameof(Member.Email)" @bind-Value="this.SelectedMember.Temporal.Email" />
+                <SimpleEditField Type="password" Display="Jelszó" Name="@nameof(Member.Password)" @bind-Value="this.SelectedMember.Temporal.Password" />
+            </div>
+            <AuthorizedView NeededRolesOR="TEEEST">
+                <button type='submit'>Küldés</button>
+                <NavLink href='@($"/{BASELINK}")'>Mégse</NavLink>
+            </AuthorizedView>
+        </EditForm>
+    </div>
+    @if (this.DialogLoading)
+    {
+        <div class='loading'></div>
+    }
+</section>
 }
 
 
 @code
 {
-        #region Közös dolgok
+    #region Közös dolgok
     private const string BASELINK = "members";
     private const string DATANAME = "tag";
 
@@ -86,6 +101,8 @@
 
     [Parameter]
     public string PopupDisplay { get; set; }
+
+    private bool DialogLoading { get; set; } = false;
     #endregion
 
     #region Oldal-specifikus dolgok
@@ -95,17 +112,19 @@
 
     private string PopupTitle
     {
-        get { return this.PopupDisplay == "add" ? $"Új {DATANAME}" : $"{this.SelectedMember.Original.Username} szerkesztése"; }
+        get { return this.PopupDisplay == "add" ? $"Új {DATANAME}" : $"{this.SelectedMember?.Original.Username} szerkesztése"; }
     }
 
     #endregion
 
+    #region CRUD metódusok
     protected override async Task OnInitializedAsync()
     {
         await Task.Run(() =>
         {
-            using (GanzAdminDbContext db = new GanzAdminDbContext())
+            //using (GanzAdminDbContext db = new GanzAdminDbContext())
             {
+                GanzAdminDbEngine db = GanzAdminDbEngine.Instance;
                 this.MemberList = db.Members.FindAll().ToList();
             }
         });
@@ -135,40 +154,50 @@
 
     private void OnAddEditSubmit()
     {
-        if (this.PopupDisplay == "add")
+        Task.Run(() =>
         {
-            this.AddMember();
-        }
-        else
-        {
-            this.ModifMember();
-        }
-        this.NavMan.NavigateTo($"/{BASELINK}");
+            this.DialogLoading = true;
+            if (this.PopupDisplay == "add")
+            {
+                this.Add();
+            }
+            else
+            {
+                this.Modify();
+            }
+            this.DialogLoading = false;
+            this.NavMan.NavigateTo($"/{BASELINK}");
+        });
     }
 
-    private void AddMember()
+    private void Add()
     {
-        using (GanzAdminDbContext db = new GanzAdminDbContext())
-        {
-            db.Members.Insert(this.SelectedMember.FoldBack());
-        }
+        GanzAdminDbEngine.Instance.Members.Insert(this.SelectedMember.FoldBack());
+
         this.JS.InvokeVoidAsync("alertify.success", "Tag hozzáadva!");
     }
 
-    private void ModifMember()
+    private void Modify()
     {
-        using (GanzAdminDbContext db = new GanzAdminDbContext())
-        {
-            db.Members.Update(this.SelectedMember.FoldBack());
-        }
+        GanzAdminDbEngine.Instance.Members.Update(this.SelectedMember.FoldBack());
+
         this.JS.InvokeVoidAsync("alertify.success", "Tag módosítva!");
     }
 
-    private void DeleteMember()
+    //TODO
+    private void Delete()
     {
-        using (GanzAdminDbContext db = new GanzAdminDbContext())
-        {
-            db.Members.Delete(this.SelectedMember.Original.Id);
-        }
+        GanzAdminDbEngine.Instance.Members.Delete(this.SelectedMember.Original.Id);
+
+        this.JS.InvokeVoidAsync("alertify.success", "Tag törölev :(");
     }
+    #endregion
+
+    #region Egyéb metódusok
+    private void OnLogAttenance(Member member)
+    {
+        GanzAdminDbFunctions.LogAttendance(member, DateTime.Today);
+        this.JS.InvokeVoidAsync("alertify.success", "Jelenléti ív frissítve!");
+    }
+    #endregion
 }

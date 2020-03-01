@@ -1,31 +1,30 @@
 ﻿using GanzAdmin.Database.Models;
+using GanzAdmin.Utils;
 using LiteDB;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata;
 using System;
 using System.Collections.Generic;
 using System.Text;
-using System.Linq;
-using GanzAdmin.Utils;
 
 namespace GanzAdmin.Database
 {
-    public class GanzAdminDbContext : IDisposable
+    public class GanzAdminDbEngine
     {
-        public const string CONNECTION_STRING = @"_Data\litedb.bin";
+        public const string CONNECTION_STRING = @"_Data\ganzadmin.db";
 
         private bool m_IsDisposing;
 
         private LiteDatabase m_InnerDb;
 
-        public ILiteCollection<Member> Members          { get { return this.m_InnerDb.GetCollection<Member>(); } }
-        public ILiteCollection<Attendance> Attendances  { get { return this.m_InnerDb.GetCollection<Attendance>(); } }
+        public static GanzAdminDbEngine Instance { get; } = new GanzAdminDbEngine();
+
+        public ILiteCollection<Member> Members { get { return this.m_InnerDb.GetCollection<Member>().Include(i => i.Attendances); } }
+        public ILiteCollection<Attendance> Attendances { get { return this.m_InnerDb.GetCollection<Attendance>(); } }
 
         public void Dispose()
         {
             this.Transact();
 
-            if(!this.m_IsDisposing)
+            if (!this.m_IsDisposing)
             {
                 this.m_InnerDb.Dispose();
 
@@ -33,10 +32,9 @@ namespace GanzAdmin.Database
             }
         }
 
-        public GanzAdminDbContext()
+        public GanzAdminDbEngine()
         {
             this.m_InnerDb = new LiteDatabase(CONNECTION_STRING);
-            this.BeginTransaction();
         }
 
         public void EnsureCreated()
@@ -53,6 +51,10 @@ namespace GanzAdmin.Database
                     Password = GanzUtils.Sha256("admin"),
                     Phone = "+3699 999 9999",
                     Username = "sa",
+                    Roles = new List<string>()
+                    {
+                        Roles.Overlord,
+                    }
                 });
             }
 

@@ -17,9 +17,13 @@ namespace GanzAdmin.Database.Models
         public string Name { get; set; }
         public string Address { get; set; }
         public string Phone { get; set; }
+        public string Email { get; set; }
         public bool Active { get; set; }
+        public DateTime MemberSince { get; set; }
         public DateTime PaidUntil { get; set; }
-        public List<Attendance> Attendances { get; set; }
-        public Roles Role { get; set; }
+        public List<string> Roles { get; set; }
+
+        [BsonRef(nameof(Attendance))]
+        public List<Attendance> Attendances { get; set; } = new List<Attendance>();
     }
 }

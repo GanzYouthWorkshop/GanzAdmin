@@ -25,10 +25,10 @@ namespace GanzAdmin.Authentication
         public const string JS_REMOVE_COOKIE = "Blazor0.deleteCookie";
 
         private SessionManager m_SessionManager { get; set; }
-        public IJSRuntime m_Javascript { get; set; }
+        private IJSRuntime m_Javascript { get; set; }
         private IHttpContextAccessor m_Http;
 
-        private SessionManager.Session m_ScopeSession;
+        public SessionManager.Session CurrentSesstion { get; private set; }
 
         public GanzAuthProvider(SessionManager sessionManager, IHttpContextAccessor httpProxy, IJSRuntime jsRuntime)
         {
@@ -42,22 +42,24 @@ namespace GanzAdmin.Authentication
             {
                 var cookie = cookies[AUTH_COOKIE];
 
-                this.m_ScopeSession = this.m_SessionManager.CheckTokenValidity(cookie);
+                this.CurrentSesstion = this.m_SessionManager.CheckTokenValidity(cookie);
             }
         }
 
         public bool CheckAuth(string OrRoles, string AndRoles)
         {
-            this.m_ScopeSession = this.m_SessionManager.CheckSessionValidity(this.m_ScopeSession);
+            this.CurrentSesstion = this.m_SessionManager.CheckSessionValidity(this.CurrentSesstion);
 
-            if (this.m_ScopeSession != null && this.m_ScopeSession.MemberId > 0)
+            if (this.CurrentSesstion != null && this.CurrentSesstion.MemberId > 0)
             {
-                if(OrRoles != null)
+                GanzAdminDbEngine db = GanzAdminDbEngine.Instance;
+                Member member = db.Members.FindById(this.CurrentSesstion.MemberId);
+                if (OrRoles != null && (member.Roles.ContainsAny(OrRoles.Split(',').ToList()) || member.Roles.Contains(Roles.Overlord)))
                 {
                     //TODO
                     return true;
                 }
-                else if(AndRoles != null)
+                else if (AndRoles != null && (member.Roles.ContainsAny(AndRoles.Split(',').ToList()) || member.Roles.Contains(Roles.Overlord)))
                 {
                     //TODO
                     return true;
@@ -87,14 +89,12 @@ namespace GanzAdmin.Authentication
         {
             bool result = false;
 
-            using(GanzAdminDbContext db = new GanzAdminDbContext())
+            GanzAdminDbEngine db = GanzAdminDbEngine.Instance;
+            Member member = db.Members.FindOne(m => m.Username == user);
+            if(member != null && member.Password == GanzUtils.Sha256(pass))
             {
-                Member member = db.Members.FindOne(m => m.Username == user);
-                if(member != null && member.Password == GanzUtils.Sha256(pass))
-                {
-                    this.SignIn(member);
-                    result = true;
-                }
+                this.SignIn(member);
+                result = true;
             }
 
             return result;
@@ -103,13 +103,13 @@ namespace GanzAdmin.Authentication
         public async Task SignIn(Member member)
         {
             SessionManager.Session session = this.m_SessionManager.RegisterNewSession(member.Id);
-            this.m_ScopeSession = session;
+            this.CurrentSesstion = session;
             this.MakeCookie(AUTH_COOKIE, session.SecurityToken, 3);
         }
 
         public async Task SignOut()
         {
-            this.m_SessionManager.RevokeSession(this.m_ScopeSession);
+            this.m_SessionManager.RevokeSession(this.CurrentSesstion);
             this.DeleteCookie(AUTH_COOKIE);
         }
 

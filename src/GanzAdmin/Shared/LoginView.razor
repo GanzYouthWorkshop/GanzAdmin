@@ -44,8 +44,6 @@
     [Inject]
     protected NavigationManager NavMan { get; set; }
 
-
-
     private string User { get; set; }
     private string Pass { get; set; }
 
@@ -63,8 +61,4 @@
             JS.InvokeVoidAsync("alertify.error", "Hibás felhasználónév vagy jelszó!");
         }
     }
-
-    //protected override async Task OnInitializedAsync()
-    //{
-    //}
 }

@@ -44,8 +44,9 @@ namespace GanzAdmin
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            using (GanzAdminDbContext db = new GanzAdminDbContext())
+            //using (GanzAdminDbContext db = new GanzAdminDbContext())
             {
+                GanzAdminDbEngine db = GanzAdminDbEngine.Instance;
                 db.EnsureCreated();
             }
 

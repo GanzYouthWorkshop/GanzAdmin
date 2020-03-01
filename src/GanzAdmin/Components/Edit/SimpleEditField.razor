@@ -6,7 +6,7 @@
         @switch (this.Type)
         {
             case "text":
-                <input type="text" value="@this.Value" name="@this.Name" @oninput="OnValueChanged"/>
+                <input type="text" value="@this.Value" name="@this.Name" @onchange="OnValueChanged" />
                 break;
             case "number":
                 break;
@@ -15,6 +15,7 @@
             case "numeric":
                 break;
             case "password":
+                <input type="password" value="@this.Value" name="@this.Name" @onchange="OnValueChanged" />
                 break;
         }
     </AuthorizedView>
@@ -31,6 +32,7 @@
             case "numeric":
                 break;
             case "password":
+                <span>*********</span>
                 break;
         }
 
@@ -60,9 +62,9 @@
     [Parameter]
     public EventCallback<string>ValueChanged { get; set; }
 
-    private Task OnValueChanged(ChangeEventArgs e)  
-    {  
-        this.Value = e.Value.ToString();  
-        return ValueChanged.InvokeAsync(Value);  
-    }  
+    private Task OnValueChanged(ChangeEventArgs e)
+    {
+        this.Value = e.Value.ToString();
+        return this.ValueChanged.InvokeAsync(Value);
+    }
 }

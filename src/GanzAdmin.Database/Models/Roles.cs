@@ -4,18 +4,22 @@ using System.Text;
 
 namespace GanzAdmin.Database.Models
 {
-    public enum Roles
+    public class Roles
     {
-        AttendanceLogger,
+        public const string AttendanceLogger = nameof(AttendanceLogger);
 
-        WarehouseBrowser,
-        WarehouseUploader,
-        WarehouseManager,
+        public const string WarehouseBrowser = nameof(WarehouseBrowser);
+        public const string WarehouseUploader = nameof(WarehouseUploader);
+        public const string WarehouseManager = nameof(WarehouseManager);
 
+        public const string MemberBrowser = nameof(WarehouseBrowser);
+        public const string MemberPaymentSetter = nameof(WarehouseUploader);
+        public const string MemberManager = nameof(WarehouseManager);
 
+        public const string GeneralAministrator = nameof(GeneralAministrator);
 
-        GeneralAministrator,
+        public const string SecurityCameraWatcher = nameof(SecurityCameraWatcher);
 
-        Overlord
+        public const string Overlord = nameof(Overlord);
     }
 }

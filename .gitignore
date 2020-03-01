@@ -9,3 +9,5 @@ src/GanzAdmin/GanzAdmin.csproj.user
 src/GanzAdmin.Utils/bin
 src/GanzAdmin.Utils/obj
 src/GanzAdmin/_Data/litedb.bin
+src/GanzAdmin/_Data/ganzadmin.db
+src/GanzAdmin/_Data/ganzadmin-log.db

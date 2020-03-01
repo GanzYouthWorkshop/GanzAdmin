@@ -1,26 +1,89 @@
 ﻿@page "/"
 
+@using GanzAdmin.Authentication;
+@using GanzAdmin.Database;
+@using GanzAdmin.Database.Models;
+
 <main class="full dashboard">
-    <section>
-        <h1>Hello, --belépett felhasz--!</h1>
+    <h1>Helló, @this.CurrentUser.Name!</h1>
 
-        <h2>Gyorslinkek</h2>
+    <div class="grid">
+        <section>
+            <h2>Fogllkozás</h2>
+            <NavLink href="/notyet" class="button">
+                <i></i>
+                <p>Tananyagtár</p>
+            </NavLink>
+            <NavLink href="/notyet" class="button">
+                <i></i>
+                <p>Naptár</p>
+            </NavLink>
 
-        <NavLink href="/members" class="button">
-            <i></i>
-            <p>Tagok</p>
-        </NavLink>
-        <NavLink href="/test-auth" class="button">
-            <i></i>
-            <p>Tesztek</p>
-        </NavLink>
+            @if (!this.CurrentUser.Attendances.Exists(a => a.Occasion.Date == DateTime.Today))
+            {
+                <NavLink class="button" @onclick="OnLogAttenance">
+                    <i></i>
+                    <p>Megjöttem!</p>
+                </NavLink>
+            }
+        </section>
 
+        <section>
+            <h2>Adatkezelés</h2>
+            <NavLink href="/members" class="button">
+                <i></i>
+                <p>Tagok</p>
+            </NavLink>
+        </section>
 
-        <h2>Adatkezelés</h2>
+        <section>
+            <h2>Felhőtároló</h2>
+            <NavLink href="/notyet" class="button">
+                <i></i>
+                <p>Saját fájljaim</p>
+            </NavLink>
+            <NavLink href="/notyet" class="button">
+                <i></i>
+                <p>Közös fájlok</p>
+            </NavLink>
+        </section>
 
-        <NavLink href="/members" class="button">
-            <i></i>
-            <p>Tagok</p>
-        </NavLink>
-    </section>
+        <section>
+            <h2>Fejlesztői eszközök</h2>
+            <NavLink href="/dev-ideas" class="button">
+                <i></i>
+                <p>Fejlesztési javaslatok</p>
+            </NavLink>
+
+            <NavLink href="/test-auth" class="button">
+                <i></i>
+                <p>Tesztek</p>
+            </NavLink>
+        </section>
+    </div>
 </main>
+
+@code
+{
+    [Inject]
+    private IJSRuntime JS { get; set; }
+
+    [Inject]
+    public GanzAuthProvider AuthProvider { get; set; }
+
+    public Member CurrentUser { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Task.Run(() =>
+        {
+            this.CurrentUser = GanzAdminDbEngine.Instance.Members.FindById(this.AuthProvider.CurrentSesstion.MemberId);
+        });
+    }
+
+    private void OnLogAttenance()
+    {
+        GanzAdminDbFunctions.LogAttendance(this.CurrentUser, DateTime.Today);
+        this.JS.InvokeVoidAsync("alertify.success", "Jelenléti ív frissítve!");
+    }
+}
