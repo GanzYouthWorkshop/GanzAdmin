@@ -675,6 +675,48 @@ form.login button, form.login button:hover
 
 /* **************************************************************************************************************************** */
 
+table.calendar
+{
+	positin: absolute;
+	top: 0;
+	bottom: 0;
+	right: 0;
+	left: 0;
+}
+
+table.calendar span
+{
+	padding: 0.3em;
+	font-size: 0.6em;
+}
+
+table.calendar span.tag
+{
+	border-radius: 2px;
+}
+
+table.calendar span.tag.workshop
+{
+	color: #FFFFFF;
+	background-color: mediumvioletred;
+}
+
+table.calendar span.tag.event
+{
+	color: #FFFFFF;
+	background-color: indianred;
+}
+
+table.calendar span.tag.attendance
+{
+	color: #FFFFFF;
+	background-color: forestgreen;
+}
+
+
+
+/* **************************************************************************************************************************** */
+
 #login.popup .body
 {
 	height: auto;
