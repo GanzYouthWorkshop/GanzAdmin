@@ -21,7 +21,7 @@ namespace GanzAdmin.Database.Models
         public bool Active { get; set; }
         public DateTime MemberSince { get; set; }
         public DateTime PaidUntil { get; set; }
-        public List<string> Roles { get; set; }
+        public List<string> Roles { get; set; } = new List<string>();
 
         [BsonRef]
         public List<Attendance> Attendances { get; set; } = new List<Attendance>();

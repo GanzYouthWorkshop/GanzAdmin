@@ -1,0 +1,20 @@
+﻿@using GanzAdmin.Authentication.Components;
+
+<div>
+    @this.Path.Split('/').Last()
+</div>
+
+@code
+{
+    [Parameter]
+    public bool IsFolder { get; set; }
+
+    [Parameter]
+    public string Path { get; set; }
+
+    [Parameter]
+    public EventCallback Clicked { get; set; }
+
+    [Parameter]
+    public EventCallback DoubleClicked { get; set; }
+}

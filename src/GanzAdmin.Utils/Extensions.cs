@@ -12,7 +12,7 @@ namespace GanzAdmin.Utils
 
             foreach(T needle in needles)
             {
-                if(haystack.Contains(needle))
+                if(haystack != null && haystack.Contains(needle))
                 {
                     result = true;
                 }
@@ -27,7 +27,7 @@ namespace GanzAdmin.Utils
 
             foreach (T needle in needles)
             {
-                if (!haystack.Contains(needle))
+                if (haystack != null && !haystack.Contains(needle))
                 {
                     result = false;
                 }

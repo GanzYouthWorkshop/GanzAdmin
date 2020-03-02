@@ -1,0 +1,27 @@
+﻿@using System.IO;
+@using GanzAdmin.Components.FileBrowser;
+
+<div>
+    @foreach(string file in Directory.GetDirectories(this.m_CurrentDirectory))
+    {
+        <FileBox IsFolder="true" Path="@file" />
+    }
+
+    @foreach(string file in Directory.GetFiles(this.m_CurrentDirectory))
+    {
+        <FileBox  IsFolder="true" Path="@file" />
+    }
+</div>
+
+@code
+{
+    [Parameter]
+    public string StartingDirectory { get; set; }
+
+    private string m_CurrentDirectory;
+
+    protected override Task OnParametersSetAsync()
+    {
+        return base.OnParametersSetAsync();
+    }
+}

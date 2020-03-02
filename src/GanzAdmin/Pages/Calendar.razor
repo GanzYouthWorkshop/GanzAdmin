@@ -8,12 +8,14 @@
 @using GanzAdmin.Database.Models;
 @using GanzAdmin.Utils;
 
-<aside class='loading'>
-    <NavLink class="addlink" href="@($"/{BASELINK}/add")">Új @DATANAME</NavLink>
+<aside>
+    <AuthorizedView NeededRolesOR="AddEvent">
+        <NavLink class="addlink" href="@($"/{BASELINK}/add")">Új @DATANAME</NavLink>
+    </AuthorizedView>
 </aside>
 
 <main class='@(this.ItemList == null ? "loading" : "")'>
-    @if (this.ItemList != null)
+    @if (this.ItemList != null && this.AttendanceList != null)
     {
         <table class="calendar">
             <tr>
@@ -35,7 +37,7 @@
 
                 @if(this.Days[i] == null)
                 {
-                      <td>.</td>
+                      <td class="inactive"></td>
                 }
                 else
                 {
@@ -53,7 +55,11 @@
                           {
                               <span class="tag event">@ev.Name</span>
                           }
-                          <span class="tag attendance">0 megjelent tag</span>
+                          @if (this.AttendanceList.Count(a => a.Occasion.Date == this.Days[i].Value.Date) > 0)
+                          {
+                              int a = this.AttendanceList.Count(a => a.Occasion.Date == this.Days[i].Value.Date);
+                              <span class="tag attendance">@a megjelent tag</span>
+                          }
                       </td>
                 }
 
@@ -111,6 +117,7 @@
 
     #region Oldal-specifikus dolgok
     private List<Event> ItemList { get; set; }
+    private List<Attendance> AttendanceList { get; set; }
 
     private TemporalObject<Event> SelectedItem { get; set; }
 
@@ -129,7 +136,8 @@
         await Task.Run(() =>
         {
             this.Days = new List<DateTime?>();
-            DateTime firstDayOfTheMonth = DateTime.Today.AddDays(-DateTime.Today.Day + 1);
+            DateTime firstDayOfTheMonth = DateTime.Today.AddDays(-DateTime.Today.Day + 1).Date;
+            DateTime lastDayOfTheMonth = firstDayOfTheMonth;
             int days = DateTime.DaysInMonth(firstDayOfTheMonth.Year, firstDayOfTheMonth.Month);
             int dow = (int)firstDayOfTheMonth.DayOfWeek - 1;
             if(dow == -1)
@@ -143,15 +151,17 @@
             }
             for(int i = 0; i < days; i++)
             {
-                this.Days.Add(firstDayOfTheMonth.AddDays(i));
+                this.Days.Add(lastDayOfTheMonth);
+                lastDayOfTheMonth = lastDayOfTheMonth.AddDays(1);
             }
             while(this.Days.Count % 7 != 0)
             {
                 this.Days.Add(null);
             }
 
-            GanzAdminDbEngine db = GanzAdminDbEngine.Instance;
-            this.ItemList = db.Events.FindAll().ToList();
+            this.ItemList = GanzAdminDbEngine.Instance.Events.FindAll().ToList();
+
+            this.AttendanceList = GanzAdminDbEngine.Instance.Attendances.Find(a => a.Occasion.Date >= firstDayOfTheMonth && a.Occasion <= lastDayOfTheMonth).ToList();
         });
     }
 
@@ -219,20 +229,6 @@
     #endregion
 
     #region Egyéb dolgok
-    private string GetCellContens(DateTime dt)
-    {
-        string result = "";
-        result += dt.ToString("MM.dd");
-
-        return result;
-        //List<Event> currentEvents = this.ItemList.Where(e => e.Start <= dt & (e.Start + e.Duration) > dt).ToList();
-
-        //foreach (Event ev in currentEvents)
-        //{
-        //    //bool userCanSee = G
-        //    result += ev.Name;
-        //}
-    }
 
     #endregion
 }

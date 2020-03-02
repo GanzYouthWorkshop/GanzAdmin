@@ -21,8 +21,4 @@
     <ProjectReference Include="..\GanzAdmin.Utils\GanzAdmin.Utils.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Components\FileBrowser\" />
-  </ItemGroup>
-
 </Project>

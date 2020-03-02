@@ -421,15 +421,6 @@ main table tr.alert td
 	background-color: #ffcdd2 !important;
 }
 
-main table td:nth-child(6),
-main table td:nth-child(7),
-main table td:nth-child(8),
-main table td:nth-child(9),
-main table td:nth-child(10)
-{
-	text-align: center;
-}
-
 /* **************************************************************************************************************************** */
 
 .popup
@@ -677,16 +668,25 @@ form.login button, form.login button:hover
 
 table.calendar
 {
-	positin: absolute;
+	position: absolute;
 	top: 0;
 	bottom: 0;
 	right: 0;
 	left: 0;
+	height: 100%;
 }
+
+table.calendar td.inactive
+{
+	background-color: #CCCCCC;
+}
+
 
 table.calendar span
 {
+	display: block;
 	padding: 0.3em;
+	margin: 0.3em;
 	font-size: 0.6em;
 }
 
