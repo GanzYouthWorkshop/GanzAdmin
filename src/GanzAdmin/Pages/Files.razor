@@ -1,8 +1,19 @@
 ﻿@page "/files/own"
 @page "/files/shared"
+@page "/files/own/{Path}"
+@page "/files/shared/{Path}"
 
 @using GanzAdmin.Components.FileBrowser;
 
-<main class="full">
-    <FileBrowser StartingDirectory="D:"></FileBrowser>
+<aside>
+</aside>
+
+<main class="filebrowser">
+    <FileBrowser StartingDirectory="C:\Documents and Settings\Szlatyka\Documents"></FileBrowser>
 </main>
+
+@code
+{
+    [Parameter]
+    public string Path { get; set; }
+}

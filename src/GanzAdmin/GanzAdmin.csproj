@@ -21,4 +21,8 @@
     <ProjectReference Include="..\GanzAdmin.Utils\GanzAdmin.Utils.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\img\files\" />
+  </ItemGroup>
+
 </Project>

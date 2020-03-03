@@ -1,8 +1,9 @@
 ﻿@using GanzAdmin.Authentication.Components;
 
-<div>
-    @this.Path.Split('/').Last()
-</div>
+<NavLink href="@($"~/{this.Path}")">
+    <img src="@($"img/files/{this.Image}")" />
+    <p>@this.Path.Split('/', '\\').Last()</p>
+</NavLink>
 
 @code
 {
@@ -11,6 +12,70 @@
 
     [Parameter]
     public string Path { get; set; }
+
+    private string Image
+    {
+        get
+        {
+            string result = "";
+
+            if(this.IsFolder)
+            {
+                result = "folder.svg";
+            }
+            else
+            {
+                string extension = this.Path.Split('/', '\\').Last().Split('.').Last().ToLower();
+
+                switch(extension)
+                {
+                    case "doc":
+                    case "docx":
+                        result = "doc.svg";
+                        break;
+                    case "xls":
+                    case "xlsx":
+                        result = "xls.svg";
+                        break;
+                    case "ppt":
+                    case "pptx":
+                        result = "ppt.svg";
+                        break;
+                    case "bmp":
+                    case "png":
+                        result = "png.svg";
+                        break;
+                    case "jpg":
+                    case "jpeg":
+                        result = "jpg.svg";
+                        break;
+                    case "exe":
+                        result = "exe.svg";
+                        break;
+                    case "zip":
+                        result = "zip.svg";
+                        break;
+                    case "rar":
+                        result = "rar.svg";
+                        break;
+                    case "pdf":
+                        result = "pdf.svg";
+                        break;
+                    case "mp3":
+                        result = "mp3.svg";
+                        break;
+                    case "mp4":
+                        result = "mp4.svg";
+                        break;
+                    default:
+                        result = "file.svg";
+                        break;
+                }
+            }
+
+            return result;
+        }
+    }
 
     [Parameter]
     public EventCallback Clicked { get; set; }

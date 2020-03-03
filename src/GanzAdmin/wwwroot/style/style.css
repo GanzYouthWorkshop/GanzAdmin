@@ -713,6 +713,28 @@ table.calendar span.tag.attendance
 	background-color: forestgreen;
 }
 
+/* **************************************************************************************************************************** */
+
+main.filebrowser a
+{
+	margin: 1em;
+	border: 1px solid #CCCCCC;
+	border-radius: 2px;
+	display: inline-block;
+	padding: 1em;
+	margin: 1em;
+	text-decoration: none;
+	text-transform: uppercase;
+	width: 120px;
+	height: 120px;
+	text-align: center;
+}
+
+main.filebrowser a img
+{
+	width: 96px;
+	height: 96px;
+}
 
 
 /* **************************************************************************************************************************** */
