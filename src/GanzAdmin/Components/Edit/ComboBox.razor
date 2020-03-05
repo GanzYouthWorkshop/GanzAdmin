@@ -1,0 +1,47 @@
+﻿@using GanzAdmin.Authentication.Components;
+@using GanzAdmin.Database.Models;
+
+<p>
+    <span>@this.Display:</span>
+    <AuthorizedView NeededRolesOR="@this.AuthOR" NeededRolesAND="@this.AuthAND">
+        <select name="@this.Name">
+            @foreach(IEntity item in Items)
+            {
+                <option value="@item">@item.DisplayValue</option>
+            }
+        </select>
+    </AuthorizedView>
+    <NonAuthorizedView NeededRolesOR="@this.AuthOR" NeededRolesAND="@this.AuthAND">
+                <span>@this.Value</span>
+    </NonAuthorizedView>
+</p>
+
+@code
+{
+    [Parameter]
+    public string AuthOR { get; set; }
+
+    [Parameter]
+    public string AuthAND { get; set; }
+
+    [Parameter]
+    public List<IEntity> Items { get; set; }
+
+    [Parameter]
+    public IEntity Value { get; set; }
+
+    [Parameter]
+    public string Name { get; set; }
+
+    [Parameter]
+    public string Display { get; set; }
+
+    [Parameter]
+    public EventCallback<IEntity>ValueChanged { get; set; }
+
+    private Task OnValueChanged(ChangeEventArgs e)
+    {
+        this.Value = (IEntity)e.Value;
+        return this.ValueChanged.InvokeAsync(Value);
+    }
+}

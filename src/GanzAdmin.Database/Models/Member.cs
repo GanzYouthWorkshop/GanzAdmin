@@ -25,5 +25,11 @@ namespace GanzAdmin.Database.Models
 
         [BsonRef]
         public List<Attendance> Attendances { get; set; } = new List<Attendance>();
+
+        [BsonIgnore]
+        public string DisplayValue
+        {
+            get { return this.Username; }
+        }
     }
 }

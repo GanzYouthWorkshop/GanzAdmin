@@ -14,5 +14,11 @@ namespace GanzAdmin.Database.Models
         public DateTime Start { get; set; }
         public TimeSpan Duration { get; set; }
         public List<string> Permissions { get; set; }  
+
+        [BsonIgnore]
+        public string DisplayValue
+        {
+            get { return this.Name; }
+        }
     }
 }

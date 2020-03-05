@@ -44,7 +44,7 @@
                 </thead>
 
                 <tbody>
-                    @foreach (var member in this.ItemList)
+                    @foreach (Member member in this.ItemList)
                     {
                         <tr>
                             <td><NavLink href="@($"/{this.BaseLink}/{member.Id}")">@member.Name</NavLink></td>

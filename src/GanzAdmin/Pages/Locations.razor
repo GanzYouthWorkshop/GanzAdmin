@@ -1,0 +1,94 @@
+﻿@page "/locations"
+@page "/locations/{PopupDisplay}"
+
+@using GanzAdmin.Authentication.Components;
+@using GanzAdmin.Components.Edit;
+@using GanzAdmin.Components.DataGrid;
+@using GanzAdmin.DataHandling;
+@using GanzAdmin.Database;
+@using GanzAdmin.Database.Models;
+@using GanzAdmin.Utils;
+
+@inherits DataHandlingController<Location>
+
+<aside class='loading'>
+    <AuthorizedView NeededRolesOR="AddLocation">
+        <NavLink class="addlink" href="@($"/{this.BaseLink}/add")">Új @this.DataName</NavLink>
+    </AuthorizedView>
+</aside>
+
+<main class='@(this.ItemList == null ? "loading" : "")'>
+    @if (this.ItemList != null)
+    {
+        <div id='table-wrapper'>
+            <table id='table-header'>
+                <thead>
+                    <tr>
+                        <DataGridHeader IsPinnable IsSortable>Név</DataGridHeader>
+                        <DataGridHeader IsCollapsible IsSortable>Hely</DataGridHeader>
+                    </tr>
+                </thead>
+            </table>
+
+            <table id='data' class="display nowrap">
+                <thead>
+                    <tr>
+                        <DataGridHeader IsPinnable IsSortable>Név</DataGridHeader>
+                        <DataGridHeader IsCollapsible IsSortable>Hely</DataGridHeader>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @foreach (Location location in this.ItemList)
+                    {
+                        <tr>
+                            <td><NavLink href="@($"/{this.BaseLink}/{location.Id}")">@location.Name</NavLink></td>
+                            <td>@(location.ParentLocation != null ? location.ParentLocation.Name : "-")</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</main>
+
+@if (this.SelectedItem != null)
+{
+    <section class='popup' id='content'>
+        <div class='shadow'></div>
+        <div class='body'>
+            <NavLink href="@($"/{this.BaseLink}")" class='close'></NavLink>
+            <EditForm method="post" EditContext="new EditContext(true)" OnValidSubmit="OnDefaultAddEditSubmit">
+                <h3>@this.PopupTitle</h3>
+                <div class='dynamic'>
+                    <SimpleEditField AuthOR="EditLocation" Type="text" Display="Név" Name="@nameof(Location.Name)" @bind-Value="this.SelectedItem.Temporal.Name" />
+                    <ComboBox AuthOR="EditLocation" Items="@(this.ItemList.ToEntities<Location>())" Name="@nameof(Location.ParentLocation)" Display="Hely" @bind-Value="this.SelectedItem.Temporal.ParentLocation" />
+                </div>
+                <AuthorizedView NeededRolesOR="AddUser,EditUser">
+                    <button type='submit'>Küldés</button>
+                    <NavLink href='@($"/{this.BaseLink}")'>Mégse</NavLink>
+                </AuthorizedView>
+            </EditForm>
+        </div>
+        @if (this.DialogLoading)
+        {
+            <div class='loading'></div>
+        }
+    </section>
+}
+
+
+@code
+{
+    protected override string PopupTitle
+    {
+        get { return this.PopupDisplay == "add" ? $"Új {this.BaseLink}" : $"{this.SelectedItem?.Original.Name} szerkesztése"; }
+    }
+
+    private void OnLogAttenance(Member member)
+    {
+        GanzAdminDbFunctions.LogAttendance(member, DateTime.Today);
+
+        this.JS.InvokeVoidAsync("alertify.success", "Jelenléti ív frissítve!");
+    }
+}

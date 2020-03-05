@@ -22,6 +22,8 @@ namespace GanzAdmin.Database
 
         public ILiteCollection<Event> Events { get { return this.m_InnerDb.GetCollection<Event>(); } }
 
+        public ILiteCollection<Location> Locations { get { return this.m_InnerDb.GetCollection<Location>(); } }
+
         public void Dispose()
         {
             this.Transact();

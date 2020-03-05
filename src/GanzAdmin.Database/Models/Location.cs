@@ -12,5 +12,11 @@ namespace GanzAdmin.Database.Models
 
         public string Name { get; set; }
         public Location ParentLocation { get; set; }
+
+        [BsonIgnore]
+        public string DisplayValue
+        {
+            get { return this.Name; }
+        }
     }
 }

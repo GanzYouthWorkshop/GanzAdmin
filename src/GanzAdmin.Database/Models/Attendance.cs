@@ -15,5 +15,11 @@ namespace GanzAdmin.Database.Models
         
         public DateTime Occasion { get; set; }
         public TimeSpan Length { get; set; }
+
+        [BsonIgnore]
+        public string DisplayValue
+        {
+            get { return this.Occasion.ToString(); }
+        }
     }
 }
