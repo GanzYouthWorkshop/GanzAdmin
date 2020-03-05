@@ -6,12 +6,12 @@ using System.Text;
 
 namespace GanzAdmin.Database.Models
 {
-    public class Attendance
+    public class Attendance : IEntity
     {
         [BsonId]
-        public ObjectId Id { get; set; }
+        public long Id { get; set; }
 
-        public int MemberId { get; set; }
+        public long MemberId { get; set; }
         
         public DateTime Occasion { get; set; }
         public TimeSpan Length { get; set; }

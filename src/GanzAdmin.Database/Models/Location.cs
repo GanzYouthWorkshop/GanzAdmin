@@ -5,10 +5,10 @@ using System.Text;
 
 namespace GanzAdmin.Database.Models
 {
-    public class Location
+    public class Location : IEntity
     {
         [BsonId]
-        public int Id { get; set; }
+        public long Id { get; set; }
 
         public string Name { get; set; }
         public Location ParentLocation { get; set; }

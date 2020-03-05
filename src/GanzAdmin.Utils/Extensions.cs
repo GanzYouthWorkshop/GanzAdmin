@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Text;
 
 namespace GanzAdmin.Utils
@@ -36,5 +37,9 @@ namespace GanzAdmin.Utils
             return result;
         }
 
+        public static string ToCapital(this string s)
+        {
+            return CultureInfo.CurrentCulture.TextInfo.ToTitleCase(s.ToLower());
+        }
     }
 }

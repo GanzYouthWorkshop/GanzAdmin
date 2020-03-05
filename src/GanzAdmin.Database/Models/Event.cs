@@ -5,10 +5,10 @@ using System.Text;
 
 namespace GanzAdmin.Database.Models
 {
-    public class Event
+    public class Event : IEntity
     {
         [BsonId]
-        public int Id { get; set; }
+        public long Id { get; set; }
 
         public string Name { get; set; }
         public DateTime Start { get; set; }

@@ -10,7 +10,7 @@ namespace GanzAdmin.Authentication
     {
         public class Session
         {
-            public int MemberId { get; set; }
+            public long MemberId { get; set; }
             public string SecurityToken { get; set; }
             public DateTime ExirationDateUtc { get; set; }
         }
@@ -30,7 +30,7 @@ namespace GanzAdmin.Authentication
             return result;
         }
 
-        public Session RegisterNewSession(int id)
+        public Session RegisterNewSession(long id)
         {
             Session result = new Session()
             {

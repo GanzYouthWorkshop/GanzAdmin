@@ -63,6 +63,15 @@ namespace GanzAdmin.Database
             this.m_InnerDb.Checkpoint();
         }
 
+        public ILiteCollection<T> GetCollection<T>()
+        {
+            if(typeof(T).Equals(typeof(Member)))
+            {
+                return (ILiteCollection<T>)this.Members;
+            }
+            return this.m_InnerDb.GetCollection<T>();
+        }
+
         public void BeginTransaction()
         {
             this.m_InnerDb.BeginTrans();

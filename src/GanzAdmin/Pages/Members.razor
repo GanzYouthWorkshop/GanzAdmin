@@ -5,13 +5,16 @@
 @using GanzAdmin.Authentication.Components;
 @using GanzAdmin.Components.Edit;
 @using GanzAdmin.Components.DataGrid;
+@using GanzAdmin.DataHandling;
 @using GanzAdmin.Database;
 @using GanzAdmin.Database.Models;
 @using GanzAdmin.Utils;
 
+@inherits DataHandlingController<Member>
+
 <aside class='loading'>
     <AuthorizedView NeededRolesOR="AddUser">
-        <NavLink class="addlink" href="@($"/{BASELINK}/add")">Új @DATANAME</NavLink>
+        <NavLink class="addlink" href="@($"/{this.BaseLink}/add")">Új @this.DataName</NavLink>
     </AuthorizedView>
 </aside>
 
@@ -43,17 +46,17 @@
                 <tbody>
                     @foreach (var member in this.ItemList)
                     {
-                    <tr>
-                        <td><NavLink href="@($"/{BASELINK}/{member.Id}")">@member.Name</NavLink></td>
-                        <td>@member.Active</td>
-                        <td>@member.PaidUntil</td>
-                        <td>
-                            @if(!member.Attendances.Exists(a => a.Occasion.Date == DateTime.Today))
-                            {
-                                <a @onclick="() => this.OnLogAttenance(member)">Jelenléti ív kitöltés</a>
-                            }
-                        </td>
-                    </tr>
+                        <tr>
+                            <td><NavLink href="@($"/{this.BaseLink}/{member.Id}")">@member.Name</NavLink></td>
+                            <td>@member.Active</td>
+                            <td>@member.PaidUntil</td>
+                            <td>
+                                @if (!member.Attendances.Exists(a => a.Occasion.Date == DateTime.Today))
+                                {
+                                    <a @onclick="() => this.OnLogAttenance(member)">Jelenléti ív kitöltés</a>
+                                }
+                            </td>
+                        </tr>
                     }
                 </tbody>
             </table>
@@ -63,148 +66,59 @@
 
 @if (this.SelectedItem != null)
 {
-<section class='popup' id='content'>
-    <div class='shadow'></div>
-    <div class='body'>
-        <NavLink href="@($"/{BASELINK}")" class='close'></NavLink>
-        <EditForm method="post" EditContext="new EditContext(true)" OnValidSubmit="OnAddEditSubmit">
-            <h3>@this.PopupTitle</h3>
-            <div class='dynamic'>
-                <SimpleEditField AuthOR="EditUser" Type="text" Display="Név" Name="@nameof(Member.Name)" @bind-Value="this.SelectedItem.Temporal.Name" />
-                <SimpleEditField AuthOR="EditUser" Type="text" Display="Cím" Name="@nameof(Member.Address)" @bind-Value="this.SelectedItem.Temporal.Address" />
-                <SimpleEditField AuthOR="EditUser" Type="text" Display="Telefon" Name="@nameof(Member.Phone)" @bind-Value="this.SelectedItem.Temporal.Phone" />
-                <SimpleEditField AuthOR="EditUser" Type="text" Display="Email" Name="@nameof(Member.Email)" @bind-Value="this.SelectedItem.Temporal.Email" />
-                <SimpleEditField AuthOR="EditUser" Type="text" Display="Felhasználónév" Name="@nameof(Member.Username)" @bind-Value="this.SelectedItem.Temporal.Username" />
-                <SimpleEditField AuthOR="EditUser" Type="password" Display="Jelszó" Name="@nameof(Member.Password)" @bind-Value="this.SelectedItem.Temporal.Password" />
-            </div>
-            <AuthorizedView NeededRolesOR="AddUser,EditUser">
-                <button type='submit'>Küldés</button>
-                <NavLink href='@($"/{BASELINK}")'>Mégse</NavLink>
-            </AuthorizedView>
-        </EditForm>
-    </div>
-    @if (this.DialogLoading)
-    {
-        <div class='loading'></div>
-    }
-</section>
+    <section class='popup' id='content'>
+        <div class='shadow'></div>
+        <div class='body'>
+            <NavLink href="@($"/{this.BaseLink}")" class='close'></NavLink>
+            <EditForm method="post" EditContext="new EditContext(true)" OnValidSubmit="OnDefaultAddEditSubmit">
+                <h3>@this.PopupTitle</h3>
+                <div class='dynamic'>
+                    <SimpleEditField AuthOR="EditUser" Type="text" Display="Név" Name="@nameof(Member.Name)" @bind-Value="this.SelectedItem.Temporal.Name" />
+                    <SimpleEditField AuthOR="EditUser" Type="text" Display="Cím" Name="@nameof(Member.Address)" @bind-Value="this.SelectedItem.Temporal.Address" />
+                    <SimpleEditField AuthOR="EditUser" Type="text" Display="Telefon" Name="@nameof(Member.Phone)" @bind-Value="this.SelectedItem.Temporal.Phone" />
+                    <SimpleEditField AuthOR="EditUser" Type="text" Display="Email" Name="@nameof(Member.Email)" @bind-Value="this.SelectedItem.Temporal.Email" />
+                    <SimpleEditField AuthOR="EditUser" Type="text" Display="Felhasználónév" Name="@nameof(Member.Username)" @bind-Value="this.SelectedItem.Temporal.Username" />
+                    <SimpleEditField AuthOR="EditUser" Type="password" Display="Jelszó" Name="@nameof(Member.Password)" @bind-Value="this.SelectedItem.Temporal.Password" />
+                </div>
+                <AuthorizedView NeededRolesOR="AddUser,EditUser">
+                    <button type='submit'>Küldés</button>
+                    <NavLink href='@($"/{this.BaseLink}")'>Mégse</NavLink>
+                </AuthorizedView>
+            </EditForm>
+        </div>
+        @if (this.DialogLoading)
+        {
+            <div class='loading'></div>
+        }
+    </section>
 }
 
 
 @code
 {
-    #region Közös dolgok
-    private const string BASELINK = "members";
-    private const string DATANAME = "tag";
-
-    [Inject]
-    private NavigationManager NavMan { get; set; }
-
-    [Inject]
-    private IJSRuntime JS { get; set; }
-
-    [Parameter]
-    public string PopupDisplay { get; set; }
-
-    private bool DialogLoading { get; set; } = false;
-    #endregion
-
-    #region Oldal-specifikus dolgok
-    private List<Member> ItemList { get; set; }
-
-    private TemporalObject<Member> SelectedItem { get; set; }
-
-    private string PopupTitle
+    protected override string PopupTitle
     {
-        get { return this.PopupDisplay == "add" ? $"Új {DATANAME}" : $"{this.SelectedItem?.Original.Username} szerkesztése"; }
+        get { return this.PopupDisplay == "add" ? $"Új {this.BaseLink}" : $"{this.SelectedItem?.Original.Username} szerkesztése"; }
     }
 
-    #endregion
-
-    #region CRUD metódusok
-    protected override async Task OnInitializedAsync()
+    protected override void Init()
     {
-        await Task.Run(() =>
-        {
-            GanzAdminDbEngine db = GanzAdminDbEngine.Instance;
-            this.ItemList = db.Members.FindAll().ToList();
-        });
     }
 
-    protected override async Task OnParametersSetAsync()
-    {
-        await Task.Run(() =>
-        {
-            this.SelectedItem = null;
-
-            if (this.PopupDisplay == "add")
-            {
-                this.SelectedItem = new TemporalObject<Member>(new Member());
-            }
-            else if (this.PopupDisplay != null)
-            {
-                int showId = 0;
-                if (int.TryParse(this.PopupDisplay, out showId))
-                {
-                    Member item = this.ItemList.FirstOrDefault(i => i.Id == showId);
-                    this.SelectedItem = new TemporalObject<Member>(item);
-                }
-            }
-        });
-    }
-
-    private void OnAddEditSubmit()
-    {
-        Task.Run(() =>
-        {
-            this.DialogLoading = true;
-            if (this.PopupDisplay == "add")
-            {
-                this.Add();
-            }
-            else
-            {
-                this.Modify();
-            }
-            this.DialogLoading = false;
-            this.NavMan.NavigateTo($"/{BASELINK}");
-        });
-    }
-
-    private void Add()
+    protected override void BeforeAdd()
     {
         this.SelectedItem.Temporal.Password = GanzUtils.Sha256(this.SelectedItem.Temporal.Password);
-        GanzAdminDbEngine.Instance.Members.Insert(this.SelectedItem.FoldBack());
-        GanzAdminDbEngine.Instance.Transact();
-
-        this.JS.InvokeVoidAsync("alertify.success", "Tag hozzáadva!");
     }
 
-    private void Modify()
+    protected override void BeforeEdit()
     {
         this.SelectedItem.Temporal.Password = GanzUtils.Sha256(this.SelectedItem.Temporal.Password);
-        GanzAdminDbEngine.Instance.Members.Update(this.SelectedItem.FoldBack());
-        GanzAdminDbEngine.Instance.Transact();
-
-        this.JS.InvokeVoidAsync("alertify.success", "Tag módosítva!");
     }
 
-    //TODO
-    private void Delete()
-    {
-        GanzAdminDbEngine.Instance.Members.Delete(this.SelectedItem.Original.Id);
-        GanzAdminDbEngine.Instance.Transact();
-
-        this.JS.InvokeVoidAsync("alertify.success", "Tag törölev :(");
-    }
-    #endregion
-
-    #region Egyéb metódusok
     private void OnLogAttenance(Member member)
     {
         GanzAdminDbFunctions.LogAttendance(member, DateTime.Today);
 
         this.JS.InvokeVoidAsync("alertify.success", "Jelenléti ív frissítve!");
     }
-    #endregion
 }
