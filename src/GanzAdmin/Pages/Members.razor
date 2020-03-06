@@ -96,6 +96,9 @@
 
 @code
 {
+    protected override string BaseLink { get; set; } = "members";
+    protected override string DataName { get; set; } = "tag";
+
     protected override string PopupTitle
     {
         get { return this.PopupDisplay == "add" ? $"Új {this.BaseLink}" : $"{this.SelectedItem?.Original.Username} szerkesztése"; }

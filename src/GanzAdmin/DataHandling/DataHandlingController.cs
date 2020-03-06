@@ -21,8 +21,9 @@ namespace GanzAdmin.DataHandling
         [Inject]
         protected IJSRuntime JS { get; set; }
 
-        protected string BaseLink { get; set; } = "members";
-        protected string DataName { get; set; } = "tag";
+        protected abstract string BaseLink { get; set; }
+        protected abstract string DataName { get; set; }
+
         protected ILiteCollection<T> m_Collection;
 
         [Parameter]

@@ -11,7 +11,13 @@
 
 @inherits DataHandlingController<Location>
 
-<aside class='loading'>
+<aside class='@(this.ItemList == null ? "loading" : "")'>
+    @if (this.ItemList != null)
+    {
+        <ul>
+            @this.CreateTree(null);
+        </ul>
+    }
     <AuthorizedView NeededRolesOR="AddLocation">
         <NavLink class="addlink" href="@($"/{this.BaseLink}/add")">Új @this.DataName</NavLink>
     </AuthorizedView>
@@ -62,7 +68,7 @@
                 <h3>@this.PopupTitle</h3>
                 <div class='dynamic'>
                     <SimpleEditField AuthOR="EditLocation" Type="text" Display="Név" Name="@nameof(Location.Name)" @bind-Value="this.SelectedItem.Temporal.Name" />
-                    <ComboBox AuthOR="EditLocation" Items="@(this.ItemList.ToEntities<Location>())" Name="@nameof(Location.ParentLocation)" Display="Hely" @bind-Value="this.SelectedItem.Temporal.ParentLocation" />
+                    <ComboBox AuthOR="EditLocation" Items="@(this.ItemList.ToEntities<Location>())" Owner="this.SelectedItem.Temporal" Name="@nameof(Location.ParentLocation)" Display="Hely" @bind-Value="this.SelectedItem.Temporal.ParentLocation" /> 
                 </div>
                 <AuthorizedView NeededRolesOR="AddUser,EditUser">
                     <button type='submit'>Küldés</button>
@@ -80,15 +86,25 @@
 
 @code
 {
+    protected override string BaseLink { get; set; } = "locations";
+    protected override string DataName { get; set; } = "hely";
+
     protected override string PopupTitle
     {
         get { return this.PopupDisplay == "add" ? $"Új {this.BaseLink}" : $"{this.SelectedItem?.Original.Name} szerkesztése"; }
     }
 
-    private void OnLogAttenance(Member member)
+    //TODO
+    private string CreateTree(Location root)
     {
-        GanzAdminDbFunctions.LogAttendance(member, DateTime.Today);
+        string result = "";
+        List<Location> items = this.ItemList.Where(l => l.ParentLocation == root).ToList();
 
-        this.JS.InvokeVoidAsync("alertify.success", "Jelenléti ív frissítve!");
+        foreach(Location item in items)
+        {
+            result = "<li><a href='#'>" + item.Name + "<ul>" + this.CreateTree(item) + "</ul></li>";
+        }
+
+        return result;
     }
 }

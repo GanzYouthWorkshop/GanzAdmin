@@ -4,10 +4,21 @@
 <p>
     <span>@this.Display:</span>
     <AuthorizedView NeededRolesOR="@this.AuthOR" NeededRolesAND="@this.AuthAND">
-        <select name="@this.Name">
-            @foreach(IEntity item in Items)
+        <select name="@this.Name" @onchange="OnValueChanged">
+            <option value="0">-</option>
+            @foreach (IEntity item in Items)
             {
-                <option value="@item">@item.DisplayValue</option>
+                if (item != this.Owner)
+                {
+                    if (item == this.Value)
+                    {
+                        <option value="@item.Id" selected>@item.DisplayValue</option>
+                    }
+                    else
+                    {
+                        <option value="@item.Id">@item.DisplayValue</option>
+                    }
+                }
             }
         </select>
     </AuthorizedView>
@@ -31,17 +42,21 @@
     public IEntity Value { get; set; }
 
     [Parameter]
+    public IEntity Owner { get; set; }
+
+    [Parameter]
     public string Name { get; set; }
 
     [Parameter]
     public string Display { get; set; }
 
+    //TODO
     [Parameter]
-    public EventCallback<IEntity>ValueChanged { get; set; }
+    public EventCallback<Location> ValueChanged { get; set; }
 
     private Task OnValueChanged(ChangeEventArgs e)
     {
-        this.Value = (IEntity)e.Value;
-        return this.ValueChanged.InvokeAsync(Value);
+        this.Value = (IEntity)this.Items.Find(i => i.Id == Convert.ToInt64(e.Value));
+        return this.ValueChanged.InvokeAsync((Location)Value);
     }
 }

@@ -14,7 +14,7 @@ namespace GanzAdmin.Utils
         private interface IGetSet
         {
             public Type ValueType { get; }
-            public void Init(PropertyInfo info);
+            public bool Init(PropertyInfo info);
         }
 
         private class GetSet<K> : IGetSet
@@ -34,10 +34,21 @@ namespace GanzAdmin.Utils
                 this.Init(info);
             }
 
-            public void Init(PropertyInfo info)
+            public bool Init(PropertyInfo info)
             {
-                this.Setter = (Action<T, K>)Delegate.CreateDelegate(typeof(Action<T, K>), null, info.GetSetMethod());
-                this.Getter = (Func<T, K>)Delegate.CreateDelegate(typeof(Func<T, K>), null, info.GetGetMethod());
+                bool valid = false;
+
+                MethodInfo setMethod = info.GetSetMethod();
+                MethodInfo getMethod = info.GetGetMethod();
+
+                if(setMethod != null && getMethod != null)
+                {
+                    this.Setter = (Action<T, K>)Delegate.CreateDelegate(typeof(Action<T, K>), null, setMethod);
+                    this.Getter = (Func<T, K>)Delegate.CreateDelegate(typeof(Func<T, K>), null, getMethod);
+                    valid = true;
+                }
+
+                return valid;
             }
         }
 
@@ -96,14 +107,17 @@ namespace GanzAdmin.Utils
 
         private static void CreateMap()
         {
-            PropertyInfo[] infos = typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance);
+            PropertyInfo[] infos = typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetProperty | BindingFlags.SetProperty);
             foreach(PropertyInfo info in infos)
             {
                 Type dynamicType = typeof(GetSet<>).MakeGenericType(typeof(T), info.PropertyType);
                 dynamic getSet = Activator.CreateInstance(dynamicType);
 
-                (getSet as IGetSet).Init(info);
-                PropertyData.Add(info.Name, getSet);
+                bool valid = (getSet as IGetSet).Init(info);
+                if (valid)
+                {
+                    PropertyData.Add(info.Name, getSet);
+                }
             }
 
             Mapped = true;
