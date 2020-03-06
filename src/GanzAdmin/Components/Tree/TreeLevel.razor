@@ -1,0 +1,30 @@
+﻿@using GanzAdmin.Authentication.Components;
+@using GanzAdmin.Database.Models;
+
+<ul>
+    @if (this.Items != null)
+    {
+        foreach (IEntity item in this.Items)
+        {
+            if (this.Filter(item, this.Root))
+            {
+                <li>
+                    <a href="#">@item.DisplayValue</a>
+                    <TreeLevel Items="@this.Items" Filter="@this.Filter" Root="@item" />
+                </li>
+            }
+        }
+    }
+</ul>
+
+@code
+{
+    [Parameter]
+    public List<IEntity> Items { get; set; }
+
+    [Parameter]
+    public Func<IEntity, IEntity, bool> Filter { get; set; }
+
+    [Parameter]
+    public IEntity Root { get; set; }
+}

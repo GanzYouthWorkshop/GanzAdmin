@@ -34,29 +34,13 @@ namespace GanzAdmin.DataHandling
         protected List<T> ItemList { get; set; }
         protected TemporalObject<T> SelectedItem { get; set; }
 
-        protected abstract string PopupTitle { get; }
 
         public DataHandlingController()
         {
             this.m_Collection = GanzAdminDbEngine.Instance.GetCollection<T>();
         }
 
-        protected virtual void Init()
-        {
-
-        }
-
-        protected virtual void BeforeAdd()
-        {
-
-        }
-
-        protected virtual void BeforeEdit()
-        {
-
-        }
-
-
+        #region Közös alap funkcionalitások
         protected override async Task OnInitializedAsync()
         {
             await Task.Run(() =>
@@ -91,9 +75,10 @@ namespace GanzAdmin.DataHandling
 
         protected void OnDefaultAddEditSubmit()
         {
+            this.DialogLoading = true;
+
             Task.Run(() =>
             {
-                this.DialogLoading = true;
                 if (this.PopupDisplay == "add")
                 {
                     this.Add();
@@ -102,6 +87,7 @@ namespace GanzAdmin.DataHandling
                 {
                     this.Modify();
                 }
+
                 this.DialogLoading = false;
                 this.NavMan.NavigateTo($"/{BaseLink}");
             });
@@ -134,5 +120,41 @@ namespace GanzAdmin.DataHandling
 
             this.JS.InvokeVoidAsync("alertify.success", $"{this.DataName.ToCapital()} törölve :(");
         }
+        #endregion
+
+        #region felülírható dolgok
+        protected virtual string PopupTitle
+        {
+            get
+            {
+                string result = "";
+                if(this.PopupDisplay == "add")
+                {
+                    result = $"{this.DataName.ToCapital()} hozzáadása";
+                }
+                else
+                {
+                    result = $"'{this.SelectedItem.Temporal.DisplayValue}' szerkesztése";
+                }
+                return result;
+            }
+        }
+
+
+        protected virtual void Init()
+        {
+
+        }
+
+        protected virtual void BeforeAdd()
+        {
+
+        }
+
+        protected virtual void BeforeEdit()
+        {
+
+        }
+        #endregion
     }
 }
