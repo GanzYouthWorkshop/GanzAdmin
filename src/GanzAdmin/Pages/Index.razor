@@ -1,10 +1,5 @@
 ﻿@page "/"
 
-@using GanzAdmin.Authentication;
-@using GanzAdmin.Authentication.Components;
-@using GanzAdmin.Database;
-@using GanzAdmin.Database.Models;
-
 <main class="full dashboard @(this.CurrentUser == null ? "loading" : "")">
     @if (this.CurrentUser != null)
     {
@@ -33,13 +28,13 @@
 
             <section>
                 <h2>Adatkezelés</h2>
-                <AuthorizedView NeededRolesOR="ListUsers">
+                <AuthorizedView NeededRolesOR="@Permissions.ListMembers">
                     <NavLink href="/members" class="button">
                         <i></i>
                         <p>Tagok</p>
                     </NavLink>
                 </AuthorizedView>
-                <AuthorizedView NeededRolesOR="ListLocations">
+                <AuthorizedView NeededRolesOR="@Permissions.ListLocations">
                     <NavLink href="/locations" class="button">
                         <i></i>
                         <p>Helyek</p>
@@ -49,13 +44,13 @@
 
             <section>
                 <h2>Felhőtároló</h2>
-                <AuthorizedView NeededRolesOR="OwnFileStorage">
+                <AuthorizedView NeededRolesOR="@Permissions.AccessOwnFileStorage">
                     <NavLink href="/files/own" class="button">
                         <i></i>
                         <p>Saját fájljaim</p>
                     </NavLink>
                 </AuthorizedView>
-                <AuthorizedView NeededRolesOR="CommonFileStorage">
+                <AuthorizedView NeededRolesOR="@Permissions.AccessSharedFileStorage">
                     <NavLink href="/files/shared" class="button">
                         <i></i>
                         <p>Közös fájlok</p>
@@ -70,7 +65,7 @@
                     <p>Fejlesztési javaslatok</p>
                 </NavLink>
 
-                <AuthorizedView NeededRolesOR="Overlord">
+                <AuthorizedView NeededRolesOR="@Permissions.Overlord">
                     <NavLink href="/test-auth" class="button">
                         <i></i>
                         <p>Tesztek</p>
@@ -95,7 +90,7 @@
     {
         await Task.Run(() =>
         {
-            this.CurrentUser = GanzAdminDbEngine.Instance.Members.FindById(this.AuthProvider.CurrentSesstion.MemberId);
+            this.CurrentUser = GanzAdminDbEngine.Instance.Members.FindById(this.AuthProvider.CurrentSession.MemberId);
         });
     }
 

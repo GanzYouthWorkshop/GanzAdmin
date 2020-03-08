@@ -1,15 +1,6 @@
 ﻿@page "/locations"
 @page "/locations/{PopupDisplay}"
 
-@using GanzAdmin.Authentication.Components;
-@using GanzAdmin.Components.Edit;
-@using GanzAdmin.Components.DataGrid;
-@using  GanzAdmin.Components.Tree;
-@using GanzAdmin.DataHandling;
-@using GanzAdmin.Database;
-@using GanzAdmin.Database.Models;
-@using GanzAdmin.Utils;
-
 @inherits DataHandlingController<Location>
 
 <aside class='@(this.ItemList == null ? "loading" : "")'>
@@ -17,7 +8,7 @@
     {
         <TreeLevel Items="@(this.ItemList.ToEntities<Location>())" Root="@null" Filter="@((e, r) => (e as Location).ParentLocation == null && r == null || (e as Location).ParentLocation?.Id == r?.Id)" />
     }
-    <AuthorizedView NeededRolesOR="AddLocation">
+    <AuthorizedView NeededRolesOR="@Permissions.EditLocations">
         <NavLink class="addlink" href="@($"/{this.BaseLink}/add")">Új @this.DataName</NavLink>
     </AuthorizedView>
     </aside>
@@ -66,10 +57,14 @@
                 <EditForm method="post" EditContext="new EditContext(true)" OnValidSubmit="OnDefaultAddEditSubmit">
                     <h3>@this.PopupTitle</h3>
                     <div class='dynamic'>
-                        <SimpleEditField AuthOR="EditLocation" Type="text" Display="Név" Name="@nameof(Location.Name)" @bind-Value="this.SelectedItem.Temporal.Name" />
-                        <ComboBox AuthOR="EditLocation" Items="@(this.ItemList.ToEntities<Location>())" Owner="this.SelectedItem.Temporal" Name="@nameof(Location.ParentLocation)" Display="Hely" @bind-Value="this.SelectedItem.Temporal.ParentLocation" />
+                        <SimpleEditField AuthOR="@Permissions.EditLocations" Type="text" Display="Név" Name="@nameof(Location.Name)" @bind-Value="this.SelectedItem.Temporal.Name" />
+                        <ComboBox        AuthOR="@Permissions.EditLocations" Items="@(this.ItemList.ToEntities<Location>())" Owner="this.SelectedItem.Temporal" Name="@nameof(Location.ParentLocation)" Display="Hely" @bind-Value="this.SelectedItem.Temporal.ParentLocation" />
                     </div>
-                    <AuthorizedView NeededRolesOR="AddUser,EditUser">
+                    <AuthorizedView NeededRolesOR="@Permissions.EditLocations">
+                        <button type='submit'>Küldés</button>
+                        <NavLink href='@($"/{this.BaseLink}")'>Mégse</NavLink>
+                    </AuthorizedView>
+                    <AuthorizedView NeededRolesOR="@Permissions.DeleteLocations">
                         <button type='submit'>Küldés</button>
                         <NavLink href='@($"/{this.BaseLink}")'>Mégse</NavLink>
                     </AuthorizedView>
@@ -83,22 +78,8 @@
     }
 
 
-    @code
+@code
 {
-protected override string BaseLink { get; set; } = "locations";
+    protected override string BaseLink { get; set; } = "locations";
     protected override string DataName { get; set; } = "hely";
-
-    //TODO
-    private string CreateTree(Location root)
-    {
-        string result = "";
-        List<Location> items = this.ItemList.Where(l => l.ParentLocation == root).ToList();
-
-        foreach (Location item in items)
-        {
-            result = "<li><a href='#'>" + item.Name + "<ul>" + this.CreateTree(item) + "</ul></li>";
-        }
-
-        return result;
-    }
-    }
+}

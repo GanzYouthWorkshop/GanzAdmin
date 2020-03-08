@@ -1,13 +1,6 @@
 ﻿@page "/calendar"
 @page "/calendar/{PopupDisplay}"
 
-@using GanzAdmin.Authentication.Components;
-@using GanzAdmin.Components.Edit;
-@using GanzAdmin.Components.DataGrid;
-@using GanzAdmin.Database;
-@using GanzAdmin.Database.Models;
-@using GanzAdmin.Utils;
-
 <aside>
     <AuthorizedView NeededRolesOR="AddEvent">
         <NavLink class="addlink" href="@($"/{BASELINK}/add")">Új @DATANAME</NavLink>
@@ -41,7 +34,7 @@
                 }
                 else
                 {
-                      <td>
+                      <td class="@(this.Days[i] == DateTime.Today ? "today" : "")">
                           <span>@(this.Days[i].Value.ToString("MM.dd"))</span>
                           @if (this.Days[i].Value.DayOfWeek == DayOfWeek.Saturday)
                           {

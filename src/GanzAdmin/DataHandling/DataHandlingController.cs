@@ -10,11 +10,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using GanzAdmin.Database.Models;
+using GanzAdmin.Authentication;
 
 namespace GanzAdmin.DataHandling
 {
     public abstract class DataHandlingController<T> : ComponentBase where T : class, IEntity, new()
     {
+        [Inject]
+        protected GanzAuthProvider AuthManager { get; set; }
+
         [Inject]
         protected NavigationManager NavMan { get; set; }
 

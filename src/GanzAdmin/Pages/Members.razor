@@ -2,18 +2,10 @@
 @page "/members"
 @page "/members/{PopupDisplay}"
 
-@using GanzAdmin.Authentication.Components;
-@using GanzAdmin.Components.Edit;
-@using GanzAdmin.Components.DataGrid;
-@using GanzAdmin.DataHandling;
-@using GanzAdmin.Database;
-@using GanzAdmin.Database.Models;
-@using GanzAdmin.Utils;
-
 @inherits DataHandlingController<Member>
 
 <aside class='loading'>
-    <AuthorizedView NeededRolesOR="AddUser">
+    <AuthorizedView NeededRolesOR="@Permissions.EditMembers">
         <NavLink class="addlink" href="@($"/{this.BaseLink}/add")">Új @this.DataName</NavLink>
     </AuthorizedView>
 </aside>
@@ -73,14 +65,29 @@
             <EditForm method="post" EditContext="new EditContext(true)" OnValidSubmit="OnDefaultAddEditSubmit">
                 <h3>@this.PopupTitle</h3>
                 <div class='dynamic'>
-                    <SimpleEditField AuthOR="EditUser" Type="text" Display="Név" Name="@nameof(Member.Name)" @bind-Value="this.SelectedItem.Temporal.Name" />
-                    <SimpleEditField AuthOR="EditUser" Type="text" Display="Cím" Name="@nameof(Member.Address)" @bind-Value="this.SelectedItem.Temporal.Address" />
-                    <SimpleEditField AuthOR="EditUser" Type="text" Display="Telefon" Name="@nameof(Member.Phone)" @bind-Value="this.SelectedItem.Temporal.Phone" />
-                    <SimpleEditField AuthOR="EditUser" Type="text" Display="Email" Name="@nameof(Member.Email)" @bind-Value="this.SelectedItem.Temporal.Email" />
-                    <SimpleEditField AuthOR="EditUser" Type="text" Display="Felhasználónév" Name="@nameof(Member.Username)" @bind-Value="this.SelectedItem.Temporal.Username" />
-                    <SimpleEditField AuthOR="EditUser" Type="password" Display="Jelszó" Name="@nameof(Member.Password)" @bind-Value="this.SelectedItem.Temporal.Password" />
+                    <SimpleEditField AuthOR="@Permissions.EditMembers" Type="text" Display="Név" Name="@nameof(Member.Name)" @bind-Value="this.SelectedItem.Temporal.Name" />
+                    <SimpleEditField AuthOR="@Permissions.EditMembers" Type="text" Display="Cím" Name="@nameof(Member.Address)" @bind-Value="this.SelectedItem.Temporal.Address" />
+                    <SimpleEditField AuthOR="@Permissions.EditMembers" Type="text" Display="Telefon" Name="@nameof(Member.Phone)" @bind-Value="this.SelectedItem.Temporal.Phone" />
+                    <SimpleEditField AuthOR="@Permissions.EditMembers" Type="text" Display="Email" Name="@nameof(Member.Email)" @bind-Value="this.SelectedItem.Temporal.Email" />
+                    <SimpleEditField AuthOR="@Permissions.EditMembers" Type="text" Display="Felhasználónév" Name="@nameof(Member.Username)" @bind-Value="this.SelectedItem.Temporal.Username" />
+                    <SimpleEditField AuthOR="@Permissions.EditMembers" Type="password" Display="Jelszó" Name="@nameof(Member.Password)" @bind-Value="this.SelectedItem.Temporal.Password" />
+
+                    @foreach (string permission in Permissions.AllPermissions)
+                    {
+                        <p>@permission</p>
+                        //TODO
+                        <SimpleEditField AuthOR="@permission" Type="bool" Display="@permission" Name="@permission" @bind-Value="this.SelectedItem.Temporal.Name" />
+
+                        //HA add módban vagyunk nem kell semmit extrát csinálni,d e ha editben vagy - talán akkor sem?
+                        if (this.PopupDisplay == "add")
+                        {
+                        }
+                        else
+                        {
+                        }
+                    }
                 </div>
-                <AuthorizedView NeededRolesOR="AddUser,EditUser">
+                <AuthorizedView NeededRolesOR="@Permissions.EditMembers">
                     <button type='submit'>Küldés</button>
                     <NavLink href='@($"/{this.BaseLink}")'>Mégse</NavLink>
                 </AuthorizedView>

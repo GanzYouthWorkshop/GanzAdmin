@@ -8,6 +8,9 @@
             case "text":
                 <input type="text" value="@this.Value" name="@this.Name" @onchange="OnValueChanged" />
                 break;
+            case "bool":
+                <input type="checkbox" value="@this.Value" name="@this.Name" @onchange="OnValueChanged" />
+                break;
             case "number":
                 break;
             case "select":
@@ -23,6 +26,9 @@
         @switch (this.Type)
         {
             case "text":
+                <span>@this.Value</span>
+                break;
+            case "bool":
                 <span>@this.Value</span>
                 break;
             case "number":

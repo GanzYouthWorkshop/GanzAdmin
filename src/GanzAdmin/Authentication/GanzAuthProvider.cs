@@ -28,7 +28,22 @@ namespace GanzAdmin.Authentication
         private IJSRuntime m_Javascript { get; set; }
         private IHttpContextAccessor m_Http;
 
-        public SessionManager.Session CurrentSesstion { get; private set; }
+        public SessionManager.Session CurrentSession { get; private set; }
+
+        public Member CurrentMember
+        {
+            get
+            {
+                if(this.CurrentSession != null)
+                {
+                    return GanzAdminDbEngine.Instance.Members.FindById(this.CurrentSession.MemberId);
+                }
+                else
+                {
+                    return null;
+                }
+            }
+        }
 
         public GanzAuthProvider(SessionManager sessionManager, IHttpContextAccessor httpProxy, IJSRuntime jsRuntime)
         {
@@ -42,18 +57,18 @@ namespace GanzAdmin.Authentication
             {
                 var cookie = cookies[AUTH_COOKIE];
 
-                this.CurrentSesstion = this.m_SessionManager.CheckTokenValidity(cookie);
+                this.CurrentSession = this.m_SessionManager.CheckTokenValidity(cookie);
             }
         }
 
         public bool CheckAuth(string OrRoles, string AndRoles)
         {
-            this.CurrentSesstion = this.m_SessionManager.CheckSessionValidity(this.CurrentSesstion);
+            this.CurrentSession = this.m_SessionManager.CheckSessionValidity(this.CurrentSession);
 
-            if (this.CurrentSesstion != null && this.CurrentSesstion.MemberId > 0)
+            if (this.CurrentSession != null && this.CurrentSession.MemberId > 0)
             {
                 GanzAdminDbEngine db = GanzAdminDbEngine.Instance;
-                Member member = db.Members.FindById(this.CurrentSesstion.MemberId);
+                Member member = db.Members.FindById(this.CurrentSession.MemberId);
                 if(OrRoles == null && AndRoles == null)
                 {
                     return true;
@@ -105,13 +120,13 @@ namespace GanzAdmin.Authentication
         public async Task SignIn(Member member)
         {
             SessionManager.Session session = this.m_SessionManager.RegisterNewSession(member.Id);
-            this.CurrentSesstion = session;
+            this.CurrentSession = session;
             this.MakeCookie(AUTH_COOKIE, session.SecurityToken, 3);
         }
 
         public async Task SignOut()
         {
-            this.m_SessionManager.RevokeSession(this.CurrentSesstion);
+            this.m_SessionManager.RevokeSession(this.CurrentSession);
             this.DeleteCookie(AUTH_COOKIE);
         }
 
