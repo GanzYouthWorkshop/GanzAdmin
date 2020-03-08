@@ -7,6 +7,7 @@ body
 
 a
 {
+	cursor: pointer;
 	color: #00897b;
 }
 
@@ -477,7 +478,7 @@ main table tr.alert td
 	text-align: left;
 }
 
-.popup input[type=submit], .popup button, #login input[type=submit]
+.popup input[type=submit], .popup input[type=button], .popup button, #login input[type=submit]
 {
 	padding: 5px 1em;
 	text-transform: uppercase;
@@ -486,7 +487,7 @@ main table tr.alert td
 	border: 0;
 	cursor: pointer;
 }
-.popup input[type=submit]:hover, .popup button:hover,  #login input[type=submit]:hover
+.popup input[type=submit]:hover, .popup input[type=button]:hover, .popup button:hover,  #login input[type=submit]:hover
 {
 	background-color: #00897b;
 }
@@ -508,6 +509,16 @@ main table tr.alert td
 	width: 4em;
 }
 
+.popup input.delete
+{
+	float: right;
+	background-color: #c41111;
+}
+
+.popup input.delete:hover
+{
+	background-color: #f40000;
+}
 
 .popup #params i
 {

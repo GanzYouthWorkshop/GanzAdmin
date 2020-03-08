@@ -3,14 +3,14 @@ KÉSZ :)
 =================
 -Naptár funkció - mikor hányan voltak jelen és mikor lesznek foglalkozások, nyári táborok
 -Majdnem az összes funkciót be kell rakni authorizedview-ba a megfelelõ role-okkal
+-A szerepeket le kell tisztázni
+-Kell törlés funkció
 
 =================
 FOLYAMATBAN...
 =================
 -GanzInv funkcionalitásátv visszarakni (helyek-kategóriák-alaktrészek) és kibõvítése (projektek, lerakatok, mennyiségek)
--A szerepeket le kell tisztázni
 -Fájltár megcsinálása
--Kell törlés funkció
 
 =================
 MÉG NINCS KÉSZ :(

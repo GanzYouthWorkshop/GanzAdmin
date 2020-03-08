@@ -89,7 +89,9 @@
                 </div>
                 <AuthorizedView NeededRolesOR="@Permissions.EditMembers">
                     <button type='submit'>Küldés</button>
-                    <NavLink href='@($"/{this.BaseLink}")'>Mégse</NavLink>
+                </AuthorizedView>
+                <AuthorizedView NeededRolesOR="@Permissions.DeleteMembers">
+                    <input type='button' class="delete" value="Törlés" @onclick="OnDefaultDeleteSubmit" />
                 </AuthorizedView>
             </EditForm>
         </div>

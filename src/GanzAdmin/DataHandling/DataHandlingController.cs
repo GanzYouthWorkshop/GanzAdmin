@@ -11,6 +11,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using GanzAdmin.Database.Models;
 using GanzAdmin.Authentication;
+using Microsoft.AspNetCore.Http;
 
 namespace GanzAdmin.DataHandling
 {
@@ -24,6 +25,9 @@ namespace GanzAdmin.DataHandling
 
         [Inject]
         protected IJSRuntime JS { get; set; }
+
+        [Inject]
+        protected IHttpContextAccessor Http { get; set; }
 
         protected abstract string BaseLink { get; set; }
         protected abstract string DataName { get; set; }
@@ -79,6 +83,7 @@ namespace GanzAdmin.DataHandling
 
         protected void OnDefaultAddEditSubmit()
         {
+
             this.DialogLoading = true;
 
             Task.Run(() =>
@@ -95,6 +100,20 @@ namespace GanzAdmin.DataHandling
                 this.DialogLoading = false;
                 this.NavMan.NavigateTo($"/{BaseLink}");
             });
+        }
+
+        protected void OnDefaultDeleteSubmit()
+        {
+            this.DialogLoading = true;
+
+            Task.Run(() =>
+            {
+                this.Delete();
+
+                this.DialogLoading = false;
+                this.NavMan.NavigateTo($"/{BaseLink}");
+            });
+
         }
 
         private void Add()
@@ -119,14 +138,16 @@ namespace GanzAdmin.DataHandling
 
         private void Delete()
         {
-            GanzAdminDbEngine.Instance.Members.Delete(this.SelectedItem.Original.Id);
+            this.BeforeDelete();
+
+            this.m_Collection.Delete(this.SelectedItem.Original.Id);
             GanzAdminDbEngine.Instance.Transact();
 
             this.JS.InvokeVoidAsync("alertify.success", $"{this.DataName.ToCapital()} törölve :(");
         }
         #endregion
 
-        #region felülírható dolgok
+        #region Kötelezően felülírandó dolgok
         protected virtual string PopupTitle
         {
             get
@@ -159,6 +180,12 @@ namespace GanzAdmin.DataHandling
         {
 
         }
+
+        protected virtual void BeforeDelete()
+        {
+
+        }
+
         #endregion
     }
 }
