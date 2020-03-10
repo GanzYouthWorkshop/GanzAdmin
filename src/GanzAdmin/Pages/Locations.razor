@@ -58,14 +58,17 @@
                 <h3>@this.PopupTitle</h3>
                 <div class='dynamic'>
                     <SimpleTextField AuthOR="@Permissions.EditLocations" Type="text" Display="Név" Name="@nameof(Location.Name)" @bind-Value="this.SelectedItem.Temporal.Name" />
-                    <ComboBox        AuthOR="@Permissions.EditLocations" ItemType="@Location" Items="@(this.ItemList.ToEntities<Location>())" Owner="this.SelectedItem.Temporal" Name="@nameof(Location.ParentLocation)" Display="Hely" @bind-Value="this.SelectedItem.Temporal.ParentLocation" />
+                    <ComboBox AuthOR="@Permissions.EditLocations" ItemType="@Location" Items="@(this.ItemList.ToEntities<Location>())" Owner="this.SelectedItem.Temporal" Name="@nameof(Location.ParentLocation)" Display="Hely" @bind-Value="this.SelectedItem.Temporal.ParentLocation" />
                 </div>
                 <AuthorizedView NeededRolesOR="@Permissions.EditLocations">
                     <button type='submit'>Küldés</button>
                 </AuthorizedView>
-                <AuthorizedView NeededRolesOR="@Permissions.DeleteLocations">
-                    <input type='button' class="delete" value="Törlés" @onclick="OnDefaultDeleteSubmit" />
-                </AuthorizedView>
+                @if (this.PopupDisplay != "add")
+                {
+                    <AuthorizedView NeededRolesOR="@Permissions.DeleteLocations">
+                        <input type='button' class="delete" value="Törlés" @onclick="OnDefaultDeleteSubmit" />
+                    </AuthorizedView>
+                }
             </EditForm>
         </div>
         @if (this.DialogLoading)

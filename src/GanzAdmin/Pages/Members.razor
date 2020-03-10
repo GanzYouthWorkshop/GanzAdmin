@@ -74,7 +74,7 @@
 
                     @foreach (string permission in Permissions.AllPermissions)
                     {
-                        <SimpleTextField AuthOR="@permission" Type="bool" Display="@permission" Name="@permission" @bind-Value="this.SelectedItem.Temporal.Roles.Contains(permission)" />
+                        <SimpleCheckField AuthOR="@permission" Type="bool" Display="@permission" Name="@permission" Value="@this.SelectedItem.Temporal.Roles.Contains(permission)" />
                     }
                 </div>
                 <AuthorizedView NeededRolesOR="@Permissions.EditMembers">
