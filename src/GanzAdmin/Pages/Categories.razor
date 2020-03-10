@@ -1,12 +1,12 @@
-﻿@page "/locations"
-@page "/locations/{PopupDisplay}"
+﻿@page "/categories"
+@page "/categories/{PopupDisplay}"
 
-@inherits DataHandlingController<Location>
+@inherits DataHandlingController<Category>
 
 <aside class='@(this.ItemList == null ? "loading" : "")'>
     @if (this.ItemList != null)
     {
-        <TreeLevel Items="@(this.ItemList.ToEntities<Location>())" Root="@null" Filter="@((e, r) => (e as Location).ParentLocation == null && r == null || (e as Location).ParentLocation?.Id == r?.Id)" />
+        <TreeLevel Items="@(this.ItemList.ToEntities<Category>())" Root="@null" Filter="@((e, r) => (e as Category).ParentCategory == null && r == null || (e as Category).ParentCategory?.Id == r?.Id)" />
     }
     <AuthorizedView NeededRolesOR="@Permissions.EditLocations">
         <NavLink class="addlink" href="@($"/{this.BaseLink}/add")">Új @this.DataName</NavLink>
@@ -35,11 +35,11 @@
                 </thead>
 
                 <tbody>
-                    @foreach (Location location in this.ItemList)
+                    @foreach (Category category in this.ItemList)
                     {
                         <tr>
-                            <td><NavLink href="@($"/{this.BaseLink}/{location.Id}")">@location.Name</NavLink></td>
-                            <td>@(location.ParentLocation != null ? location.ParentLocation.Name : "-")</td>
+                            <td><NavLink href="@($"/{this.BaseLink}/{category.Id}")">@category.Name</NavLink></td>
+                            <td>@(category.ParentCategory != null ? category.ParentCategory.Name : "-")</td>
                         </tr>
                     }
                 </tbody>
@@ -57,8 +57,8 @@
             <EditForm method="post" EditContext="new EditContext(true)" OnSubmit="OnDefaultAddEditSubmit">
                 <h3>@this.PopupTitle</h3>
                 <div class='dynamic'>
-                    <SimpleEditField AuthOR="@Permissions.EditLocations" Type="text" Display="Név" Name="@nameof(Location.Name)" @bind-Value="this.SelectedItem.Temporal.Name" />
-                    <ComboBox        AuthOR="@Permissions.EditLocations" ItemType="@Location" Items="@(this.ItemList.ToEntities<Location>())" Owner="this.SelectedItem.Temporal" Name="@nameof(Location.ParentLocation)" Display="Hely" @bind-Value="this.SelectedItem.Temporal.ParentLocation" />
+                    <SimpleEditField AuthOR="@Permissions.EditLocations" Type="text" Display="Név" Name="@nameof(Category.Name)" @bind-Value="this.SelectedItem.Temporal.Name" />
+                    <ComboBox        AuthOR="@Permissions.EditLocations" ItemType="@Category" Items="@(this.ItemList.ToEntities<Category>())" Owner="this.SelectedItem.Temporal" Name="@nameof(Category.ParentCategory)" Display="Hely" @bind-Value="this.SelectedItem.Temporal.ParentCategory" />
                 </div>
                 <AuthorizedView NeededRolesOR="@Permissions.EditLocations">
                     <button type='submit'>Küldés</button>
@@ -78,6 +78,6 @@
 
 @code
 {
-    protected override string BaseLink { get; set; } = "locations";
-    protected override string DataName { get; set; } = "hely";
+    protected override string BaseLink { get; set; } = "categories";
+    protected override string DataName { get; set; } = "kategória";
 }
