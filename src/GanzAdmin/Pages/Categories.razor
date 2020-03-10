@@ -57,7 +57,7 @@
             <EditForm method="post" EditContext="new EditContext(true)" OnSubmit="OnDefaultAddEditSubmit">
                 <h3>@this.PopupTitle</h3>
                 <div class='dynamic'>
-                    <SimpleEditField AuthOR="@Permissions.EditLocations" Type="text" Display="Név" Name="@nameof(Category.Name)" @bind-Value="this.SelectedItem.Temporal.Name" />
+                    <SimpleTextField AuthOR="@Permissions.EditLocations" Type="text" Display="Név" Name="@nameof(Category.Name)" @bind-Value="this.SelectedItem.Temporal.Name" />
                     <ComboBox        AuthOR="@Permissions.EditLocations" ItemType="@Category" Items="@(this.ItemList.ToEntities<Category>())" Owner="this.SelectedItem.Temporal" Name="@nameof(Category.ParentCategory)" Display="Hely" @bind-Value="this.SelectedItem.Temporal.ParentCategory" />
                 </div>
                 <AuthorizedView NeededRolesOR="@Permissions.EditLocations">

@@ -65,34 +65,27 @@
             <EditForm method="post" EditContext="new EditContext(true)" OnValidSubmit="OnDefaultAddEditSubmit">
                 <h3>@this.PopupTitle</h3>
                 <div class='dynamic'>
-                    <SimpleEditField AuthOR="@Permissions.EditMembers" Type="text" Display="Név" Name="@nameof(Member.Name)" @bind-Value="this.SelectedItem.Temporal.Name" />
-                    <SimpleEditField AuthOR="@Permissions.EditMembers" Type="text" Display="Cím" Name="@nameof(Member.Address)" @bind-Value="this.SelectedItem.Temporal.Address" />
-                    <SimpleEditField AuthOR="@Permissions.EditMembers" Type="text" Display="Telefon" Name="@nameof(Member.Phone)" @bind-Value="this.SelectedItem.Temporal.Phone" />
-                    <SimpleEditField AuthOR="@Permissions.EditMembers" Type="text" Display="Email" Name="@nameof(Member.Email)" @bind-Value="this.SelectedItem.Temporal.Email" />
-                    <SimpleEditField AuthOR="@Permissions.EditMembers" Type="text" Display="Felhasználónév" Name="@nameof(Member.Username)" @bind-Value="this.SelectedItem.Temporal.Username" />
-                    <SimpleEditField AuthOR="@Permissions.EditMembers" Type="password" Display="Jelszó" Name="@nameof(Member.Password)" @bind-Value="this.SelectedItem.Temporal.Password" />
+                    <SimpleTextField AuthOR="@Permissions.EditMembers" Type="text" Display="Név" Name="@nameof(Member.Name)" @bind-Value="this.SelectedItem.Temporal.Name" />
+                    <SimpleTextField AuthOR="@Permissions.EditMembers" Type="text" Display="Cím" Name="@nameof(Member.Address)" @bind-Value="this.SelectedItem.Temporal.Address" />
+                    <SimpleTextField AuthOR="@Permissions.EditMembers" Type="text" Display="Telefon" Name="@nameof(Member.Phone)" @bind-Value="this.SelectedItem.Temporal.Phone" />
+                    <SimpleTextField AuthOR="@Permissions.EditMembers" Type="text" Display="Email" Name="@nameof(Member.Email)" @bind-Value="this.SelectedItem.Temporal.Email" />
+                    <SimpleTextField AuthOR="@Permissions.EditMembers" Type="text" Display="Felhasználónév" Name="@nameof(Member.Username)" @bind-Value="this.SelectedItem.Temporal.Username" />
+                    <SimpleTextField AuthOR="@Permissions.EditMembers" Type="password" Display="Jelszó" Name="@nameof(Member.Password)" @bind-Value="this.SelectedItem.Temporal.Password" />
 
                     @foreach (string permission in Permissions.AllPermissions)
                     {
-                        <p>@permission</p>
-                        //TODO
-                        <SimpleEditField AuthOR="@permission" Type="bool" Display="@permission" Name="@permission" @bind-Value="this.SelectedItem.Temporal.Name" />
-
-                        //HA add módban vagyunk nem kell semmit extrát csinálni,d e ha editben vagy - talán akkor sem?
-                        if (this.PopupDisplay == "add")
-                        {
-                        }
-                        else
-                        {
-                        }
+                        <SimpleTextField AuthOR="@permission" Type="bool" Display="@permission" Name="@permission" @bind-Value="this.SelectedItem.Temporal.Roles.Contains(permission)" />
                     }
                 </div>
                 <AuthorizedView NeededRolesOR="@Permissions.EditMembers">
                     <button type='submit'>Küldés</button>
                 </AuthorizedView>
-                <AuthorizedView NeededRolesOR="@Permissions.DeleteMembers">
-                    <input type='button' class="delete" value="Törlés" @onclick="OnDefaultDeleteSubmit" />
-                </AuthorizedView>
+                @if (this.PopupDisplay != "add")
+                {
+                    <AuthorizedView NeededRolesOR="@Permissions.DeleteMembers">
+                        <input type='button' class="delete" value="Törlés" @onclick="OnDefaultDeleteSubmit" />
+                    </AuthorizedView>
+                }
             </EditForm>
         </div>
         @if (this.DialogLoading)

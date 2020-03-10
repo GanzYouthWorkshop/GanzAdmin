@@ -1,0 +1,30 @@
+﻿@using GanzAdmin.Authentication.Components;
+
+@inherits EditField<string>
+
+<p>
+    <span>@this.Display:</span>
+    <AuthorizedView NeededRolesOR="@this.AuthOR" NeededRolesAND="@this.AuthAND">
+        @switch (this.Type)
+        {
+            case "text":
+                <input type="text" value="@this.Value" name="@this.Name" @onchange="OnValueChanged" />
+                break;
+            case "password":
+                <input type="password" value="@this.Value" name="@this.Name" @onchange="OnValueChanged" />
+                break;
+        }
+    </AuthorizedView>
+    <NonAuthorizedView NeededRolesOR="@this.AuthOR" NeededRolesAND="@this.AuthAND">
+        @switch (this.Type)
+        {
+            case "text":
+                <span>@this.Value</span>
+                break;
+            case "password":
+                <span>*********</span>
+                break;
+        }
+
+    </NonAuthorizedView>
+</p>
