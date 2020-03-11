@@ -11,11 +11,14 @@
                 <input type="checkbox" value="@this.Value" name="@this.Name" @onchange="OnValueChanged" />
                 break;
             case "switch":
-                <input type="password" value="@this.Value" name="@this.Name" @onchange="OnValueChanged" />
+                <label class="switch">
+                    <input type="checkbox" value="@this.Value" name="@this.Name" @onchange="OnValueChanged" />
+                    <span class="slider"></span>
+                </label>
                 break;
         }
     </AuthorizedView>
     <NonAuthorizedView NeededRolesOR="@this.AuthOR" NeededRolesAND="@this.AuthAND">
-        <span>@this.Name : @this.Value</span>
+        <span>@this.Name : @this.Value</span><span>UNAUTH</span>
     </NonAuthorizedView>
 </p>

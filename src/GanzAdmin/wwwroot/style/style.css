@@ -728,6 +728,11 @@ table.calendar span.tag.attendance
 	background-color: forestgreen;
 }
 
+table.calendar td.today
+{
+	background-color: #ffcdd2;
+}
+
 /* **************************************************************************************************************************** */
 
 main.filebrowser a
