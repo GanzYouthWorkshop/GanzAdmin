@@ -5,13 +5,13 @@ KÉSZ :)
 -Majdnem az összes funkciót be kell rakni authorizedview-ba a megfelelõ role-okkal
 -A szerepeket le kell tisztázni
 -Kell törlés funkció
+-A szerepeket ki kell tudni osztani, de csak annyit, amennyit magunk is kapunk
 
 =================
 FOLYAMATBAN...
 =================
 -GanzInv funkcionalitásátv visszarakni (helyek-kategóriák-alaktrészek) és kibõvítése (projektek, lerakatok, mennyiségek)
 -Fájltár megcsinálása
--A szerepeket ki kell tudni osztani, de csak annyit, amennyit magunk is kapunk
 
 =================
 MÉG NINCS KÉSZ :(
