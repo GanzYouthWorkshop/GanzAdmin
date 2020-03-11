@@ -1,21 +1,36 @@
+Ôªø=================
+K√âSZ :)
 =================
-K…SZ :)
-=================
--Napt·r funkciÛ - mikor h·nyan voltak jelen Ès mikor lesznek foglalkoz·sok, ny·ri t·borok
--Majdnem az ˆsszes funkciÛt be kell rakni authorizedview-ba a megfelelı role-okkal
--A szerepeket le kell tiszt·zni
--Kell tˆrlÈs funkciÛ
+-Napt√°r funkci√≥ - mikor h√°nyan voltak jelen √©s mikor lesznek foglalkoz√°sok, ny√°ri t√°borok
+-Majdnem az √∂sszes funkci√≥t be kell rakni authorizedview-ba a megfelel√µ role-okkal
+-A szerepeket le kell tiszt√°zni
+-Kell t√∂rl√©s funkci√≥
 
 =================
 FOLYAMATBAN...
 =================
--GanzInv funkcionalit·s·tv visszarakni (helyek-kategÛri·k-alaktrÈszek) Ès kibıvÌtÈse (projektek, lerakatok, mennyisÈgek)
--F·jlt·r megcsin·l·sa
+-GanzInv funkcionalit√°s√°tv visszarakni (helyek-kateg√≥ri√°k-alaktr√©szek) √©s kib√µv√≠t√©se (projektek, lerakatok, mennyis√©gek)
+-F√°jlt√°r megcsin√°l√°sa
+-A szerepeket ki kell tudni osztani, de csak annyit, amennyit magunk is kapunk
 
 =================
-M…G NINCS K…SZ :(
+M√âG NINCS K√âSZ :(
 =================
--Csin·lni kell egy saj·t profilt szerkesztı fel¸letet amit mindenkinek el kell tudnia Èrnie
--A szerepeket ki kell tudni osztani, de csak annyit, amennyit magunk is kapunk
--KÈne egy fejlÈc alatti breakcrumb-men¸
--Napt·rba esemÈnyek hozz·ad·sa
+-Csin√°lni kell egy saj√°t profilt szerkeszt√µ fel√ºletet amit mindenkinek el kell tudnia √©rnie
+-K√©ne egy fejl√©c alatti breakcrumb-men√º
+-Napt√°rba esem√©nyek hozz√°ad√°sa
+
+=================
+HOWTO
+=================
+-Szerepkioszt√°s:
+	-Felvessz√ºk az √∂sszes megl√©v≈ë szerepet egy list√°ba
+	-Minden kiadhat√≥ szerepnek csin√°lunk egy checkboxot
+	-A checkbox bekattint√°s√°val hozz√° tudunk adni/elvenni egy szerepet
+	-Aminek nincs checkboxa csak ki√≠rjuk, de emiatt nem is lehet a list√°ban m√≥dos√≠tani
+-Eventek
+	-Kelleni fog hozz√° egy datetimepicker
+	-Ut√°na tirvi√°lis a DataHandleren kereszt√ºl
+-F√°jlt√°r
+	-oldals√≥ men√ºbe kell egy inform√°ci√≥s panel
+	-click √©s doubleclick esem√©nyeket norm√°lisan kell kezelni √©s ennyi

@@ -74,7 +74,13 @@
 
                     @foreach (string permission in Permissions.AllPermissions)
                     {
-                        <SimpleCheckField AuthOR="@permission" Type="switch" Display="@permission" Name="@permission" Value="@this.SelectedItem.Temporal.Roles.Contains(permission)" />
+                        <SimpleCheckField
+                                          AuthOR="@permission"
+                                          Type="switch"
+                                          Display="@permission"
+                                          Name="@permission"
+                                          Value="@this.SelectedItem.Temporal.Roles.Contains(permission)"
+                                          ValueChanged="@(e => this.EditPermission(permission, e))" />
                     }
                 </div>
                 <AuthorizedView NeededRolesOR="@Permissions.EditMembers">
@@ -116,5 +122,17 @@
         GanzAdminDbFunctions.LogAttendance(member, DateTime.Today);
 
         this.JS.InvokeVoidAsync("alertify.success", "Jelenléti ív frissítve!");
+    }
+
+    private void EditPermission(string permission, bool value)
+    {
+        if(value)
+        {
+            this.SelectedItem.Temporal.Roles.Add(permission);
+        }
+        else
+        {
+            this.SelectedItem.Temporal.Roles.RemoveAll(i => i == permission);
+        }
     }
 }
