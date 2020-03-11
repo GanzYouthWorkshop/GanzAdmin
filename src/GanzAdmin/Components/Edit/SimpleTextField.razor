@@ -3,7 +3,7 @@
 @inherits EditField<string>
 
 <p>
-    <span>@this.Display:</span>
+    <label for="@this.Name">@this.Display:</label>
     <AuthorizedView NeededRolesOR="@this.AuthOR" NeededRolesAND="@this.AuthAND">
         @switch (this.Type)
         {

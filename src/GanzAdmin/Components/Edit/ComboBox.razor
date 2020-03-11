@@ -2,62 +2,45 @@
 @using GanzAdmin.Database.Models;
 
 @typeparam ItemType
+@inherits EditField<ItemType>
 
 <p>
-    <span>@this.Display:</span>
+    <label for="@this.Name">@this.Display:</label>
     <AuthorizedView NeededRolesOR="@this.AuthOR" NeededRolesAND="@this.AuthAND">
         <select name="@this.Name" @onchange="OnValueChanged">
             <option value="0">-</option>
-            @foreach (IEntity item in Items)
+            @foreach (ItemType item in Items)
             {
-                if (item != this.Owner)
+                if (item.Equals(this.Owner))
                 {
-                    if (item == this.Value)
+                    if (item.Equals(this.Value))
                     {
-                        <option value="@item.Id" selected>@item.DisplayValue</option>
+                        <option value="@((item as IEntity).Id)" selected>@((item as IEntity).DisplayValue)</option>
                     }
                     else
                     {
-                        <option value="@item.Id">@item.DisplayValue</option>
+                        <option value="@((item as IEntity).Id)">@((item as IEntity).DisplayValue)</option>
                     }
                 }
             }
         </select>
     </AuthorizedView>
     <NonAuthorizedView NeededRolesOR="@this.AuthOR" NeededRolesAND="@this.AuthAND">
-                <span>@this.Value</span>
+        <span>@this.Value</span>
     </NonAuthorizedView>
 </p>
 
 @code
 {
     [Parameter]
-    public string AuthOR { get; set; }
+    public List<ItemType> Items { get; set; }
 
     [Parameter]
-    public string AuthAND { get; set; }
+    public ItemType Owner { get; set; }
 
-    [Parameter]
-    public List<IEntity> Items { get; set; }
-
-    [Parameter]
-    public IEntity Value { get; set; }
-
-    [Parameter]
-    public IEntity Owner { get; set; }
-
-    [Parameter]
-    public string Name { get; set; }
-
-    [Parameter]
-    public string Display { get; set; }
-
-    [Parameter]
-    public EventCallback<ItemType> ValueChanged { get; set; }
-
-    private Task OnValueChanged(ChangeEventArgs e)
+    protected override Task OnValueChanged(ChangeEventArgs e)
     {
-        this.Value = (IEntity)this.Items.Find(i => i.Id == Convert.ToInt64(e.Value));
+        this.Value = this.Items.Find(i => ((IEntity)i).Id == Convert.ToInt64(e.Value));
         return this.ValueChanged.InvokeAsync((ItemType)Value);
     }
 }

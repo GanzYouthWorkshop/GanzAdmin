@@ -29,7 +29,7 @@ namespace GanzAdmin.Components.Edit
         [Parameter]
         public EventCallback<T> ValueChanged { get; set; }
 
-        public Task OnValueChanged(ChangeEventArgs e)
+        protected virtual Task OnValueChanged(ChangeEventArgs e)
         {
             this.Value = (T)e.Value;
             return this.ValueChanged.InvokeAsync(this.Value);
