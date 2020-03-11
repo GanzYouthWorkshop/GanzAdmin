@@ -8,11 +8,25 @@
         @switch (this.Type)
         {
             case "check":
-                <input type="checkbox" value="@this.Value" name="@this.Name" @onchange="OnValueChanged" />
+                if (this.Value)
+                {
+                    <input type="checkbox" value="@this.Value" name="@this.Name" checked @onchange="OnValueChanged" />
+                }
+                else
+                {
+                    <input type="checkbox" value="@this.Value" name="@this.Name" @onchange="OnValueChanged" />
+                }
                 break;
             case "switch":
                 <label class="switch">
-                    <input type="checkbox" value="@this.Value" name="@this.Name" @onchange="OnValueChanged" />
+                    @if (this.Value)
+                    {
+                        <input type="checkbox" value="@this.Value" name="@this.Name" checked @onchange="OnValueChanged" />
+                    }
+                    else
+                    {
+                        <input type="checkbox" value="@this.Value" name="@this.Name" @onchange="OnValueChanged" />
+                    }
                     <span class="slider"></span>
                 </label>
                 break;
