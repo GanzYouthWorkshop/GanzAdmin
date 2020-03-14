@@ -19,6 +19,7 @@ MÉG NINCS KÉSZ :(
 -Csinálni kell egy saját profilt szerkesztõ felületet amit mindenkinek el kell tudnia érnie
 -Kéne egy fejléc alatti breakcrumb-menü
 -Naptárba események hozzáadása
+-UserProjektek listázássa, megjeleníytése, új naplóbejegyzés írása
 
 =================
 HOWTO
