@@ -1,0 +1,23 @@
+﻿@using GanzAdmin.Authentication.Components;
+
+@inherits EditField<DateTime>
+
+<p>
+    <label for="@this.Name">@this.Display:</label>
+    <AuthorizedView NeededRolesOR="@this.AuthOR" NeededRolesAND="@this.AuthAND">
+        <input type="text" value="@this.Value" name="@this.Name" class="dtp" @oninput="OnValueChanged" />
+    </AuthorizedView>
+    <NonAuthorizedView NeededRolesOR="@this.AuthOR" NeededRolesAND="@this.AuthAND">
+        <span>@this.Value</span>
+    </NonAuthorizedView>
+</p>
+
+@code
+{
+    protected override Task OnValueChanged(ChangeEventArgs e)
+    {
+        this.Value = DateTime.Parse(e.Value.ToString());
+
+        return this.ValueChanged.InvokeAsync(this.Value);
+    }
+}

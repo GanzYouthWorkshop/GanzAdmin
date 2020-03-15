@@ -1,9 +1,9 @@
 ﻿@using GanzAdmin.Authentication.Components;
 
-<NavLink href="@($"~/{this.Path}")">
+<a href="@($"~/{this.Path}")" @onclick="OnClick" @onclick:preventDefault @ondblclick="OnDoubleClick">
     <img src="@($"img/files/{this.Image}")" />
     <p>@this.Path.Split('/', '\\').Last()</p>
-</NavLink>
+</a>
 
 @code
 {
@@ -89,4 +89,14 @@
 
     [Parameter]
     public EventCallback DoubleClicked { get; set; }
+
+    public void OnClick(EventArgs e)
+    {
+        this.Clicked.InvokeAsync(this);
+    }
+
+    public void OnDoubleClick()
+    {
+        this.DoubleClicked.InvokeAsync(this);
+    }
 }

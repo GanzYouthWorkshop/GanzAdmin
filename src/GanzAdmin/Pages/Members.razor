@@ -69,14 +69,18 @@
                     <SimpleTextField AuthOR="@Permissions.EditMembers" Type="text" Display="Cím" Name="@nameof(Member.Address)" @bind-Value="this.SelectedItem.Temporal.Address" />
                     <SimpleTextField AuthOR="@Permissions.EditMembers" Type="text" Display="Telefon" Name="@nameof(Member.Phone)" @bind-Value="this.SelectedItem.Temporal.Phone" />
                     <SimpleTextField AuthOR="@Permissions.EditMembers" Type="text" Display="Email" Name="@nameof(Member.Email)" @bind-Value="this.SelectedItem.Temporal.Email" />
+
+                    <SimpleDateField AuthOR="@Permissions.EditMembers" Type="text" Display="Tagdíj befizetve" Name="@nameof(Member.PaidUntil)" @bind-Value="this.SelectedItem.Temporal.PaidUntil" />
+                    <SimpleCheckField AuthOR="@Permissions.EditMembers" Type="switch" Display="Aktív?" Name="@nameof(Member.Active)" @bind-Value="@this.SelectedItem.Temporal.Active" />
+
+
                     <SimpleTextField AuthOR="@Permissions.EditMembers" Type="text" Display="Felhasználónév" Name="@nameof(Member.Username)" @bind-Value="this.SelectedItem.Temporal.Username" />
                     <SimpleTextField AuthOR="@Permissions.EditMembers" Type="password" Display="Jelszó" Name="@nameof(Member.Password)" @bind-Value="this.SelectedItem.Temporal.Password" />
 
                     @foreach (string permission in Permissions.AllPermissions)
                     {
                         bool temp = this.SelectedItem.Temporal.Roles.Contains(permission);
-                        <SimpleCheckField
-                                          AuthOR="@permission"
+                        <SimpleCheckField AuthOR="@permission"
                                           Type="switch"
                                           Display="@permission"
                                           Name="@permission"

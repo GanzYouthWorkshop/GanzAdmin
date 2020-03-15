@@ -61,10 +61,12 @@ header h1
 {
 	margin: 0;
 	font-size: 1.7em;
-	padding: 12px 2em 11px 2em;
+	padding: 12px 0;
 	background-color: #455a64;
 	margin-right: 2em;
 	font-weight: 100;
+	text-align: center;
+	width: 250px;
 }
 
 header h1 a, header h1 a:hover, header h1 a:active
@@ -206,7 +208,7 @@ header nav ul li a:hover
 
 aside
 {
-	width: 200px;
+	width: 250px;
 	position: absolute;
 	top: 60px;
 	bottom: 43px;
@@ -266,8 +268,9 @@ main
 	position: absolute;
 	top: 60px;
 	bottom: 0;
-	left: 200px;
+	left: 250px;
 	right: 0;
+	overflow: auto;
 }
 
 main.full

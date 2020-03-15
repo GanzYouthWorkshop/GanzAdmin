@@ -19,4 +19,13 @@
 function onBlazorRender()
 {
 	setupDataGrid();
+
+	$('form .dtp').each(function (i)
+	{
+		$(this).datetimepicker(
+		{
+				format: 'Y. m. d. H:i'
+		});
+	});
 }
+

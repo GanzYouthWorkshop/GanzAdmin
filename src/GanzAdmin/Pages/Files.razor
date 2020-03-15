@@ -1,19 +1,48 @@
 ﻿@page "/files/own"
 @page "/files/shared"
-@page "/files/own/{Path}"
-@page "/files/shared/{Path}"
+@page "/files/own/{*Path}"
+@page "/files/shared/{*Path}"
 
 @using GanzAdmin.Components.FileBrowser;
+@using System.IO;
 
 <aside>
+     @aside
 </aside>
 
 <main class="filebrowser">
-    <FileBrowser StartingDirectory="C:\Documents and Settings\Szlatyka\Documents"></FileBrowser>
+    @foreach (string file in Directory.GetDirectories(this.Base + "\\" + this.Path))
+    {
+        <FileBox IsFolder="true" Path="@file.Split('\\').Last()" Clicked="OnSelect" DoubleClicked="OnOpen" />
+    }
+
+    @foreach (string file in Directory.GetFiles(this.Base + "/" + this.Path))
+    {
+        <FileBox IsFolder="false" Path="@file.Split('\\').Last()" />
+    }
 </main>
 
 @code
 {
+    [Inject]
+    protected NavigationManager NavMan { get; set; }
+
     [Parameter]
     public string Path { get; set; }
+
+    public string Base { get; } = @"C:\Documents and Settings\Szlatyka\Documents";
+
+    public string aside { get; set; }
+
+    public void OnOpen(object sender)
+    {
+        string newUrl = this.NavMan.Uri + "/" + (sender as FileBox).Path.Split('\\').Last();
+        this.NavMan.NavigateTo(newUrl);
+        aside = (sender as FileBox).Path;
+    }
+
+    public void OnSelect(object sender)
+    {
+        aside = "OPEN";
+    }
 }

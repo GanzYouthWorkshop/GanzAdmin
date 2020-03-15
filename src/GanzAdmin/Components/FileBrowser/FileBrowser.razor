@@ -2,15 +2,6 @@
 @using GanzAdmin.Components.FileBrowser;
 
 <div>
-    @foreach(string file in Directory.GetDirectories(this.StartingDirectory))
-    {
-        <FileBox IsFolder="true" Path="@file" />
-    }
-
-    @foreach(string file in Directory.GetFiles(this.StartingDirectory))
-    {
-        <FileBox IsFolder="false" Path="@file" />
-    }
 </div>
 
 @code
@@ -18,8 +9,25 @@
     [Parameter]
     public string StartingDirectory { get; set; }
 
+    [Parameter]
+    public EventCallback Selected { get; set; }
+
+    [Parameter]
+    public EventCallback Opened { get; set; }
+
+
     protected override Task OnParametersSetAsync()
     {
         return base.OnParametersSetAsync();
+    }
+
+    protected void Select(object sender)
+    {
+        this.Selected.InvokeAsync(sender);
+    }
+
+    protected void Open(object sender)
+    {
+        this.Opened.InvokeAsync(sender);
     }
 }

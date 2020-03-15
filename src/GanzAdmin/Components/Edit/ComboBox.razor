@@ -11,7 +11,7 @@
             <option value="0">-</option>
             @foreach (ItemType item in Items)
             {
-                if (item.Equals(this.Owner))
+                if (!item.Equals(this.Owner))
                 {
                     if (item.Equals(this.Value))
                     {
