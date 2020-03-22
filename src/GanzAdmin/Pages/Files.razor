@@ -1,48 +1,131 @@
 ﻿@page "/files/own"
 @page "/files/shared"
-@page "/files/own/{*Path}"
-@page "/files/shared/{*Path}"
+@page "/files/secret"
+
 
 @using GanzAdmin.Components.FileBrowser;
 @using System.IO;
+@using Microsoft.AspNetCore.Hosting;
 
 <aside>
-     @aside
+    @aside
 </aside>
 
 <main class="filebrowser">
-    @foreach (string file in Directory.GetDirectories(this.Base + "\\" + this.Path))
+    <nav class="breadcrumb">
+        <span>&gt;</span><a href="" @onclick='() => OnBreadCrumb("")' @onclick:preventDefault>Home</a><span> / </span>
+        @{
+            string build = "";
+            string relPath = this.Path.Remove(0, this.Base.Length);
+            foreach (string s in relPath.Split('\\', StringSplitOptions.RemoveEmptyEntries))
+            {
+                build += $"{s}\\";
+                string tmp = build;
+                <a href="@build" @onclick="() => OnBreadCrumb(tmp)" @onclick:preventDefault>@s</a><span> / </span>
+            }
+        }
+    </nav>
+    @foreach (string file in Directory.GetDirectories(this.Path))
     {
-        <FileBox IsFolder="true" Path="@file.Split('\\').Last()" Clicked="OnSelect" DoubleClicked="OnOpen" />
+        <FileBox IsFolder="true" Path="@file.Split('\\', '/').Last()" Clicked="OnSelect" DoubleClicked="OnOpen" />
     }
 
-    @foreach (string file in Directory.GetFiles(this.Base + "/" + this.Path))
+    @foreach (string file in Directory.GetFiles(this.Path))
     {
-        <FileBox IsFolder="false" Path="@file.Split('\\').Last()" />
+        <FileBox IsFolder="false" Path="@file.Split('\\', '/').Last()" Clicked="OnSelect" DoubleClicked="OnOpen" />
     }
 </main>
 
+@if (this.OpenedFile != null)
+{
+    <section class='popup' id='content'>
+        <div class='shadow'></div>
+
+        <div class='body'>
+            <div class='header'>
+                <h2>@this.OpenedFile.Split("\\").Last()</h2>
+                <a href="#" class='button' @onclick='() => this.OpenedFile = null' @onclick:preventDefault></a>
+                <a href="@this.OpenedFile.Substring(this.m_Hosting.WebRootPath.Length)" download="lol" class='button'></a>
+            </div>
+
+            <div class="file-preview">
+                <FileViewer FileName="@this.OpenedFile" />
+            </div>
+        </div>
+    </section>
+}
+
 @code
 {
+    [Inject]
+    private IWebHostEnvironment m_Hosting { get; set; }
+
     [Inject]
     protected NavigationManager NavMan { get; set; }
 
     [Parameter]
     public string Path { get; set; }
 
-    public string Base { get; } = @"C:\Documents and Settings\Szlatyka\Documents";
+    public string Base { get; set; }
 
     public string aside { get; set; }
 
+    public string OpenedFile { get; set; }
+
+    protected override Task OnInitializedAsync()
+    {
+        return Task.Run(new Action(() =>
+        {
+            if (this.NavMan.Uri.Contains("own"))
+            {
+                this.Base = @"C:\Users\Szlatyka\Documents\GIT\GanzAdmin\src\GanzAdmin\wwwroot\content";
+            }
+            else if (this.NavMan.Uri.Contains("shared"))
+            {
+                this.Base = @"C:\Documents and Settings\Szlatyka\Documents";
+            }
+            else if (this.NavMan.Uri.Contains("secret"))
+            {
+                this.Base = @"C:\Documents and Settings\Szlatyka\Documents";
+            }
+            else
+            {
+                this.Base = null;
+            }
+
+            this.Path = this.Base;
+        }));
+    }
+
+    public void OnBreadCrumb(string sender)
+    {
+        this.Path = this.Base + "\\" + sender;
+    }
+
     public void OnOpen(object sender)
     {
-        string newUrl = this.NavMan.Uri + "/" + (sender as FileBox).Path.Split('\\').Last();
-        this.NavMan.NavigateTo(newUrl);
-        aside = (sender as FileBox).Path;
+        FileBox info = sender as FileBox;
+        if (info.IsFolder)
+        {
+            this.Path = this.Path + "\\" + info.Path;
+        }
+        else
+        {
+            this.OpenedFile = this.Path + "\\" + info.Path;
+        }
+
     }
 
     public void OnSelect(object sender)
     {
-        aside = "OPEN";
+        FileBox info = sender as FileBox;
+        if (info.IsFolder)
+        {
+
+        }
+        else
+        {
+
+        }
     }
 }

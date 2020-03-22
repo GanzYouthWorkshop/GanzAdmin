@@ -447,6 +447,7 @@ main table tr.alert td
 	z-index: 100;
 }
 
+
 .popup .body
 {
 	position: relative;
@@ -461,6 +462,48 @@ main table tr.alert td
 	z-index: 101;
 	overflow-y: auto;
 	/*box-shadow: 10px 10px 0px #222222;*/
+}
+
+.popup .body .header
+{
+	background-color: #DFDFDF;
+	margin: -1em -1em 1em -1em;
+}
+
+.popup .body .header h2
+{
+	display: inline-block;
+	margin : 0.3em;
+	font-size: 1.3em;
+}
+
+.popup .body .header a.button
+{
+	padding : 0.4em;
+	font-size: 1.2em;
+	font-family: 'FontAwesome';
+	cursor: pointer;
+	float: right;
+	color: #343434;
+	text-decoration: none;
+}
+
+.popup .body .header a.button:hover
+{
+	background-color: #00897b;
+	color: #FFFFFF;
+}
+
+.popup .body .file-preview
+{
+	height: calc(100% - 2em)
+}
+
+.popup .body .file-preview *
+{
+	display: block;
+	width: 100%;
+	height: 100%;
 }
 
 .popup .close
@@ -490,6 +533,7 @@ main table tr.alert td
 	border: 0;
 	cursor: pointer;
 }
+
 .popup input[type=submit]:hover, .popup input[type=button]:hover, .popup button:hover,  #login input[type=submit]:hover
 {
 	background-color: #00897b;
@@ -502,6 +546,7 @@ main table tr.alert td
 	padding: 0.2em;
 	width: 20em;
 }
+
 .popup input[type=text]:focus, .popup input[type=password], .popup textarea:focus
 {
 	border: 3px solid #00897b;
@@ -699,7 +744,6 @@ table.calendar td.inactive
 	background-color: #CCCCCC;
 }
 
-
 table.calendar span
 {
 	display: block;
@@ -751,6 +795,7 @@ main.filebrowser a
 	width: 120px;
 	height: 120px;
 	text-align: center;
+	overflow: hidden;
 }
 
 main.filebrowser a img
@@ -823,4 +868,45 @@ main.filebrowser a img
 .alertify-button-ok
 {
 	background-color: #00897b !important;
+}
+
+
+
+
+
+
+
+
+
+main .breadcrumb a
+{
+	display: inline-block;
+	width: auto;
+	height: auto;
+	text-align: left;
+	margin: 0;
+	border: 0;
+	padding: 0 0.5em;
+}
+
+
+
+.simple-ui
+{
+	padding: 1em;
+}
+
+.simple-ui section
+{
+	margin: 1em;
+	padding: 1em;
+	border: 1px solid #CCCCCC;
+	border-radius: 2px;
+}
+
+.simple-ui section img
+{
+	float: left;
+	width: 250px;
+	height: 250px;
 }

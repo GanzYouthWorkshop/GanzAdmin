@@ -35,11 +35,11 @@
                 </thead>
 
                 <tbody>
-                    @foreach (Location location in this.ItemList)
+                    @foreach (Location item in this.ItemList)
                     {
                         <tr>
-                            <td><NavLink href="@($"/{this.BaseLink}/{location.Id}")">@location.Name</NavLink></td>
-                            <td>@(location.ParentLocation != null ? location.ParentLocation.Name : "-")</td>
+                            <td><NavLink href="@($"/{this.BaseLink}/{item.Id}")">@item.Name</NavLink></td>
+                            <td>@(item.ParentLocation != null ? item.ParentLocation.Name : "-")</td>
                         </tr>
                     }
                 </tbody>

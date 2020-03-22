@@ -17,9 +17,9 @@ namespace GanzAdmin.Database.Models
         public string Logo { get; set; }
 
         [BsonRef]
-        public List<Member> Members { get; set; }
+        public List<Member> Members { get; set; } = new List<Member>();
 
-        public List<LogEntry> ProjectLog { get; set; }
+        public List<LogEntry> ProjectLog { get; set; } = new List<LogEntry>();
 
         [BsonIgnore]
         public string DisplayValue

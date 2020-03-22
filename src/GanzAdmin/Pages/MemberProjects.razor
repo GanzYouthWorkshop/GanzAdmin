@@ -1,5 +1,6 @@
 ﻿@page "/member-projects"
 @page "/member-projects/{PopupDisplay}"
+@page "/member-projects/{PopupDisplay}/edit"
 
 @inherits DataHandlingController<MemberProject>
 
@@ -9,38 +10,26 @@
     </AuthorizedView>
 </aside>
 
-<main class='@(this.ItemList == null ? "loading" : "")'>
+<main class='@(this.ItemList == null ? "simple-ui loading" : "simple-ui")'>
     @if (this.ItemList != null)
     {
-        <div id='table-wrapper'>
-            <table id='table-header'>
-                <thead>
-                    <tr>
-                        <DataGridHeader IsPinnable IsSortable>Név</DataGridHeader>
-                        <DataGridHeader IsCollapsible IsSortable>Hely</DataGridHeader>
-                    </tr>
-                </thead>
-            </table>
-
-            <table id='data' class="display nowrap">
-                <thead>
-                    <tr>
-                        <DataGridHeader IsPinnable IsSortable>Név</DataGridHeader>
-                        <DataGridHeader IsCollapsible IsSortable>Hely</DataGridHeader>
-                    </tr>
-                </thead>
-
-                <tbody>
-                    @foreach (MemberProject category in this.ItemList)
+        @foreach (MemberProject item in this.ItemList)
+        {
+            <section>
+                <img srv="@item.Logo" />
+                <h2>@item.Name</h2>
+                <p>Állapot: @item.IsFinished</p>
+                <p>
+                    Résztvevők:
+                    @foreach(Member member in item.Members)
                     {
-                        <tr>
-                            <td><NavLink href="@($"/{this.BaseLink}/{category.Id}")">@category.Name</NavLink></td>
-                            <td></td>
-                        </tr>
+                        <span>@member.Name, </span>
                     }
-                </tbody>
-            </table>
-        </div>
+                </p>
+                <p>@item.Description</p>
+                <NavLink class="button">Részletek</NavLink>
+            </section>
+        }
     }
 </main>
 

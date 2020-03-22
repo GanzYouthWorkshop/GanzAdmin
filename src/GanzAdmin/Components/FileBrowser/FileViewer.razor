@@ -1,0 +1,55 @@
+﻿@using GanzAdmin.Authentication.Components;
+@using System.IO;
+@using Microsoft.AspNetCore.Hosting;
+
+@switch(this.WebFile.Split('/', '\\').Last().Split('.').Last().ToLower())
+{
+    case "bmp":
+    case "png":
+    case "jpg":
+    case "jpeg":
+        <img src="@this.WebFile" />
+        break;
+    case "pdf":
+        <iframe src="@this.WebFile" />
+        break;
+    case "mp3":
+        <audio src="@this.WebFile" controls autoplay />
+        break;
+    case "mp4":
+        <video src="@this.WebFile" controls autoplay />
+        break;
+    case "txt":
+    case "ini":
+    case "md":
+        <div>@File.ReadAllText(this.FileName)</div>
+        break;
+
+    case "doc":
+    case "docx":
+    case "xls":
+    case "xlsx":
+    case "ppt":
+    case "pptx":
+    case "exe":
+    case "zip":
+    case "rar":
+    case "iso":
+    default:
+        <span>Nincs online nézet :(</span>
+        break;
+}
+
+@code
+{
+    [Inject]
+    private IWebHostEnvironment m_Hosting { get; set; }
+
+    [Parameter]
+    public string FileName { get; set; }
+
+    public string WebFile
+    {
+        get { return this.FileName.Substring(this.m_Hosting.WebRootPath.Length); }
+    }
+}
