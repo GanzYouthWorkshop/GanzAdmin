@@ -61,9 +61,12 @@
     <section class='popup' id='content'>
         <div class='shadow'></div>
         <div class='body'>
-            <NavLink href="@($"/{this.BaseLink}")" class='close'></NavLink>
+            <div class='header'>
+                <h2>@this.PopupTitle</h2>
+                <a class='button' href="@($"/{this.BaseLink}")"></a>
+            </div>
+
             <EditForm method="post" EditContext="new EditContext(true)" OnValidSubmit="OnDefaultAddEditSubmit">
-                <h3>@this.PopupTitle</h3>
                 <div class='dynamic'>
                     <SimpleTextField AuthOR="@Permissions.EditMembers" Type="text" Display="Név" Name="@nameof(Member.Name)" @bind-Value="this.SelectedItem.Temporal.Name" />
                     <SimpleTextField AuthOR="@Permissions.EditMembers" Type="text" Display="Cím" Name="@nameof(Member.Address)" @bind-Value="this.SelectedItem.Temporal.Address" />

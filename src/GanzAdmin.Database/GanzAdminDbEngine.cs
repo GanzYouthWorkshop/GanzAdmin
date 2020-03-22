@@ -9,7 +9,7 @@ namespace GanzAdmin.Database
 {
     public class GanzAdminDbEngine
     {
-        public const string CONNECTION_STRING = @"_Data\ganzadmin.db";
+        public const string CONNECTION_STRING = @"Filename=_Data\ganzadmin.db; Mode=Shared";
 
         private bool m_IsDisposing;
 
@@ -23,6 +23,7 @@ namespace GanzAdmin.Database
         public ILiteCollection<Event> Events { get { return this.m_InnerDb.GetCollection<Event>(); } }
 
         public ILiteCollection<Location> Locations { get { return this.m_InnerDb.GetCollection<Location>(); } }
+        public ILiteCollection<Category> Categories { get { return this.m_InnerDb.GetCollection<Category>(); } }
 
         public void Dispose()
         {
