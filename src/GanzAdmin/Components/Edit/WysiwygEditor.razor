@@ -1,0 +1,35 @@
+﻿@using GanzAdmin.Authentication.Components;
+@using GanzAdmin.Database.Models;
+
+<div id="editorjs"></div>
+
+@code
+{
+    [Inject]
+    protected IJSRuntime JS { get; set; }
+
+
+    [Parameter]
+    public string Value { get; set; }
+
+    [Parameter]
+    public EventCallback<string> ValueChanged { get; set; }
+
+    protected virtual Task OnValueChanged(ChangeEventArgs e)
+    {
+        this.Value = (string)e.Value;
+        return this.ValueChanged.InvokeAsync(this.Value);
+    }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        DotNetObjectReference<WysiwygEditor> objRef = DotNetObjectReference.Create(this);
+        this.JS.InvokeVoidAsync("createEditorJS", this.Value, objRef);
+    }
+
+    [JSInvokable]
+    public void OnJsChanged(string data)
+    {
+        this.OnValueChanged(new ChangeEventArgs() { Value = data });
+    }
+}

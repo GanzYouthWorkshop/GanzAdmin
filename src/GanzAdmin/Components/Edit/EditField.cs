@@ -24,15 +24,20 @@ namespace GanzAdmin.Components.Edit
         public string Display { get; set; }
 
         [Parameter]
-        public T Value { get; set; }
+        public T Value
+        {
+            get { return this.m_Value; }
+            set { this.m_Value = value; }
+        }
+        private T m_Value;
 
         [Parameter]
         public EventCallback<T> ValueChanged { get; set; }
 
         protected virtual Task OnValueChanged(ChangeEventArgs e)
         {
-            this.Value = (T)e.Value;
-            return this.ValueChanged.InvokeAsync(this.Value);
+            this.m_Value = (T)e.Value;
+            return this.ValueChanged.InvokeAsync(this.m_Value);
         }
 
     }

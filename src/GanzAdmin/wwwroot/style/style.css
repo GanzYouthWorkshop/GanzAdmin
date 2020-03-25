@@ -910,3 +910,9 @@ main .breadcrumb a
 	width: 250px;
 	height: 250px;
 }
+
+#editorjs
+{
+	padding: 1em;
+	border: 2px solid #00897b;
+}

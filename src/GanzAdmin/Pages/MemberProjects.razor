@@ -4,64 +4,88 @@
 
 @inherits DataHandlingController<MemberProject>
 
-<aside class='@(this.ItemList == null ? "loading" : "")'>
-    <AuthorizedView NeededRolesOR="@Permissions.EditLocations">
-        <NavLink class="addlink" href="@($"/{this.BaseLink}/add")">Új @this.DataName</NavLink>
-    </AuthorizedView>
-</aside>
 
-<main class='@(this.ItemList == null ? "simple-ui loading" : "simple-ui")'>
-    @if (this.ItemList != null)
-    {
-        @foreach (MemberProject item in this.ItemList)
+@if (this.SelectedItem == null)
+{
+    <aside class='@(this.ItemList == null ? "loading" : "")'>
+        <AuthorizedView NeededRolesOR="@Permissions.EditLocations">
+            <NavLink class="addlink" href="@($"/{this.BaseLink}/add")">Új @this.DataName</NavLink>
+        </AuthorizedView>
+    </aside>
+
+    <main class='@(this.ItemList == null ? "simple-ui loading" : "simple-ui")'>
+        @if (this.ItemList != null)
         {
-            <section>
-                <img srv="@item.Logo" />
-                <h2>@item.Name</h2>
-                <p>Állapot: @item.IsFinished</p>
-                <p>
-                    Résztvevők:
-                    @foreach(Member member in item.Members)
+            @foreach (MemberProject item in this.ItemList)
+            {
+                <section>
+                    <img srv="@item.Logo" />
+                    <h2>@item.Name</h2>
+                    <p>Állapot: @item.IsFinished</p>
+                    <p>
+                        Résztvevők:
+                        @*@foreach (Member member in item.Members)
+                            {
+                                <span>@member.Name, </span>
+                            }*@
+                    </p>
+                    <p>@item.Description</p>
+                    <NavLink class="button" href="@($"/{this.BaseLink}/{item.Id}")">Részletek</NavLink>
+                </section>
+            }
+        }
+    </main>
+}
+else
+{
+    <main class='full'>
+        <section>
+            @*TODO: [KG] H2-vel egyvonalba kell két gomb ami magát a projektet szerkeszti és új naplóbejegyzést ad hozzá*@
+            <h2>@this.SelectedItem.Original.Name</h2>
+            <img srv="@this.SelectedItem.Original.Logo" />
+            <p>Állapot: @this.SelectedItem.Original.IsFinished</p>
+            <p>
+                Résztvevők:
+                @*@foreach (Member member in item.Members)
                     {
                         <span>@member.Name, </span>
-                    }
-                </p>
-                <p>@item.Description</p>
-                <NavLink class="button">Részletek</NavLink>
-            </section>
-        }
-    }
-</main>
+                    }*@
+            </p>
+            <p>@this.SelectedItem.Original.Description</p>
+            <h3>Fejlesztési napló</h3>
+            @foreach (LogEntry entry in this.SelectedItem.Original.ProjectLog.OrderByDescending(log => log.StartTime))
+            {
 
-@if (this.SelectedItem != null)
-{
-    <section class='popup' id='content'>
-        <div class='shadow'></div>
-        <div class='body'>
-            <NavLink href="@($"/{this.BaseLink}")" class='close'></NavLink>
-            <EditForm method="post" EditContext="new EditContext(true)" OnSubmit="OnDefaultAddEditSubmit">
-                <h3>@this.PopupTitle</h3>
-                <div class='dynamic'>
-                    <SimpleTextField AuthOR="@Permissions.EditLocations" Type="text" Display="Név" Name="@nameof(Category.Name)" @bind-Value="this.SelectedItem.Temporal.Name" />
-                </div>
-                <AuthorizedView NeededRolesOR="@Permissions.EditLocations">
-                    <button type='submit'>Küldés</button>
-                </AuthorizedView>
-                @if (this.PopupDisplay != "add")
-                {
-                    <AuthorizedView NeededRolesOR="@Permissions.DeleteLocations">
-                        <input type='button' class="delete" value="Törlés" @onclick="OnDefaultDeleteSubmit" />
+            }
+        </section>
+    </main>
+
+    @*<section class='popup' id='content'>
+            <div class='shadow'></div>
+            <div class='body'>
+                <NavLink href="@($"/{this.BaseLink}")" class='close'></NavLink>
+                <EditForm method="post" EditContext="new EditContext(true)" OnSubmit="OnDefaultAddEditSubmit">
+                    <h3>@this.PopupTitle</h3>
+                    <div class='dynamic'>
+                        <SimpleTextField AuthOR="@Permissions.EditLocations" Type="text" Display="Név" Name="@nameof(Category.Name)" @bind-Value="this.SelectedItem.Temporal.Name" />
+                    </div>
+                    <AuthorizedView NeededRolesOR="@Permissions.EditLocations">
+                        <button type='submit'>Küldés</button>
                     </AuthorizedView>
-                }
-            </EditForm>
-        </div>
-        @if (this.DialogLoading)
-        {
-            <div class='loading'> </div>
-        }
-    </section>
+                    @if (this.PopupDisplay != "add")
+                    {
+                        <AuthorizedView NeededRolesOR="@Permissions.DeleteLocations">
+                            <input type='button' class="delete" value="Törlés" @onclick="OnDefaultDeleteSubmit" />
+                        </AuthorizedView>
+                    }
+                </EditForm>
+            </div>
+            @if (this.DialogLoading)
+            {
+                <div class='loading'> </div>
+            }
+        </section>*@
 }
-
 
 @code
 {
