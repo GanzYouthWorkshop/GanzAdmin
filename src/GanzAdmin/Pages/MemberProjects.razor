@@ -24,10 +24,10 @@
                     <p>Állapot: @item.IsFinished</p>
                     <p>
                         Résztvevők:
-                        @*@foreach (Member member in item.Members)
-                            {
-                                <span>@member.Name, </span>
-                            }*@
+                        @foreach (Member member in item.Members)
+                        {
+                            <span>@member.Name, </span>
+                        }
                     </p>
                     <p>@item.Description</p>
                     <NavLink class="button" href="@($"/{this.BaseLink}/{item.Id}")">Részletek</NavLink>
@@ -40,16 +40,22 @@ else
 {
     <main class='full'>
         <section>
-            @*TODO: [KG] H2-vel egyvonalba kell két gomb ami magát a projektet szerkeszti és új naplóbejegyzést ad hozzá*@
             <h2>@this.SelectedItem.Original.Name</h2>
+            @if (this.SelectedItem.Original.Members.Contains(this.AuthManager.CurrentMember) ||
+                this.AuthManager.CurrentMember.Roles.Contains(Permissions.EditAnyProject) ||
+                this.AuthManager.CurrentMember.Roles.Contains(Permissions.Overlord))
+            {
+                <NavLink class="button" href="@($"/{this.BaseLink}/{this.SelectedItem.Original.Id}/edit")">Szerkesztés</NavLink>
+                <NavLink class="button" href="@($"/{this.BaseLink}/{this.SelectedItem.Original.Id}/edit")">Új naplóbejegyzés</NavLink>
+            }
             <img srv="@this.SelectedItem.Original.Logo" />
             <p>Állapot: @this.SelectedItem.Original.IsFinished</p>
             <p>
                 Résztvevők:
-                @*@foreach (Member member in item.Members)
-                    {
-                        <span>@member.Name, </span>
-                    }*@
+                @foreach (Member member in this.SelectedItem.Original.Members)
+                {
+                    <span>@member.Name, </span>
+                }
             </p>
             <p>@this.SelectedItem.Original.Description</p>
             <h3>Fejlesztési napló</h3>

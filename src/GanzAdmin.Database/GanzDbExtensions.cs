@@ -16,5 +16,10 @@ namespace GanzAdmin.Database
             }
             return result;
         }
+
+        public static bool IsEqual(this IEntity obj1, object obj2)
+        {
+            return obj1.GetType().Equals(obj2.GetType()) && obj1.Id == (obj2 as IEntity).Id;
+        }
     }
 }

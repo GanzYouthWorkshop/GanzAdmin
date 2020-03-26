@@ -14,6 +14,18 @@ namespace GanzAdmin.Database.Models
         public const string EditLocations = nameof(EditLocations);
         public const string DeleteLocations = nameof(DeleteLocations);
 
+        public const string ListCategories = nameof(ListCategories);
+        public const string EditCategories = nameof(EditCategories);
+        public const string DeleteCategories = nameof(DeleteCategories);
+
+        public const string AddProject = nameof(AddProject);
+        public const string EditAnyProject = nameof(EditAnyProject);
+        public const string DeleteProject = nameof(DeleteProject);
+
+        public const string AddCourse = nameof(AddCourse);
+        public const string EditCourse = nameof(EditCourse);
+        public const string DeleteCourse = nameof(DeleteCourse);
+
         public const string AccessOwnFileStorage = nameof(AccessOwnFileStorage);
         public const string AccessSharedFileStorage = nameof(AccessSharedFileStorage);
 
@@ -29,6 +41,18 @@ namespace GanzAdmin.Database.Models
             ListLocations,
             EditLocations,
             DeleteLocations,
+
+            ListCategories,
+            EditCategories,
+            DeleteCategories,
+
+            AddProject,
+            EditAnyProject,
+            DeleteProject,
+
+            AddCourse,
+            EditCourse,
+            DeleteCourse,
 
             AccessOwnFileStorage,
             AccessSharedFileStorage,

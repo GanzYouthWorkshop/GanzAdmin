@@ -9,8 +9,8 @@
             if (this.Filter(item, this.Root))
             {
                 <li>
-                    <a href="#">@item.DisplayValue</a>
-                    <TreeLevel Items="@this.Items" Filter="@this.Filter" Root="@item" />
+                    <a href="@this.UrlTemplate(item)">@item.DisplayValue</a>
+                    <TreeLevel Items="@this.Items" Filter="@this.Filter" UrlTemplate="@this.UrlTemplate" Root="@item" />
                 </li>
             }
         }
@@ -24,6 +24,10 @@
 
     [Parameter]
     public Func<IEntity, IEntity, bool> Filter { get; set; }
+
+    [Parameter]
+    public Func<IEntity, string> UrlTemplate
+    { get; set; }
 
     [Parameter]
     public IEntity Root { get; set; }

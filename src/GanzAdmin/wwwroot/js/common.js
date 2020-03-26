@@ -49,7 +49,13 @@ function createEditorJS(initialData, callbackObj)
 			//autofocus: true,
 
 			data: obj,
-			onChange: () => { return callbackObj.invokeMethodAsync('OnJsChanged') },
+			onChange: () =>
+			{
+				editor.save().then((outputData) =>
+				{
+					callbackObj.invokeMethodAsync('OnJsChanged', JSON.stringify(outputData));
+				})
+			},
 
 			tools:
 			{
