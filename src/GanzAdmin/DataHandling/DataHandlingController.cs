@@ -145,6 +145,12 @@ namespace GanzAdmin.DataHandling
 
             this.JS.InvokeVoidAsync("alertify.success", $"{this.DataName.ToCapital()} törölve :(");
         }
+
+        protected override bool ShouldRender()
+        {
+            bool result = !Environment.StackTrace.Contains("OnValueChanged");
+            return result;
+        }
         #endregion
 
         #region Kötelezően felülírandó dolgok
