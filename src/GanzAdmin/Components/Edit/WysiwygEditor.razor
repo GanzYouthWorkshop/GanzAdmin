@@ -31,9 +31,12 @@
 
     protected override void OnAfterRender(bool firstRender)
     {
-        DotNetObjectReference<WysiwygEditor> objRef = DotNetObjectReference.Create(this);
-        this.JS.InvokeVoidAsync("createEditorJS", this.m_Value, objRef);
-        this.m_HasRendered = true;
+        if (firstRender && !this.m_HasRendered)
+        {
+            DotNetObjectReference<WysiwygEditor> objRef = DotNetObjectReference.Create(this);
+            this.JS.InvokeVoidAsync("createEditorJS", this.m_Value, objRef);
+            this.m_HasRendered = true;
+        }
     }
 
     [JSInvokable]

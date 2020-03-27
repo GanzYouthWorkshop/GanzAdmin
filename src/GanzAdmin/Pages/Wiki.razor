@@ -24,11 +24,11 @@
     {
         @if (this.Edit == "edit" || this.NavMan.Uri.EndsWith("add"))
         {
-            <EditForm method="post" EditContext="new EditContext(true)" OnSubmit="OnDefaultAddEditSubmit">
+            <EditForm @key="this.SelectedItem" method="post" EditContext="new EditContext(true)" OnSubmit="OnDefaultAddEditSubmit">
                     <div class='dynamic'>
                         <SimpleTextField AuthOR="@Permissions.EditCourse" Type="text" Display="Név" Name="@nameof(Category.Name)" @bind-Value="this.SelectedItem.Temporal.Name" />
                         <ComboBox AuthOR="@Permissions.EditCourse" ItemType="@WikiPage" Items="@this.ItemList" Owner="this.SelectedItem.Temporal" Name="@nameof(WikiPage.ParentPage)" Display="Hely" @bind-Value="this.SelectedItem.Temporal.ParentPage" />
-                        <WysiwygEditor @bind-Value="@this.SelectedItem.Temporal.Content"></WysiwygEditor>
+                        <WysiwygEditor @key="this.SelectedItem" @bind-Value="@this.SelectedItem.Temporal.Content"></WysiwygEditor>
                     </div>
                     <AuthorizedView NeededRolesOR="@Permissions.EditLocations">
                         <button type='submit'>Küldés</button>
@@ -39,7 +39,7 @@
                             <input type='button' class="delete" value="Törlés" @onclick="OnDefaultDeleteSubmit" />
                         </AuthorizedView>
                     }
-                </EditForm>
+            </EditForm>
         }
         else
         {
@@ -68,4 +68,14 @@
 
     [Parameter]
     public string Edit { get; set; }
+
+    protected override void BeforeAdd()
+    {
+        this.SelectedItem.Temporal.LastModified = DateTime.Now;
+    }
+
+    protected override void BeforeEdit()
+    {
+        this.SelectedItem.Temporal.LastModified = DateTime.Now;
+    }
 }

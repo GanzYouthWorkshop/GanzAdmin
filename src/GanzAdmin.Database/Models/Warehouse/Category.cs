@@ -21,5 +21,9 @@ namespace GanzAdmin.Database.Models
             get { return this.Name; }
         }
 
+        public override bool Equals(object obj)
+        {
+            return this.IsEqual(obj);
+        }
     }
 }

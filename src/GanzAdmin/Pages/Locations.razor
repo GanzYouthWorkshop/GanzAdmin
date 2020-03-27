@@ -6,7 +6,11 @@
 <aside class='@(this.ItemList == null ? "loading" : "")'>
     @if (this.ItemList != null)
     {
-        <TreeLevel Items="@(this.ItemList.ToEntities<Location>())" Root="@null" Filter="@((e, r) => (e as Location).ParentLocation == null && r == null || (e as Location).ParentLocation?.Id == r?.Id)" />
+        <TreeLevel
+                   Items="@(this.ItemList.ToEntities<Location>())"
+                   Root="@null"
+                   Filter="@((e, r) => (e as Location).ParentLocation == null && r == null || (e as Location).ParentLocation?.Id == r?.Id)"
+                   UrlTemplate="@((e) => $"/{this.BaseLink}/{e.Id}")"/>
     }
     <AuthorizedView NeededRolesOR="@Permissions.EditLocations">
         <NavLink class="addlink" href="@($"/{this.BaseLink}/add")">Új @this.DataName</NavLink>
