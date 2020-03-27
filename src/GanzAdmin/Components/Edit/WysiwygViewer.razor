@@ -1,0 +1,94 @@
+﻿@using  System.Text.Json;
+
+@foreach (JsonElement element in this.JsonSource.RootElement.GetProperty("blocks").EnumerateArray())
+{
+    JsonElement data = element.GetProperty("data");
+    switch (element.GetProperty("type").GetString())
+    {
+        case "paragraph":
+            <p>@((MarkupString)data.GetProperty("text").GetString())</p>
+            break;
+
+        case "header":
+            string level = data.GetProperty("level").ToString();
+            @((MarkupString)$"<h{level}>{data.GetProperty("text").GetString()}</h{level}>")
+            break;
+
+        case "delimiter":
+            <hr />
+            break;
+
+        case "code":
+            <code><pre>@data.GetProperty("code").GetString()</pre></code>
+            break;
+
+        case "raw":
+            @((MarkupString)data.GetProperty("html").GetString())
+            break;
+
+        case "quote":
+            <blockquote>@((MarkupString)data.GetProperty("text").GetString())</blockquote>
+            <p>@((MarkupString)data.GetProperty("caption").GetString())</p>
+            break;
+
+        case "warning":
+            <div class="warning box">
+                <p><b>@((MarkupString)data.GetProperty("title").GetString())</b></p>
+                <p>@((MarkupString)data.GetProperty("message").GetString())</p>
+            </div>
+            break;
+
+        case "list":
+            if (data.GetProperty("style").GetString() == "ordered")
+            {
+                <ol>
+                    @foreach (JsonElement le in data.GetProperty("items").EnumerateArray())
+                    {
+                        <li>@((MarkupString)le.GetString())</li>
+                    }
+                </ol>
+            }
+            else
+            {
+                <ul>
+                    @foreach (JsonElement le in data.GetProperty("items").EnumerateArray())
+                    {
+                        <li>@((MarkupString)le.GetString())</li>
+                    }
+                </ul>
+            }
+            break;
+
+        case "table":
+            <table>
+                @foreach (JsonElement row in data.GetProperty("content").EnumerateArray())
+                {
+                    <tr>
+                        @foreach (JsonElement cell in row.EnumerateArray())
+                        {
+                            <td>@((MarkupString)cell.GetString())</td>
+                        }
+                    </tr>
+                }
+            </table>
+            break;
+    }
+}
+
+@code
+{
+    [Parameter]
+    public string Source { get; set; }
+
+    public JsonDocument JsonSource
+    {
+        get
+        {
+            if(this.Source == null)
+            {
+                this.Source = "{\"blocks\": []}";
+            }
+            return JsonDocument.Parse(this.Source, new JsonDocumentOptions { AllowTrailingCommas = true });
+        }
+    }
+}

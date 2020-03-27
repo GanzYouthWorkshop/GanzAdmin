@@ -42,6 +42,8 @@ function createEditorJS(initialData, callbackObj)
 		{
 			console.log("Valami nemigazán sikerült a JSON.parse-ban! " + ex);
 		}
+
+		var itb = ['bold', 'italic', 'link'];
 		const editor = new EditorJS(
 		{
 			holder: 'editorjs',
@@ -59,22 +61,29 @@ function createEditorJS(initialData, callbackObj)
 
 			tools:
 			{
-				header: { class: Header, inlineToolbar: true },
-				list: { class: List, inlineToolbar: true },
-				checklist: { class: Checklist, inlineToolbar: true },
+				paragraph: { class: Paragraph, inlineToolbar: itb },
+				header: { class: Header, inlineToolbar: itb },
+				list: { class: List, inlineToolbar: itb },
+				checklist: { class: Checklist, inlineToolbar: itb },
 				image: ImageTool,
 				delimiter: Delimiter,
-				table: { class: Table, inlineToolbar: true },
-				code: { class: CodeTool, inlineToolbar: true },
-				raw: { class: RawTool, inlineToolbar: true },
-				link: { class: LinkTool, inlineToolbar: true },
-				quote: { class: Quote, inlineToolbar: true },
-				marker: { class: Marker, inlineToolbar: true },
-				warning: { class: Warning, inlineToolbar: true },
-				personality: { class: Personality, inlineToolbar: true },
-				embed: { class: Embed, inlineToolbar: true },
-
-				paragraph: { class: Paragraph, inlineToolbar: true },
+				table: { class: Table, inlineToolbar: itb },
+				code: { class: CodeTool, inlineToolbar: itb },
+				raw: { class: RawTool, inlineToolbar: itb },
+				url:
+				{
+					class: LinkTool,
+					inlineToolbar: itb,
+					config:
+					{
+						endpoint: './api_linktranslation'
+					}
+				},
+				embed: { class: Embed, inlineToolbar: itb },
+				quote: { class: Quote, inlineToolbar: itb },
+				marker: { class: Marker, inlineToolbar: itb },
+				warning: { class: Warning, inlineToolbar: itb },
+				personality: { class: Personality, inlineToolbar: itb },
 			},
 		})	
 	}

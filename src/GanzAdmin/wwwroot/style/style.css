@@ -279,6 +279,11 @@ main.full
 	padding: 1em;
 }
 
+main.half
+{
+	padding: 1em;
+}
+
 main h1, h2
 {
 	font-family: 'Segoe UI Light';
