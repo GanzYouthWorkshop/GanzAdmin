@@ -19,7 +19,7 @@
     </AuthorizedView>
 </aside>
 
-<main class='half'>
+<main class='half userpage'>
     @if (this.SelectedItem != null)
     {
         @if (this.Edit == "edit" || this.NavMan.Uri.EndsWith("add"))
@@ -47,7 +47,7 @@
             <AuthorizedView NeededRolesOR="@Permissions.EditCourse">
                 <NavLink class="button" href="@($"/{this.BaseLink}/{this.SelectedItem.Original.Id}/edit")">Szerkesztés</NavLink>
             </AuthorizedView>
-            <p>Utoljára módosítva: @this.SelectedItem.Original.LastModified</p>
+            <small>Utoljára módosítva: @this.SelectedItem.Original.LastModified</small>
             <WysiwygViewer Source="@this.SelectedItem.Original.Content"></WysiwygViewer>
         }
     }
