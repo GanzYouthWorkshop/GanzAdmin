@@ -79,7 +79,35 @@ function createEditorJS(initialData, callbackObj)
 						endpoint: './api_linktranslation'
 					}
 				},
-				embed: { class: Embed, inlineToolbar: itb },
+				embed:
+				{
+					class: Embed,
+					inlineToolbar: itb,
+					config:
+					{
+						youtube: true,
+						coub: true,
+						falstad:
+						{
+							regex: /http.*(falstad).*/,
+							embedUrl: 'https://www.falstad.com/circuit/circuitjs.html<%= remote_id %>',
+							html: "<iframe height='300' scrolling='no' frameborder='no' allowtransparency='true' allowfullscreen='true' style='width: 100%;'></iframe>",
+							height: 400,
+							width: 800,
+							id: (groups) => groups.join('')
+						},
+
+						codepen:
+						{
+							regex: /https?:\/\/codepen.lol\/([^\/\?\&]*)\/pen\/([^\/\?\&]*)/,
+							embedUrl: 'https://codepen.io/<%= remote_id %>?height=300&theme-id=0&default-tab=css,result&embed-version=2',
+							html: "<iframe height='300' scrolling='no' frameborder='no' allowtransparency='true' allowfullscreen='true' style='width: 100%;'></iframe>",
+							height: 300,
+							width: 600,
+							id: (groups) => groups.join('/embed/')
+						},
+					}
+				},
 				quote: { class: Quote, inlineToolbar: itb },
 				marker: { class: Marker, inlineToolbar: itb },
 				warning: { class: Warning, inlineToolbar: itb },

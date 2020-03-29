@@ -15,7 +15,7 @@
             break;
 
         case "delimiter":
-            <hr />
+            <hr />;
             break;
 
         case "code":
@@ -23,7 +23,7 @@
             break;
 
         case "raw":
-            @((MarkupString)data.GetProperty("html").GetString())
+            <div>@((MarkupString)data.GetProperty("html").GetString())</div>
             break;
 
         case "quote":
@@ -72,11 +72,18 @@
                 }
             </table>
             break;
+
+        case "embed":
+            <iframe
+                    width="@data.GetProperty("width").GetRawText()"
+                    height="@data.GetProperty("height").GetRawText()"
+                    src="@data.GetProperty("embed").GetString()" allowfullscreen></iframe>
+            break;
     }
 }
 
 @code
-{
+                        {
     [Parameter]
     public string Source { get; set; }
 
@@ -84,7 +91,7 @@
     {
         get
         {
-            if(this.Source == null)
+            if (this.Source == null)
             {
                 this.Source = "{\"blocks\": []}";
             }

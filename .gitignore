@@ -12,3 +12,5 @@ src/GanzAdmin/_Data/litedb.bin
 src/GanzAdmin/_Data/ganzadmin.db
 src/GanzAdmin/_Data/ganzadmin-log.db
 src/GanzAdmin/wwwroot/content/*
+src/GanzAdmin.ServerAdministration/bin
+src/GanzAdmin.ServerAdministration/obj

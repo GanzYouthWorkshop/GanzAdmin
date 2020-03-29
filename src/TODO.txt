@@ -6,12 +6,13 @@ KÉSZ :)
 -A szerepeket le kell tisztázni
 -Kell törlés funkció
 -A szerepeket ki kell tudni osztani, de csak annyit, amennyit magunk is kapunk
+-Fájltár megcsinálása
 
 =================
 FOLYAMATBAN...
 =================
 -GanzInv funkcionalitásátv visszarakni (helyek-kategóriák-alaktrészek) és kibõvítése (projektek, lerakatok, mennyiségek)
--Fájltár megcsinálása
+-Tananyagtár főleg a megjelenítés
 
 =================
 MÉG NINCS KÉSZ :(
