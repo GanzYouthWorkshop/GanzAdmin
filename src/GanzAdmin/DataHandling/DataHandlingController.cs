@@ -83,7 +83,6 @@ namespace GanzAdmin.DataHandling
 
         protected void OnDefaultAddEditSubmit()
         {
-
             this.DialogLoading = true;
 
             Task.Run(() =>

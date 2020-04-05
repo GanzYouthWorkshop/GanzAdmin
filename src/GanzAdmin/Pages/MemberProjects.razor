@@ -1,12 +1,17 @@
 ﻿@page "/member-projects"
+
 @page "/member-projects/{PopupDisplay}"
-@page "/member-projects/{PopupDisplay}/edit"
+@page "/member-projects/{PopupDisplay}/{PopupDisplay2}"
+@page "/member-projects/{PopupDisplay}/{PopupDisplay2}/{LogPopupDisplay}"
+
+@using  GanzAdmin.Components.Edit;
 
 @inherits DataHandlingController<MemberProject>
 
 
 @if (this.SelectedItem == null)
 {
+    <!--#region Listázás-->
     <aside class='@(this.ItemList == null ? "loading" : "")'>
         <AuthorizedView NeededRolesOR="@Permissions.EditLocations">
             <NavLink class="addlink" href="@($"/{this.BaseLink}/add")">Új @this.DataName</NavLink>
@@ -35,66 +40,238 @@
             }
         }
     </main>
+    <!--#endregion-->
 }
 else
 {
     <main class='full'>
-        <section>
-            <h2>@this.SelectedItem.Original.Name</h2>
-            @if (this.SelectedItem.Original.Members.Contains(this.AuthManager.CurrentMember) ||
-                this.AuthManager.CurrentMember.Roles.Contains(Permissions.EditAnyProject) ||
-                this.AuthManager.CurrentMember.Roles.Contains(Permissions.Overlord))
-            {
-                <NavLink class="button" href="@($"/{this.BaseLink}/{this.SelectedItem.Original.Id}/edit")">Szerkesztés</NavLink>
-                <NavLink class="button" href="@($"/{this.BaseLink}/{this.SelectedItem.Original.Id}/edit")">Új naplóbejegyzés</NavLink>
-            }
-            <img srv="@this.SelectedItem.Original.Logo" />
-            <p>Állapot: @this.SelectedItem.Original.IsFinished</p>
-            <p>
-                Résztvevők:
-                @foreach (Member member in this.SelectedItem.Original.Members)
-                {
-                    <span>@member.Name, </span>
-                }
-            </p>
-            <p>@this.SelectedItem.Original.Description</p>
-            <h3>Fejlesztési napló</h3>
-            @foreach (LogEntry entry in this.SelectedItem.Original.ProjectLog.OrderByDescending(log => log.StartTime))
-            {
-
-            }
-        </section>
-    </main>
-
-    @*<section class='popup' id='content'>
-            <div class='shadow'></div>
-            <div class='body'>
-                <NavLink href="@($"/{this.BaseLink}")" class='close'></NavLink>
-                <EditForm method="post" EditContext="new EditContext(true)" OnSubmit="OnDefaultAddEditSubmit">
-                    <h3>@this.PopupTitle</h3>
-                    <div class='dynamic'>
-                        <SimpleTextField AuthOR="@Permissions.EditLocations" Type="text" Display="Név" Name="@nameof(Category.Name)" @bind-Value="this.SelectedItem.Temporal.Name" />
-                    </div>
-                    <AuthorizedView NeededRolesOR="@Permissions.EditLocations">
-                        <button type='submit'>Küldés</button>
-                    </AuthorizedView>
-                    @if (this.PopupDisplay != "add")
+        @switch (this.Display)
+        {
+            case DisplayType.Show:
+                <!--#region Részletek-->
+                <section>
+                    <h2>@this.SelectedItem.Original.Name</h2>
+                    @if (HasLocalAuthorization)
                     {
-                        <AuthorizedView NeededRolesOR="@Permissions.DeleteLocations">
+                        <NavLink class="button" href="@($"/{this.BaseLink}/{this.SelectedItem.Original.Id}/edit")">Szerkesztés</NavLink>
+                        <NavLink class="button" href="@($"/{this.BaseLink}/{this.SelectedItem.Original.Id}/log/add")">Új naplóbejegyzés</NavLink>
+                    }
+                    <img srv="@this.SelectedItem.Original.Logo" />
+                    <p>Állapot: @this.SelectedItem.Original.IsFinished</p>
+                    <p>
+                        Résztvevők:
+                        @foreach (Member member in this.SelectedItem.Original.Members)
+                        {
+                            <span>@member.Name, </span>
+                        }
+                    </p>
+                    <WysiwygViewer Source="@this.SelectedItem.Original.Description"></WysiwygViewer>
+                    <h3>Fejlesztési napló</h3>
+                    @foreach (LogEntry entry in this.SelectedItem.Original.ProjectLog.OrderByDescending(log => log.StartTime).Take(5))
+                    {
+                        //TODO
+                    }
+                </section>
+                <!--#endregion-->
+                break;
+
+            case DisplayType.EditSummary:
+                <!--#region Szerkesztés-->
+                @if (HasLocalAuthorization)
+                {
+                    <EditForm EditContext="new EditContext(null)"  OnSubmit="OnDefaultAddEditSubmit">
+                        <h2>"@this.SelectedItem.Original.Name" szerkesztése</h2>
+                        <SimpleTextField @bind-Value="this.SelectedItem.Temporal.Name" Name="name" Display="Projektnév" Type="text"></SimpleTextField>
+
+                        //TODO fel kéne tudni tölteni a képet
+                        <img srv="@this.SelectedItem.Original.Logo" />
+
+                        <SimpleCheckField Type="switch" Display="Befejezett" Name="finished" @bind-Value="@this.SelectedItem.Temporal.IsFinished" />
+
+                        //TODO: Kelleni fog egy tag-szerkesztő felület is!
+                        <p>
+                            Résztvevők: TODO
+                        </p>
+
+                        <WysiwygEditor @bind-Value="this.SelectedItem.Temporal.Description"></WysiwygEditor>
+
+                        <button type='submit'>Küldés</button>
+                        <AuthorizedView NeededRolesOR="@Permissions.DeleteProject">
                             <input type='button' class="delete" value="Törlés" @onclick="OnDefaultDeleteSubmit" />
                         </AuthorizedView>
-                    }
-                </EditForm>
-            </div>
-            @if (this.DialogLoading)
-            {
-                <div class='loading'> </div>
-            }
-        </section>*@
+                    </EditForm>
+                }
+                else
+                {
+                    <p>Neked ilyet nem szabad :(</p>
+                }
+                <!--#endregion-->
+                break;
+            case DisplayType.AddLog:
+            case DisplayType.EditLog:
+                <!--#region Napló hozzáadás/szerkesztés-->
+                @if (HasLocalAuthorization)
+                {
+                    //TODO
+                    <EditForm EditContext="new EditContext(null)" OnSubmit="OnLogAddEditSubmit">
+                        <h2>Naplóbejegyzés szerkesztése</h2>
+
+                        <WysiwygEditor @bind-Value="this.SelectedItem.Temporal.Description"></WysiwygEditor>
+
+                        <button type='submit'>Küldés</button>
+                        <AuthorizedView NeededRolesOR="@Permissions.DeleteProject">
+                            <input type='button' class="delete" value="Törlés" @onclick="OnLogDeleteSubmit" />
+                        </AuthorizedView>
+                    </EditForm>
+                }
+                else
+                {
+                    <p>Neked ilyet nem szabad :(</p>
+                }
+                <!--#endregion-->
+                break;
+        }
+    </main>
 }
 
 @code
 {
     protected override string BaseLink { get; set; } = "member-projects";
     protected override string DataName { get; set; } = "projekt";
+
+    private TemporalObject<LogEntry> SelectedLogEntry { get; set; }
+
+    private enum DisplayType
+    {
+        Show,
+        EditSummary,
+        EditLog,
+        AddLog
+    }
+
+    [Parameter]
+    public string LogPopupDisplay { get; set; }
+
+    [Parameter]
+    public string PopupDisplay2 { get; set; }
+
+    private DisplayType Display
+    {
+        get
+        {
+            if (this.LogPopupDisplay == null)
+            {
+                if (this.NavMan.Uri.EndsWith("edit"))
+                {
+                    return DisplayType.EditSummary;
+                }
+                else
+                {
+
+                    return DisplayType.Show;
+                }
+            }
+            else
+            {
+                if (this.PopupDisplay2 == "edit")
+                {
+                    return DisplayType.EditLog;
+                }
+                else
+                {
+
+                    return DisplayType.AddLog;
+                }
+            }
+        }
+    }
+
+    private bool HasLocalAuthorization
+    {
+        get
+        {
+            if (this.SelectedItem.Original.Members.Contains(this.AuthManager.CurrentMember) ||
+                this.AuthManager.CurrentMember.Roles.Contains(Permissions.EditAnyProject) ||
+                this.AuthManager.CurrentMember.Roles.Contains(Permissions.Overlord))
+            {
+                return true;
+            }
+
+            return false;
+        }
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await Task.Run(() =>
+        {
+            this.SelectedItem = null;
+
+            if (this.PopupDisplay == "add")
+            {
+                this.SelectedItem = new TemporalObject<MemberProject>(new MemberProject());
+            }
+            else if (this.PopupDisplay != null)
+            {
+                int showId = 0;
+                if (int.TryParse(this.PopupDisplay, out showId))
+                {
+                    MemberProject item = this.ItemList.FirstOrDefault(i => i.Id == showId);
+                    this.SelectedItem = new TemporalObject<MemberProject>(item);
+                }
+            }
+
+            if(this.PopupDisplay2 == "log")
+            {
+                if (this.LogPopupDisplay == "add")
+                {
+                    this.SelectedLogEntry = new TemporalObject<LogEntry>(new LogEntry());
+                }
+                else if (this.LogPopupDisplay != null)
+                {
+                    int showId = 0;
+                    if (int.TryParse(this.LogPopupDisplay, out showId))
+                    {
+                        LogEntry item = this.SelectedItem.Original.ProjectLog.FirstOrDefault(i => i.Id == showId);
+                        this.SelectedLogEntry = new TemporalObject<LogEntry>(item);
+                    }
+                }
+            }
+        });
+    }
+
+    private void OnLogAddEditSubmit()
+    {
+        this.DialogLoading = true;
+
+        Task.Run(() =>
+        {
+            //TODO
+            if (this.PopupDisplay == "add")
+            {
+                this.m_Collection.Insert(this.SelectedItem.FoldBack());
+                GanzAdminDbEngine.Instance.Transact();
+
+                this.JS.InvokeVoidAsync("alertify.success", $"{this.DataName.ToCapital()} hozzáadva!");
+            }
+            else
+            {
+                this.m_Collection.Update(this.SelectedItem.FoldBack());
+                GanzAdminDbEngine.Instance.Transact();
+
+                this.JS.InvokeVoidAsync("alertify.success", $"{this.DataName.ToCapital()} módosítva!");
+            }
+
+            this.DialogLoading = false;
+            this.NavMan.NavigateTo($"/{BaseLink}");
+        });
+    }
+
+    private void OnLogDeleteSubmit()
+    {
+        this.m_Collection.Delete(this.SelectedItem.Original.Id);
+        GanzAdminDbEngine.Instance.Transact();
+
+        this.JS.InvokeVoidAsync("alertify.success", $"{this.DataName.ToCapital()} törölve :(");
+    }
 }
