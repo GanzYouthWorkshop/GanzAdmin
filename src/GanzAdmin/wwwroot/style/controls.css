@@ -1,4 +1,4 @@
-﻿/* ***************** SWITCH ***********************************************************************************************/
+﻿/*#region Switch*/
 label.switch
 {
   position: relative;
@@ -56,3 +56,4 @@ input:checked + .slider:before
   -ms-transform: translateX(26px);
   transform: translateX(26px);
 }
+/*#endregion*/

@@ -23,7 +23,7 @@
         {
             @foreach (MemberProject item in this.ItemList)
             {
-                <section>
+                <section class="entry-item">
                     <img srv="@item.Logo" />
                     <h2>@item.Name</h2>
                     <p>Állapot: @item.IsFinished</p>
@@ -69,26 +69,34 @@ else
                     <h3>Fejlesztési napló</h3>
                     @foreach (LogEntry entry in this.SelectedItem.Original.ProjectLog.OrderByDescending(log => log.StartTime).Take(5))
                     {
-                        //TODO
+                        <section class="entry-item">
+                            <h4>@entry.StartTime</h4>
+                            @if (HasLocalAuthorization)
+                            {
+                                <NavLink class="button" href="@($"/{this.BaseLink}/{this.SelectedItem.Original.Id}/log/{entry.Id}")">Szerkesztés</NavLink>
+                            }
+                            <WysiwygViewer Source="@entry.Content"></WysiwygViewer>
+                        </section>
                     }
                 </section>
                 <!--#endregion-->
                 break;
 
+            case DisplayType.Add:
             case DisplayType.EditSummary:
-                <!--#region Szerkesztés-->
+                <!--#region Hozzáadás/Szerkesztés-->
                 @if (HasLocalAuthorization)
                 {
-                    <EditForm EditContext="new EditContext(null)"  OnSubmit="OnDefaultAddEditSubmit">
+                    <EditForm EditContext="new EditContext(true)"  OnSubmit="OnDefaultAddEditSubmit">
                         <h2>"@this.SelectedItem.Original.Name" szerkesztése</h2>
                         <SimpleTextField @bind-Value="this.SelectedItem.Temporal.Name" Name="name" Display="Projektnév" Type="text"></SimpleTextField>
 
-                        //TODO fel kéne tudni tölteni a képet
-                        <img srv="@this.SelectedItem.Original.Logo" />
+                        @*TODO fel kéne tudni tölteni a képet*@
+                        <img src="@this.SelectedItem.Original.Logo" />
 
                         <SimpleCheckField Type="switch" Display="Befejezett" Name="finished" @bind-Value="@this.SelectedItem.Temporal.IsFinished" />
 
-                        //TODO: Kelleni fog egy tag-szerkesztő felület is!
+                        @*TODO: Kelleni fog egy tag-szerkesztő felület is!*@
                         <p>
                             Résztvevők: TODO
                         </p>
@@ -96,9 +104,12 @@ else
                         <WysiwygEditor @bind-Value="this.SelectedItem.Temporal.Description"></WysiwygEditor>
 
                         <button type='submit'>Küldés</button>
-                        <AuthorizedView NeededRolesOR="@Permissions.DeleteProject">
-                            <input type='button' class="delete" value="Törlés" @onclick="OnDefaultDeleteSubmit" />
-                        </AuthorizedView>
+                        @if (this.Display == DisplayType.EditSummary)
+                        {
+                            <AuthorizedView NeededRolesOR="@Permissions.DeleteProject">
+                                <input type='button' class="delete" value="Törlés" @onclick="OnDefaultDeleteSubmit" />
+                            </AuthorizedView>
+                        }
                     </EditForm>
                 }
                 else
@@ -112,17 +123,24 @@ else
                 <!--#region Napló hozzáadás/szerkesztés-->
                 @if (HasLocalAuthorization)
                 {
-                    //TODO
-                    <EditForm EditContext="new EditContext(null)" OnSubmit="OnLogAddEditSubmit">
-                        <h2>Naplóbejegyzés szerkesztése</h2>
+                    if(this.SelectedLogEntry != null)
+                    {
+                        //TODO
+                        <EditForm EditContext="new EditContext(true)" OnSubmit="OnLogAddEditSubmit">
+                            <h2>Naplóbejegyzés szerkesztése</h2>
 
-                        <WysiwygEditor @bind-Value="this.SelectedItem.Temporal.Description"></WysiwygEditor>
+                            <WysiwygEditor @bind-Value="this.SelectedLogEntry.Temporal.Content"></WysiwygEditor>
 
-                        <button type='submit'>Küldés</button>
-                        <AuthorizedView NeededRolesOR="@Permissions.DeleteProject">
-                            <input type='button' class="delete" value="Törlés" @onclick="OnLogDeleteSubmit" />
-                        </AuthorizedView>
-                    </EditForm>
+                            <button type='submit'>Küldés</button>
+
+                            @if (this.Display == DisplayType.EditLog)
+                            {
+                                <AuthorizedView NeededRolesOR="@Permissions.DeleteProject">
+                                    <input type='button' class="delete" value="Törlés" @onclick="OnLogDeleteSubmit" />
+                                </AuthorizedView>
+                            }
+                        </EditForm>
+                    }
                 }
                 else
                 {
@@ -144,6 +162,7 @@ else
     private enum DisplayType
     {
         Show,
+        Add,
         EditSummary,
         EditLog,
         AddLog
@@ -165,6 +184,10 @@ else
                 {
                     return DisplayType.EditSummary;
                 }
+                else if (this.NavMan.Uri.EndsWith("add"))
+                {
+                    return DisplayType.Add;
+                }
                 else
                 {
 
@@ -173,7 +196,7 @@ else
             }
             else
             {
-                if (this.PopupDisplay2 == "edit")
+                if (this.LogPopupDisplay != "add")
                 {
                     return DisplayType.EditLog;
                 }
@@ -247,31 +270,50 @@ else
         Task.Run(() =>
         {
             //TODO
-            if (this.PopupDisplay == "add")
+            if (this.Display == DisplayType.AddLog)
             {
-                this.m_Collection.Insert(this.SelectedItem.FoldBack());
+                if(this.SelectedItem.Temporal.ProjectLog.Count > 0)
+                {
+                    this.SelectedLogEntry.Temporal.Id = this.SelectedItem.Temporal.ProjectLog.Max(log => log.Id);
+                    this.SelectedLogEntry.Temporal.Id++;
+                }
+                else
+                {
+                    this.SelectedLogEntry.Temporal.Id = 1;
+                }
+                this.SelectedLogEntry.Temporal.StartTime = DateTime.Now;
+                this.SelectedLogEntry.Temporal.Writer = this.AuthManager.CurrentMember;
+                this.SelectedItem.Temporal.ProjectLog.Add(this.SelectedLogEntry.Temporal);
+
+                this.m_Collection.Update(this.SelectedItem.FoldBack());
                 GanzAdminDbEngine.Instance.Transact();
 
-                this.JS.InvokeVoidAsync("alertify.success", $"{this.DataName.ToCapital()} hozzáadva!");
+                this.JS.InvokeVoidAsync("alertify.success", $"Naplóbejegyzés hozzáadva!");
             }
             else
             {
                 this.m_Collection.Update(this.SelectedItem.FoldBack());
                 GanzAdminDbEngine.Instance.Transact();
 
-                this.JS.InvokeVoidAsync("alertify.success", $"{this.DataName.ToCapital()} módosítva!");
+                this.JS.InvokeVoidAsync("alertify.success", $"Naplóbejegyzés módosítva!");
             }
 
             this.DialogLoading = false;
-            this.NavMan.NavigateTo($"/{BaseLink}");
+            this.NavMan.NavigateTo($"/{BaseLink}/{PopupDisplay}");
         });
     }
 
     private void OnLogDeleteSubmit()
     {
-        this.m_Collection.Delete(this.SelectedItem.Original.Id);
-        GanzAdminDbEngine.Instance.Transact();
+        Task.Run(() =>
+        {
+            this.SelectedItem.Temporal.ProjectLog.Remove(this.SelectedLogEntry.Original);
 
-        this.JS.InvokeVoidAsync("alertify.success", $"{this.DataName.ToCapital()} törölve :(");
+            this.m_Collection.Update(this.SelectedItem.FoldBack());
+            GanzAdminDbEngine.Instance.Transact();
+
+            this.JS.InvokeVoidAsync("alertify.success", $"Naplóbejegyzés törölve :(");
+            this.NavMan.NavigateTo($"/{BaseLink}/{PopupDisplay}");
+        });
     }
 }

@@ -6,17 +6,17 @@
         <h1>Helló, @this.CurrentUser?.Name!</h1>
 
         <div class="grid">
-            <section>
+            <section class="entry-item">
                 <h2>Foglalkozás</h2>
-                <NavLink href="/curriculum" class="button">
+                <NavLink href="/curriculum">
                     <i></i>
                     <p>Tananyagtár</p>
                 </NavLink>
-                <NavLink href="/member-projects" class="button">
+                <NavLink href="/member-projects">
                     <i></i>
                     <p>Projektek</p>
                 </NavLink>
-                <NavLink href="/calendar" class="button">
+                <NavLink href="/calendar">
                     <i></i>
                     <p>Naptár</p>
                 </NavLink>
@@ -30,53 +30,53 @@
                 }
             </section>
 
-            <section>
+            <section class="entry-item">
                 <h2>Adatkezelés</h2>
                 <AuthorizedView NeededRolesOR="@Permissions.ListMembers">
-                    <NavLink href="/members" class="button">
+                    <NavLink href="/members">
                         <i></i>
                         <p>Tagok</p>
                     </NavLink>
                 </AuthorizedView>
                 <AuthorizedView NeededRolesOR="@Permissions.ListLocations">
-                    <NavLink href="/locations" class="button">
+                    <NavLink href="/locations">
                         <i></i>
                         <p>Helyek</p>
                     </NavLink>
                 </AuthorizedView>
                 <AuthorizedView NeededRolesOR="@Permissions.ListLocations">
-                    <NavLink href="/categories" class="button">
+                    <NavLink href="/categories">
                         <i></i>
                         <p>Kategóriák</p>
                     </NavLink>
                 </AuthorizedView>
             </section>
 
-            <section>
+            <section class="entry-item">
                 <h2>Felhőtároló</h2>
                 <AuthorizedView NeededRolesOR="@Permissions.AccessOwnFileStorage">
-                    <NavLink href="/files/own" class="button">
+                    <NavLink href="/files/own">
                         <i></i>
                         <p>Saját fájljaim</p>
                     </NavLink>
                 </AuthorizedView>
                 <AuthorizedView NeededRolesOR="@Permissions.AccessSharedFileStorage">
-                    <NavLink href="/files/shared" class="button">
+                    <NavLink href="/files/shared">
                         <i></i>
                         <p>Közös fájlok</p>
                     </NavLink>
                 </AuthorizedView>
             </section>
 
-            <section>
+            <section class="entry-item">
                 <h2>Fejlesztői eszközök</h2>
-                <NavLink href="/dev-ideas" class="button">
+                <NavLink href="/dev-ideas">
                     <i></i>
                     <p>Javaslatok</p>
                 </NavLink>
 
                 <AuthorizedView NeededRolesOR="@Permissions.Overlord">
-                    <NavLink href="/test-auth" class="button">
+                    <NavLink href="/test-auth">
                         <i></i>
                         <p>Tesztek</p>
                     </NavLink>

@@ -1,19 +1,9 @@
 @import url(./fontawesome/font.css);
 
+/*#region Teljesen általános szabályok*/
 body
 {
 	font-family: 'Segoe UI';
-}
-
-a
-{
-	cursor: pointer;
-	color: #00897b;
-}
-
-a:hover
-{
-	color: #26a69a;
 }
 
 i
@@ -38,11 +28,51 @@ i
 	background-position: center center;
 	background-repeat: no-repeat;
 }
+/*#endregion*/
 
-/* **************************************************************************************************************************** */
-
-header
+/*#region Linkek, gombok, alapvető nívigációs ezközök*/
+a
 {
+	cursor: pointer;
+	color: #00897b;
+}
+
+a:hover
+{
+	color: #26a69a;
+}
+
+input[type=submit], input[type=button], button, a.button
+{
+	padding: 5px 1em;
+	text-transform: uppercase;
+	background-color: #00838f;
+	color: #FFFFFF;
+	border: 0;
+	cursor: pointer;
+	text-decoration: none;
+}
+
+input[type=submit]:hover, input[type=button]:hover, button:hover, a.button:hover
+{
+	background-color: #00897b;
+}
+
+
+/*#endregion*/
+
+/*#region Kevésbé általános de több helyen használt fomázások*/
+.entry-item
+{
+	margin: 1em;
+	padding: 0 1em;
+	border: 1px solid #CCCCCC;
+	border-radius: 2px;
+}
+/*#endregion*/
+
+/*#region Fejléc, keresőterület, felső menü*/
+header {
 	position: absolute;
 	top: 0;
 	height: 60px;
@@ -204,8 +234,9 @@ header nav ul li a:hover
 #auto-complete-display div.location:before{ content: ''; }
 #auto-complete-display div.parameter:before{ content: ''; }
 
-/* **************************************************************************************************************************** */
+/*#endregion*/
 
+/*#region Oldalsó sáv*/
 aside
 {
 	width: 250px;
@@ -261,7 +292,10 @@ aside a.addlink:hover
 	background-color: #00897b;
 }
 
-/* **************************************************************************************************************************** */
+/*#endregion*/
+
+/*TODO: itt a fő táblázatot ki kéne szedni!*/
+/*#region Fő terület és régi fő táblázat*/
 
 main
 {
@@ -434,8 +468,10 @@ main table tr.alert td
 	background-color: #ffcdd2 !important;
 }
 
-/* **************************************************************************************************************************** */
+/*#endregion*/
 
+/*TODO: innen egy csomó mindent általánosítani kéne!*/
+/*#region Popup szerkesztői felület az adatkezeléshez*/
 .popup
 {
 	/*display: none;*/
@@ -529,21 +565,6 @@ main table tr.alert td
 	text-align: left;
 }
 
-.popup input[type=submit], .popup input[type=button], .popup button, #login input[type=submit]
-{
-	padding: 5px 1em;
-	text-transform: uppercase;
-	background-color: #00838f;
-	color: #FFFFFF;
-	border: 0;
-	cursor: pointer;
-}
-
-.popup input[type=submit]:hover, .popup input[type=button]:hover, .popup button:hover,  #login input[type=submit]:hover
-{
-	background-color: #00897b;
-}
-
 .popup input[type=text], .popup input[type=password], .popup textarea, .popup select
 {
 	font-family: 'Segoe UI';
@@ -552,7 +573,7 @@ main table tr.alert td
 	width: 20em;
 }
 
-.popup input[type=text]:focus, .popup input[type=password], .popup textarea:focus
+.popup input[type=text]:focus, .popup input[type=password]:focus, .popup textarea:focus
 {
 	border: 3px solid #00897b;
 }
@@ -643,9 +664,30 @@ main table tr.alert td
 {
 	display: none;
 }
+/*#endregion*/
 
-/* **************************************************************************************************************************** */
+/*#region Főoldal (dashboard*/
+.dashboard a
+{
+	display: inline-block;
+	border: 1px solid #EEEEEE;
+	padding: 1em;
+	margin: 1em;
+	text-decoration: none;
+	text-transform: uppercase;
+	width: 120px;
+	text-align: center;
+}
 
+.dashboard a i
+{
+	display: block;
+	margin: 1em 0;
+	font-size: 2em;
+}
+/*#endregion*/
+
+/*#region Content(?)*/
 #content .body
 {
 	width: 1000px;
@@ -696,9 +738,9 @@ main table tr.alert td
 	z-index: 102;
 	box-shadow: 10px 10px 0px #222222;
 }
+/*#endregion*/
 
-/* **************************************************************************************************************************** */
-
+/*#region Login form*/
 form.login
 {
 	margin: 0 auto;
@@ -730,10 +772,9 @@ form.login button, form.login button:hover
 {
 	background-color: #26a69a;
 }
+/*#endregion*/
 
-
-/* **************************************************************************************************************************** */
-
+/*#region Naptár*/
 table.calendar
 {
 	position: absolute;
@@ -784,9 +825,9 @@ table.calendar td.today
 {
 	background-color: #ffcdd2;
 }
+/*#endregion*/
 
-/* **************************************************************************************************************************** */
-
+/*#region Fájlböngésző*/
 main.filebrowser a
 {
 	margin: 1em;
@@ -808,8 +849,10 @@ main.filebrowser a img
 	width: 96px;
 	height: 96px;
 }
+/*#endregion*/
 
-/* **************************************************************************************************************************** */
+/*TODO: jelezzük egyértelműen, hogy wysiwyg, ez a userpage hülye név!*/
+/*#region Wysiwyg tartalom*/
 .userpage small
 {
 	font-size: 0.5em;
@@ -847,10 +890,10 @@ main.filebrowser a img
 	margin: 0 0 1em 2em;
 	font-style: italic;
 }
+/*#endregion*/
 
-
-/* **************************************************************************************************************************** */
-
+/*TODO: Átnézni!*/
+/*#region Egyéb, ezeket át kell nézni és besorolni valahova!*/
 #login.popup .body
 {
 	height: auto;
@@ -881,25 +924,6 @@ main.filebrowser a img
 	padding: 0 1em;
 	border: 1px solid #CCCCCC;
 	border-radius: 2px;
-}
-
-.dashboard a.button
-{
-	display: inline-block;
-	border: 1px solid #EEEEEE;
-	padding: 1em;
-	margin: 1em;
-	text-decoration: none;
-	text-transform: uppercase;
-	width: 120px;
-	text-align: center;
-}
-
-.dashboard a.button i
-{
-	display: block;
-	margin: 1em 0;
-	font-size: 2em;
 }
 
 .alertify-button
@@ -940,14 +964,6 @@ main .breadcrumb a
 	padding: 1em;
 }
 
-.simple-ui section
-{
-	margin: 1em;
-	padding: 1em;
-	border: 1px solid #CCCCCC;
-	border-radius: 2px;
-}
-
 .simple-ui section img
 {
 	float: left;
@@ -960,3 +976,4 @@ main .breadcrumb a
 	padding: 1em;
 	border: 2px solid #00897b;
 }
+/*#endregion*/
