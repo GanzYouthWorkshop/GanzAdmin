@@ -1,5 +1,8 @@
 ﻿@page "/"
 
+@using System.Net;
+@using Microsoft.AspNetCore.Http;
+
 <main class="full dashboard @(this.CurrentUser == null ? "loading" : "")">
     @if (this.CurrentUser != null)
     {
@@ -21,9 +24,9 @@
                     <p>Naptár</p>
                 </NavLink>
 
-                @if (!this.CurrentUser.Attendances.Exists(a => a.Occasion.Date == DateTime.Today))
+                @if (this.CanAttend)
                 {
-                    <NavLink class="button" @onclick="OnLogAttenance">
+                    <NavLink @onclick="OnLogAttenance">
                         <i></i>
                         <p>Megjöttem!</p>
                     </NavLink>
@@ -94,7 +97,22 @@
     [Inject]
     public GanzAuthProvider AuthProvider { get; set; }
 
+    [Inject]
+    protected IHttpContextAccessor Http { get; set; }
+
+
     public Member CurrentUser { get; set; }
+
+    public bool CanAttend
+    {
+        get
+        {
+            bool b1 = !this.CurrentUser.Attendances.Exists(a => a.Occasion.Date == DateTime.Today);
+            bool b2 = new WebClient().DownloadString("http://icanhazip.com") == this.Http.HttpContext.Connection.RemoteIpAddress.ToString();
+
+            return b1 && b2;
+        }
+    }
 
     protected override async Task OnInitializedAsync()
     {

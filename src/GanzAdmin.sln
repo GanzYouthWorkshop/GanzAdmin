@@ -20,6 +20,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Main", "Main", "{700C96C6-9
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Utils", "Utils", "{95345B4F-84CC-4B97-977C-BB5A47CD35E0}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Git externals", "Git externals", "{620F3039-54E9-4EEF-A82A-B523435EF925}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GEV Common Library", "..\_submodules\GEV-Common-Library\src\GEV Common Library\GEV Common Library.csproj", "{CB307FCC-19FE-4138-BEAF-20FEC5D9D6B7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -42,6 +46,10 @@ Global
 		{A30F99CD-6FF2-4968-BDF3-8BD169302038}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A30F99CD-6FF2-4968-BDF3-8BD169302038}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A30F99CD-6FF2-4968-BDF3-8BD169302038}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CB307FCC-19FE-4138-BEAF-20FEC5D9D6B7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CB307FCC-19FE-4138-BEAF-20FEC5D9D6B7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CB307FCC-19FE-4138-BEAF-20FEC5D9D6B7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CB307FCC-19FE-4138-BEAF-20FEC5D9D6B7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -51,6 +59,7 @@ Global
 		{5DA2E70B-E684-4498-88B8-13E41C4409B6} = {700C96C6-9CAE-4459-A090-134A09C73A6A}
 		{D1F42547-121E-4624-A199-66BFF21EA2F5} = {700C96C6-9CAE-4459-A090-134A09C73A6A}
 		{A30F99CD-6FF2-4968-BDF3-8BD169302038} = {95345B4F-84CC-4B97-977C-BB5A47CD35E0}
+		{CB307FCC-19FE-4138-BEAF-20FEC5D9D6B7} = {620F3039-54E9-4EEF-A82A-B523435EF925}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E749833F-B1B5-4CA4-88B1-B28F67E18BF2}

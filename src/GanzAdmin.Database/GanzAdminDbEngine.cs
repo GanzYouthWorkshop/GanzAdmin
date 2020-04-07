@@ -9,13 +9,11 @@ namespace GanzAdmin.Database
 {
     public class GanzAdminDbEngine
     {
-        public const string CONNECTION_STRING = @"Filename=_Data\ganzadmin.db; Mode=Shared";
-
         private bool m_IsDisposing;
 
         private LiteDatabase m_InnerDb;
 
-        public static GanzAdminDbEngine Instance { get; } = new GanzAdminDbEngine();
+        public static GanzAdminDbEngine Instance { get; set; }
 
         public ILiteCollection<Member> Members { get { return this.m_InnerDb.GetCollection<Member>().Include(i => i.Attendances); } }
         public ILiteCollection<Attendance> Attendances { get { return this.m_InnerDb.GetCollection<Attendance>(); } }
@@ -37,9 +35,9 @@ namespace GanzAdmin.Database
             }
         }
 
-        public GanzAdminDbEngine()
+        public GanzAdminDbEngine(string connectionString)
         {
-            this.m_InnerDb = new LiteDatabase(CONNECTION_STRING);
+            this.m_InnerDb = new LiteDatabase(connectionString);
         }
 
         public void EnsureCreated()

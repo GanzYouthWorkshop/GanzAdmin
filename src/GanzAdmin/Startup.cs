@@ -16,6 +16,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.JSInterop;
+using GanzAdmin.Configuration;
 
 namespace GanzAdmin
 {
@@ -46,8 +47,10 @@ namespace GanzAdmin
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            GanzAdminDbEngine db = GanzAdminDbEngine.Instance;
-            db.EnsureCreated();
+            GanzAdminConfiguration.Instance = GanzAdminConfiguration.Load("config.xml");
+
+            GanzAdminDbEngine.Instance = new GanzAdminDbEngine(GanzAdminConfiguration.Instance.DatabaseConnectionString);
+            GanzAdminDbEngine.Instance.EnsureCreated();
 
             if (env.IsDevelopment())
             {

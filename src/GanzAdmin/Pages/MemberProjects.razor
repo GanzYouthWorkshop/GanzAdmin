@@ -67,17 +67,34 @@ else
                     </p>
                     <WysiwygViewer Source="@this.SelectedItem.Original.Description"></WysiwygViewer>
                     <h3>Fejlesztési napló</h3>
-                    @foreach (LogEntry entry in this.SelectedItem.Original.ProjectLog.OrderByDescending(log => log.StartTime).Take(5))
-                    {
-                        <section class="entry-item">
-                            <h4>@entry.StartTime</h4>
-                            @if (HasLocalAuthorization)
-                            {
-                                <NavLink class="button" href="@($"/{this.BaseLink}/{this.SelectedItem.Original.Id}/log/{entry.Id}")">Szerkesztés</NavLink>
-                            }
-                            <WysiwygViewer Source="@entry.Content"></WysiwygViewer>
-                        </section>
-                    }
+                    <ul class='timeline'>
+                        @foreach (LogEntry entry in this.SelectedItem.Original.ProjectLog.OrderByDescending(log => log.StartTime).Take(5))
+                        {
+                            <li class='work'>
+                                <input class='radio' id='work5' name='works' type='radio' checked>
+                                <div class="relative">
+                                    @*<label for='work5'>Lorem ipsum dolor sit amet</label>*@
+                                    <span class='date'>@entry.StartTime</span>
+                                    <span class='circle'></span>
+                                </div>
+                                <div class='content'>
+                                    <NavLink class="button" href="@($"/{this.BaseLink}/{this.SelectedItem.Original.Id}/log/{entry.Id}")">Szerkesztés</NavLink>
+                                    <WysiwygViewer Source="@entry.Content"></WysiwygViewer>
+                                </div>
+                            </li>
+
+
+
+                            @*<section class="entry-item">
+                                <h4>@entry.StartTime</h4>
+                                @if (HasLocalAuthorization)
+                                {
+                                    <NavLink class="button" href="@($"/{this.BaseLink}/{this.SelectedItem.Original.Id}/log/{entry.Id}")">Szerkesztés</NavLink>
+                                }
+                                <WysiwygViewer Source="@entry.Content"></WysiwygViewer>
+                            </section>*@
+                        }
+                    </ul>
                 </section>
                 <!--#endregion-->
                 break;
