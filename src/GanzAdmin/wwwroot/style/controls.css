@@ -59,9 +59,6 @@ input:checked + .slider:before
 /*#endregion*/
 
 /*#region Timeline*/
-/* -------------------------------------
- * timeline
- * ------------------------------------- */
 .timeline
 {
     list-style: none;
@@ -181,6 +178,63 @@ input:checked + .slider:before
 .timeline /*.radio:checked ~*/ .content p
 {
     transition: color 0.3s linear 0.3s;
+}
+
+/*#endregion*/
+
+/*#region Tag editor*/
+
+.tags-editor
+{
+    list-style: outside none none;
+    background: none repeat scroll 0 0 #fff;
+    border: 1px solid #ccc;
+    display: table;
+    padding: 0.5em;
+    width: 100%;
+    cursor: text;
+}
+
+.tags-editor li.tagAdd, .tags-editor li.addedTag
+{
+    float: left;
+    margin-left: 0.25em;
+    margin-right: 0.25em;
+}
+
+.tags-editor li.addedTag
+{
+    cursor:default;
+    background: none repeat scroll 0 0 #00838f;
+    border-radius: 2px;
+    color: #fff;
+    padding: 0.25em;
+}
+
+.tags-editor input, li.addedTag
+{
+    border: 1px solid transparent;
+    border-radius: 2px;
+    box-shadow: none;
+    display: block;
+    padding: 0.5em;
+}
+
+.tags-editor input:hover
+{
+    border: 1px solid #000;
+}
+
+span.tagRemove
+{
+    cursor: pointer;
+    display: inline-block;
+    padding-left: 0.5em;
+}
+
+span.tagRemove:hover
+{
+    color: #222222;
 }
 
 /*#endregion*/

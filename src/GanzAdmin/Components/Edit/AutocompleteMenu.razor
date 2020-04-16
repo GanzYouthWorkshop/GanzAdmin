@@ -1,0 +1,27 @@
+﻿@using GanzAdmin.Authentication.Components;
+@using GanzAdmin.Database.Models;
+
+@if (this.Items.Count > 0)
+{
+    <div>
+        @foreach (Tuple<int, string> item in this.Items)
+        {
+            <span>@item.Item2</span>
+        }
+    </div>
+}
+
+@code
+{
+    [Parameter]
+    public List<Tuple<int, string>> Items { get; set; } = new List<Tuple<int, string>>();
+
+    [Parameter]
+    public EventCallback<List<Tuple<int, string>>> ItemsChanged { get; set; }
+
+    protected virtual Task OnItemsChanged(ChangeEventArgs e)
+    {
+        this.Items = (List<Tuple<int, string>>)e.Value;
+        return this.ItemsChanged.InvokeAsync(this.Items);
+    }
+}
