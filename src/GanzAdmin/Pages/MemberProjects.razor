@@ -118,6 +118,9 @@ else
                             Résztvevők: TODO
                         </p>
 
+                        <TagsEditor AuthOR="" ItemType="Member"  Items="this.AllMembers" @bind-Value="@this.SelectedItem.Temporal.Members"></TagsEditor>
+
+
                         <WysiwygEditor @bind-Value="this.SelectedItem.Temporal.Description"></WysiwygEditor>
 
                         <button type='submit'>Küldés</button>
@@ -175,6 +178,19 @@ else
     protected override string DataName { get; set; } = "projekt";
 
     private TemporalObject<LogEntry> SelectedLogEntry { get; set; }
+
+    public MemberProjects()
+    {
+        this.m_Collection = GanzAdminDbEngine.Instance.GetCollection<MemberProject>().Include(i => i.Members);
+    }
+
+    public List<Member> AllMembers
+    {
+        get
+        {
+            return GanzAdminDbEngine.Instance.Members.FindAll().ToList();
+        }
+    }
 
     private enum DisplayType
     {

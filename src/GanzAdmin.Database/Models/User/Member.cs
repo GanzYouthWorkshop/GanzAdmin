@@ -29,7 +29,7 @@ namespace GanzAdmin.Database.Models
         [BsonIgnore]
         public string DisplayValue
         {
-            get { return this.Username; }
+            get { return this.Name; }
         }
     }
 }

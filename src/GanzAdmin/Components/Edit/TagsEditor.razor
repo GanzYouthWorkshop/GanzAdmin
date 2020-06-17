@@ -1,0 +1,70 @@
+﻿@using GanzAdmin.Authentication.Components;
+@using GanzAdmin.Database.Models;
+
+@typeparam ItemType
+@inherits EditField<List<ItemType>>
+
+<p>
+    <label for="@this.Name">@this.Display:</label>
+    <AuthorizedView NeededRolesOR="@this.AuthOR" NeededRolesAND="@this.AuthAND">
+        <ul class="tags-editor" onclick="$(this).find('input').first().focus()">
+            @foreach (IEntity item in this.Value)
+            {
+                <li class="addedTag">
+                    @item.DisplayValue
+                    <span @onclick="() => this.OnDelete((ItemType)item)" class="tagRemove">x</span>
+                </li>
+            }
+            <li class="tagAdd taglist">
+                <input @ref="valami" type="text" id="search-field" @bind="this.TempValue" @bind:event="oninput" @onfocusout="Reset" @onkeyup="CheckForEnter" onkeypress="if(event.keyCode == 13) { event.preventDefault(); }">
+            </li>
+        </ul>
+    </AuthorizedView>
+    <NonAuthorizedView NeededRolesOR="@this.AuthOR" NeededRolesAND="@this.AuthAND">
+        <span>@this.Value</span>
+    </NonAuthorizedView>
+</p>
+
+
+
+@code
+{
+    private object valami;
+
+    [Parameter]
+    public List<ItemType> Items{ get; set; } = new List<ItemType>();
+
+    public string TempValue { get; set; } = "";
+
+    private void OnDelete(ItemType item)
+    {
+        this.Value.RemoveAll(i => (i as IEntity).Id == (item as IEntity).Id);
+        this.OnValueChanged(new ChangeEventArgs() { Value = this.Value });
+
+        this.m_HasRendered = false;
+        this.StateHasChanged();
+    }
+
+    private void CheckForEnter(KeyboardEventArgs e)
+    {
+        if(e.Code == "Enter")
+        {
+            ItemType temp = this.Items.FirstOrDefault(item => (item as IEntity).DisplayValue.ToLower().Contains(this.TempValue.ToLower()));
+            if(temp != null && this.Value.FirstOrDefault(item => (item as IEntity).Id == (temp as IEntity).Id) == null)
+            {
+                this.Value.Add(temp);
+                this.OnValueChanged(new ChangeEventArgs() { Value = this.Value });
+
+                this.Reset();
+
+                this.m_HasRendered = false;
+                this.StateHasChanged();
+            }
+        }
+    }
+
+    private void Reset()
+    {
+        this.TempValue = "";
+    }
+}

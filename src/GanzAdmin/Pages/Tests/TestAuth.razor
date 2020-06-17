@@ -3,34 +3,57 @@
 @using System.IO;
 @using  GanzAdmin.Components.Edit;
 
-<main class="full dashboard">
-    <AuthorizeView>
-        <Authorized>
-            Be vagy jelentkezve!
-        </Authorized>
-        <Authorizing>
-            Éppen jelentkezel be!
-        </Authorizing>
-        <NotAuthorized>
-            Nem vagy bejelentkezve!
-        </NotAuthorized>
-    </AuthorizeView>
+    <main class="full dashboard">
+        <AuthorizeView>
+            <Authorized>
+                Be vagy jelentkezve!
+            </Authorized>
+            <Authorizing>
+                Éppen jelentkezel be!
+            </Authorizing>
+            <NotAuthorized>
+                Nem vagy bejelentkezve!
+            </NotAuthorized>
+        </AuthorizeView>
 
-    @if(this.Files != null)
-    {
-        @foreach(string s in this.Files)
+        @if (this.Files != null)
         {
-            <p>@s</p>
+            @foreach (string s in this.Files)
+            {
+                <p>@s</p>
+            }
         }
-    }
 
-    <WysiwygEditor Value="teszt"></WysiwygEditor>
-</main>
+        <WysiwygEditor Value="teszt"></WysiwygEditor>
+
+        @*<TagsEditor AuthOR="" Items="this.Users" @bind-Value="vla"></TagsEditor>*@
+
+        <ul class="tags-editor">
+            <li class="addedTag">Web Deisgn<span onclick="$(this).parent().remove();" class="tagRemove">x</span><input type="hidden" name="tags[]" value="Web Deisgn"></li>
+            <li class="addedTag">Web Develop<span onclick="$(this).parent().remove();" class="tagRemove">x</span><input type="hidden" name="tags[]" value="Web Develop"></li>
+            <li class="addedTag">SEO<span onclick="$(this).parent().remove();" class="tagRemove">x</span><input type="hidden" name="tags[]" value="SEO"></li>
+            
+            <li class="tagAdd taglist">
+                <input type="text" id="search-field">
+            </li>
+        </ul>
+
+    </main>
 
 
 @code
 {
     private List<string> Files { get; set; }
+
+    private List<Tuple<int, string>> vla { get; set; } = new List<Tuple<int, string>>();
+
+    private List<Tuple<int, string>> Users
+    {
+        get
+        {
+            return GanzAdmin.Database.GanzAdminDbEngine.Instance.Members.FindAll().Select(m => new Tuple<int, string>((int)m.Id, m.Name)).ToList();
+        }
+    }
 
     protected override async Task OnInitializedAsync()
     {

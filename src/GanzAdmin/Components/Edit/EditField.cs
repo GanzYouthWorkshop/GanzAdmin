@@ -8,7 +8,7 @@ namespace GanzAdmin.Components.Edit
 {
     public class EditField<T> : ComponentBase
     {
-        private bool m_HasRendered = false;
+        protected bool m_HasRendered = false;
 
         [Parameter]
         public string AuthOR { get; set; }

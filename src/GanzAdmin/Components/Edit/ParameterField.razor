@@ -1,0 +1,55 @@
+﻿@using GanzAdmin.Authentication.Components;
+@using GanzAdmin.Database.Models;
+
+@typeparam ItemType
+@inherits EditField<PartParameter>
+
+<p>
+    <label for="@this.Name">@this.Display:</label>
+    <AuthorizedView NeededRolesOR="@this.AuthOR" NeededRolesAND="@this.AuthAND">
+        @if(this.Value.IsSelectValue)
+        {
+            <ComboBox AuthAND="@this.AuthAND" AuthOR="@this.AuthOR" 
+        }
+        else
+        {
+        }
+
+
+        <select name="@this.Name" @onchange="OnValueChanged">
+            <option value="0">-</option>
+            @foreach (ItemType item in Items)
+            {
+                if (!item.Equals(this.Owner))
+                {
+                    if (item.Equals(this.Value))
+                    {
+                        <option value="@((item as IEntity).Id)" selected>@((item as IEntity).DisplayValue)</option>
+                    }
+                    else
+                    {
+                        <option value="@((item as IEntity).Id)">@((item as IEntity).DisplayValue)</option>
+                    }
+                }
+            }
+        </select>
+    </AuthorizedView>
+    <NonAuthorizedView NeededRolesOR="@this.AuthOR" NeededRolesAND="@this.AuthAND">
+        <span>@this.Value</span>
+    </NonAuthorizedView>
+</p>
+
+@code
+{
+    [Parameter]
+    public List<ItemType> Items { get; set; }
+
+    [Parameter]
+    public ItemType Owner { get; set; }
+
+    protected override Task OnValueChanged(ChangeEventArgs e)
+    {
+        this.Value = this.Items.Find(i => ((IEntity)i).Id == Convert.ToInt64(e.Value));
+        return this.ValueChanged.InvokeAsync((ItemType)Value);
+    }
+}
