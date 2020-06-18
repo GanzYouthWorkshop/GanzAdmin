@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace GanzAdmin.Database.Models
@@ -16,6 +17,14 @@ namespace GanzAdmin.Database.Models
             get
             {
                 return (bool)this.DefaultValue?.Contains("|");
+            }
+        }
+
+        public List<string> SelectOptions
+        {
+            get
+            {
+                return this.DefaultValue.Split("|").ToList();
             }
         }
     }

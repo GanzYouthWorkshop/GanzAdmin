@@ -16,7 +16,11 @@ namespace GanzAdmin.Database.Models
         public Category Category { get; set; }
 
         [BsonRef]
-        public List<Stockpile> Stock { get; set; }
+        public List<Stockpile> Stock { get; set; } = new List<Stockpile>();
+
+        [BsonRef]
+        public int MinimumStock { get; set; } = 0;
+
 
         [BsonIgnore]
         public string DisplayValue

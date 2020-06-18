@@ -47,12 +47,19 @@
                         <p>Helyek</p>
                     </NavLink>
                 </AuthorizedView>
-                <AuthorizedView NeededRolesOR="@Permissions.ListLocations">
+                <AuthorizedView NeededRolesOR="@Permissions.ListCategories">
                     <NavLink href="/categories">
                         <i></i>
                         <p>Kategóriák</p>
                     </NavLink>
                 </AuthorizedView>
+                <AuthorizedView NeededRolesOR="@Permissions.ListParts">
+                    <NavLink href="/parts">
+                        <i></i>
+                        <p>Alkatrészek</p>
+                    </NavLink>
+                </AuthorizedView>
+
             </section>
 
             <section class="entry-item">
