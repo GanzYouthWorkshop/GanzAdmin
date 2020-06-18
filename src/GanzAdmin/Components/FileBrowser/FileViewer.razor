@@ -50,6 +50,6 @@
 
     public string WebFile
     {
-        get { return this.FileName.Substring(this.m_Hosting.WebRootPath.Length); }
+        get { return this.FileName.Substring(this.m_Hosting.WebRootPath.Length).Replace('\\', '/'); }
     }
 }

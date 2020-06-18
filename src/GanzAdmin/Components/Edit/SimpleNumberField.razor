@@ -1,0 +1,49 @@
+﻿@using GanzAdmin.Authentication.Components;
+
+@typeparam ItemType
+@inherits EditField<ItemType>
+
+<p>
+    <label for="@this.Name">@this.Display:</label>
+    <AuthorizedView NeededRolesOR="@this.AuthOR" NeededRolesAND="@this.AuthAND">
+        @switch (this.Type)
+        {
+            case "text":
+                <input type="text" value="@this.Value" name="@this.Name" @onchange="OnValueChanged" />
+                break;
+            case "password":
+                <input type="password" value="@this.Value" name="@this.Name" @onchange="OnValueChanged" />
+                break;
+        }
+    </AuthorizedView>
+    <NonAuthorizedView NeededRolesOR="@this.AuthOR" NeededRolesAND="@this.AuthAND">
+        @switch (this.Type)
+        {
+            case "text":
+                <span>@this.Value</span>
+                break;
+            case "password":
+                <span>*********</span>
+                break;
+        }
+
+    </NonAuthorizedView>
+</p>
+
+@code
+{
+    protected override Task OnValueChanged(ChangeEventArgs e)
+    {
+        decimal temp = 0;
+        if (decimal.TryParse(e.Value.ToString(), out temp))
+        {
+            this.m_Value = (ItemType)Convert.ChangeType(temp, typeof(ItemType));
+
+            this.Changed.InvokeAsync(this.m_Value);
+            return this.ValueChanged.InvokeAsync(this.m_Value);
+        }
+
+        return null;
+    }
+
+}

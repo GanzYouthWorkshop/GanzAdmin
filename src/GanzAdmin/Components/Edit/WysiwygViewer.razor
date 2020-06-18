@@ -15,7 +15,8 @@
             break;
 
         case "delimiter":
-            <hr />;
+            <hr />
+            ;
             break;
 
         case "code":
@@ -59,6 +60,16 @@
             }
             break;
 
+        case "checklist":
+            <ul>
+                @foreach (JsonElement le in data.GetProperty("items").EnumerateArray())
+                {
+                    @*@(le.GetProperty("checked").GetBoolean())*@
+                    <li>@((MarkupString)le.GetProperty("text").GetString())</li>
+                }
+            </ul>
+            break;
+
         case "table":
             <table>
                 @foreach (JsonElement row in data.GetProperty("content").EnumerateArray())
@@ -74,8 +85,7 @@
             break;
 
         case "embed":
-            <iframe
-                    width="@data.GetProperty("width").GetRawText()"
+            <iframe width="@data.GetProperty("width").GetRawText()"
                     height="@data.GetProperty("height").GetRawText()"
                     src="@data.GetProperty("embed").GetString()" allowfullscreen></iframe>
             break;
@@ -83,7 +93,7 @@
 }
 
 @code
-                        {
+{
     [Parameter]
     public string Source { get; set; }
 

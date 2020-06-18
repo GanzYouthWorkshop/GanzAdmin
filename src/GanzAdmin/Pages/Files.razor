@@ -82,11 +82,11 @@
             }
             else if (this.NavMan.Uri.Contains("shared"))
             {
-                this.Base = @"C:\Documents and Settings\Szlatyka\Documents";
+                this.Base = @"\filestorage\shared";
             }
             else if (this.NavMan.Uri.Contains("secret"))
             {
-                this.Base = @"C:\Documents and Settings\Szlatyka\Documents";
+                this.Base = @"\filestorage\own";
             }
             else
             {
@@ -111,7 +111,7 @@
         }
         else
         {
-            this.OpenedFile = this.Path + "\\" + info.Path;
+            this.OpenedFile = this.m_Hosting.WebRootPath +  this.Path + "\\" + info.Path;
         }
 
     }

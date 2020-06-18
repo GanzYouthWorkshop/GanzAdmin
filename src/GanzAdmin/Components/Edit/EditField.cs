@@ -31,7 +31,7 @@ namespace GanzAdmin.Components.Edit
             get { return this.m_Value; }
             set { this.m_Value = value; }
         }
-        private T m_Value;
+        protected T m_Value;
 
         [Parameter]
         public EventCallback<T> ValueChanged { get; set; }

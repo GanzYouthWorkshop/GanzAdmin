@@ -34,7 +34,7 @@
                             <span>@member.Name, </span>
                         }
                     </p>
-                    <p>@item.Description</p>
+                    <p><WysiwygViewer Source="@item.Description" /></p>
                     <NavLink class="button" href="@($"/{this.BaseLink}/{item.Id}")">Részletek</NavLink>
                 </section>
             }

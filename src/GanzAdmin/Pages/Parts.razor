@@ -24,6 +24,7 @@
                         <DataGridHeader IsPinnable IsSortable>Kategória</DataGridHeader>
                         <DataGridHeader IsPinnable IsSortable>Mennyiség</DataGridHeader>
                         <DataGridHeader IsPinnable IsSortable>Minimum raktári mennyiség</DataGridHeader>
+                        <DataGridHeader IsPinnable IsSortable>Hiányos?</DataGridHeader>
                     </tr>
                 </thead>
             </table>
@@ -35,6 +36,7 @@
                         <DataGridHeader IsPinnable IsSortable>Kategória</DataGridHeader>
                         <DataGridHeader IsPinnable IsSortable>Mennyiség</DataGridHeader>
                         <DataGridHeader IsPinnable IsSortable>Minimum raktári mennyiség</DataGridHeader>
+                        <DataGridHeader IsPinnable IsSortable>Hiányos?</DataGridHeader>
                     </tr>
                 </thead>
 
@@ -45,6 +47,16 @@
                         <td>
                         <NavLink href="@($"/{this.BaseLink}/{item.Id}")">@item.Name</NavLink></td>
                         <td>@item.Category.Name</td>
+                        <td>
+                            @foreach(Stockpile stock in item.Stock)
+                            {
+                                <span> (@stock.Amount)</span>
+                                <span><a>-1</a></span>
+                                <br />
+                            }
+                        </td>
+                        <td>@item.MinimumStock</td>
+                        <td></td>
                     </tr>
                     }
                 </tbody>
@@ -67,19 +79,20 @@
                 <div class='dynamic'>
                     <SimpleTextField AuthOR="@Permissions.EditParts" Type="text" Display="Név" Name="@nameof(Part.Name)" @bind-Value="this.SelectedItem.Temporal.Name" />
                     <ComboBox AuthOR="@Permissions.EditParts" ItemType="@Category" Items="@GanzAdminDbEngine.Instance.Categories.FindAll()" Owner="this.SelectedItem.Temporal.Category" Name="@nameof(Part.Category)" Display="Kategória" @bind-Value="this.SelectedItem.Temporal.Category" Changed="CategoryChanged"/>
-                    @*<SimpleTextField AuthOR="@Permissions.EditParts" Type="text" Display="Min. készlet" Name="@nameof(Part.MinimumStock)" @bind-Value="this.SelectedItem.Temporal.MinimumStock.ToString()" />*@
+                    <SimpleNumberField AuthOR="@Permissions.EditParts" Type="text" Display="Min. készlet" Name="@nameof(Part.MinimumStock)" @bind-Value="this.SelectedItem.Temporal.MinimumStock" />
 
-                    <span>Raktérkészlet</span>
+                    <h3>Raktérkészlet</h3>
                     @foreach (Stockpile stock in this.SelectedItem.Temporal.Stock)
                     {
                         <div>
-                            <ComboBox AuthOR="@Permissions.EditParts" ItemType="@Location" Items="@GanzAdminDbEngine.Instance.Locations.FindAll()" Owner="stock.Location" Name="@nameof(Part.Category)" Display="Hely" @bind-Value="stock.Location" />
-                            @*<SimpleTextField AuthOR="@Permissions.EditParts" Type="text" Display="Mennyiség" Name="@nameof(Stockpile.Amount)" @bind-Value="@stock.DisplayValue" />*@
-                            <button>X</button>
+                            <ComboBox AuthOR="@Permissions.EditParts" ItemType="@Location" Items="@GanzAdminDbEngine.Instance.Locations.FindAll()" Name="@nameof(Part.Category)" Display="Hely" @bind-Value="stock.Location" />
+                            <SimpleNumberField AuthOR="@Permissions.EditParts" Type="text" Display="Mennyiség" Name="@nameof(Stockpile.Amount)" ItemType="long" @bind-Value="@stock.Amount" />
+                            <a @onclick="() => this.SelectedItem.Temporal.Stock.Remove(stock)">X</a>
                         </div>
                     }
+                    <a @onclick="() => this.SelectedItem.Temporal.Stock.Add(new Stockpile())">Új leltári tétel</a>
 
-                    <span>Kategória paraméterek</span>
+                    <h3>Kategória paraméterek</h3>
                     @if (this.SelectedItem.Temporal.Category != null)
                     {
                         @foreach (PartParameter parameter in this.SelectedItem.Temporal.Category.DefaultParameters)

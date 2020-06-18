@@ -3,15 +3,18 @@
 
 @inherits DataHandlingController<Category>
 
-<aside class='@(this.ItemList == null ? "loading" : "")'>
-    @if (this.ItemList != null)
-    {
-        @*<TreeLevel Items="@(this.ItemList.ToEntities<Category>())" Root="@null" Filter="@((e, r) => (e as Category).ParentCategory == null && r == null || (e as Category).ParentCategory?.Id == r?.Id)" />*@
-    }
-    <AuthorizedView NeededRolesOR="@Permissions.EditLocations">
-        <NavLink class="addlink" href="@($"/{this.BaseLink}/add")">Új @this.DataName</NavLink>
-    </AuthorizedView>
-</aside>
+    <aside class='@(this.ItemList == null ? "loading" : "")'>
+        @if (this.ItemList != null)
+        {
+            <TreeLevel Items="@(this.ItemList.ToEntities<Category>())"
+                       Root="@null"
+                       Filter="@((e, r) => (e as Category).ParentCategory == null && r == null || (e as Category).ParentCategory?.Id == r?.Id)"
+                       UrlTemplate="@((e) => $"/{this.BaseLink}/{e.Id}")" />
+        }
+        <AuthorizedView NeededRolesOR="@Permissions.EditLocations">
+            <NavLink class="addlink" href="@($"/{this.BaseLink}/add")">Új @this.DataName</NavLink>
+        </AuthorizedView>
+    </aside>
 
 <main class='@(this.ItemList == null ? "loading" : "")'>
     @if (this.ItemList != null)
