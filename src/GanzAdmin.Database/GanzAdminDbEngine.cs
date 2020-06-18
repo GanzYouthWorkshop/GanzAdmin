@@ -22,6 +22,8 @@ namespace GanzAdmin.Database
 
         public ILiteCollection<Location> Locations { get { return this.m_InnerDb.GetCollection<Location>(); } }
         public ILiteCollection<Category> Categories { get { return this.m_InnerDb.GetCollection<Category>(); } }
+        
+        public ILiteCollection<Part> Parts { get { return this.m_InnerDb.GetCollection<Part>().Include(i => i.Category).Include(i => i.Stock); } }
 
         public void Dispose()
         {
@@ -69,6 +71,10 @@ namespace GanzAdmin.Database
             if(typeof(T).Equals(typeof(Member)))
             {
                 return (ILiteCollection<T>)this.Members;
+            }
+            if(typeof(T).Equals(typeof(Part)))
+            {
+                return (ILiteCollection<T>)this.Parts;
             }
             return this.m_InnerDb.GetCollection<T>();
         }

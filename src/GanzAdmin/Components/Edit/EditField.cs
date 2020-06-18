@@ -8,7 +8,7 @@ namespace GanzAdmin.Components.Edit
 {
     public class EditField<T> : ComponentBase
     {
-        protected bool m_HasRendered = false;
+        private bool m_HasRendered = false;
 
         [Parameter]
         public string AuthOR { get; set; }
@@ -36,10 +36,16 @@ namespace GanzAdmin.Components.Edit
         [Parameter]
         public EventCallback<T> ValueChanged { get; set; }
 
+        [Parameter]
+        public EventCallback<T> Changed { get; set; }
+
         protected virtual Task OnValueChanged(ChangeEventArgs e)
         {
             this.m_Value = (T)e.Value;
+
+            this.Changed.InvokeAsync(this.m_Value);
             return this.ValueChanged.InvokeAsync(this.m_Value);
+            
         }
 
         protected override void OnAfterRender(bool firstRender)

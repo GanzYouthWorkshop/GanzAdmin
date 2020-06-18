@@ -41,6 +41,8 @@
     protected override Task OnValueChanged(ChangeEventArgs e)
     {
         this.Value = this.Items.FirstOrDefault(i => ((IEntity)i).Id == Convert.ToInt64(e.Value));
+        
+        this.Changed.InvokeAsync((ItemType)Value);
         return this.ValueChanged.InvokeAsync((ItemType)Value);
     }
 }

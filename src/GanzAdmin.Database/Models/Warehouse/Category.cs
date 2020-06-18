@@ -13,7 +13,7 @@ namespace GanzAdmin.Database.Models
         public string Name { get; set; }
         public Category ParentCategory { get; set; }
 
-        public List<PartParameter> DefaultParameters { get; set; }
+        public List<PartParameter> DefaultParameters { get; set; } = new List<PartParameter>();
 
         [BsonIgnore]
         public string DisplayValue

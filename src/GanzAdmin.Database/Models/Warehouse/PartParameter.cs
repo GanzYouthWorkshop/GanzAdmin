@@ -16,7 +16,11 @@ namespace GanzAdmin.Database.Models
         {
             get
             {
-                return (bool)this.DefaultValue?.Contains("|");
+                if(this.DefaultValue != null)
+                {
+                    return this.DefaultValue.Contains("|");
+                }
+                return false;
             }
         }
 
@@ -24,7 +28,11 @@ namespace GanzAdmin.Database.Models
         {
             get
             {
-                return this.DefaultValue.Split("|").ToList();
+                if (this.DefaultValue != null)
+                {
+                    return this.DefaultValue.Split("|").ToList();
+                }
+                return null;
             }
         }
     }

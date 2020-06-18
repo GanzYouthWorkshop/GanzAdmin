@@ -4,57 +4,68 @@
 @typeparam ItemType
 @inherits EditField<PartParameter>
 
-<p>
-    <label for="@this.Name">@this.Display:</label>
-    <AuthorizedView NeededRolesOR="@this.AuthOR" NeededRolesAND="@this.AuthAND">
-        @if (this.Value.IsSelectValue && !this.IsDefaultEditor)
-        {
-            <select name="@this.Name" @onchange="OnValueChanged">
-                <option value="0">-</option>
-                @foreach (string item in this.Value.SelectOptions)
-                {
-                    if (!item.Equals(this.Value.Value))
+    <p>
+        <AuthorizedView NeededRolesOR="@this.AuthOR" NeededRolesAND="@this.AuthAND">
+            @if (this.IsDefaultEditor)
+            {
+                <input type="text" @bind-value="this.Value.Name" name="@this.Name" placeholder="Név" />
+
+            }
+            else
+            {
+                <label for="@this.Name">@this.Value.Name:</label>
+            }
+        </AuthorizedView>
+        <NonAuthorizedView NeededRolesOR="@this.AuthOR" NeededRolesAND="@this.AuthAND">
+            <label for="@this.Name">@this.Value.Name:</label>
+        </NonAuthorizedView>
+
+        <AuthorizedView NeededRolesOR="@this.AuthOR" NeededRolesAND="@this.AuthAND">
+            @if (this.Value.IsSelectValue && !this.IsDefaultEditor)
+            {
+                <select name="@this.Name" @onchange="OnValueChanged">
+                    <option value="0">-</option>
+                    @foreach (string item in this.Value.SelectOptions)
                     {
-                        if (item.Equals(this.Value))
+                        if (!item.Equals(this.Value.Value))
                         {
-                            <option value="@item" selected>@item</option>
-                        }
-                        else
-                        {
-                            <option value="@item">@item</option>
+                            if (item.Equals(this.Value))
+                            {
+                                <option value="@item" selected>@item</option>
+                            }
+                            else
+                            {
+                                <option value="@item">@item</option>
+                            }
                         }
                     }
-                }
-            </select>
-        }
-        else
-        {
-            <input type="text" value="@this.Value.Value" name="@this.Name" @onchange="OnValueChanged" />
-        }
+                </select>
+            }
+            else
+            {
+                <input type="text" @bind-value="this.Value.Value" name="@this.Name" placeholder="Érték" />
+            }
 
-        @if (this.IsDefaultEditor)
-        {
-            <input type="text" value="@this.Value.Unit" name='@(this.Name+"unit")' @onchange="OnValueChanged" />
-        }
-        else
-        {
+            @if (this.IsDefaultEditor)
+            {
+                <input type="text" @bind-value="this.Value.Unit" name='@(this.Name+"unit")' placeholder="Mértékegység" />
+            }
+            else
+            {
+                <span>@this.Value.Unit</span>
+            }
+
+        </AuthorizedView>
+        <NonAuthorizedView NeededRolesOR="@this.AuthOR" NeededRolesAND="@this.AuthAND">
+            <span>@this.Value</span>
             <span>@this.Value.Unit</span>
-        }
-
-    </AuthorizedView>
-    <NonAuthorizedView NeededRolesOR="@this.AuthOR" NeededRolesAND="@this.AuthAND">
-        <span>@this.Value</span>
-    </NonAuthorizedView>
-</p>
+        </NonAuthorizedView>
+    </p>
 
 @code
 {
     [Parameter]
     public bool IsDefaultEditor { get; set; }
-
-    [Parameter]
-    public PartParameter Parameter { get; set; }
-
 
     protected override Task OnValueChanged(ChangeEventArgs e)
     {
