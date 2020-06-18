@@ -59,6 +59,9 @@ input:checked + .slider:before
 /*#endregion*/
 
 /*#region Timeline*/
+/* -------------------------------------
+ * timeline
+ * ------------------------------------- */
 .timeline
 {
     list-style: none;

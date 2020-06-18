@@ -21,7 +21,7 @@
                 <thead>
                     <tr>
                         <DataGridHeader IsPinnable IsSortable>Név</DataGridHeader>
-                        <DataGridHeader IsCollapsible IsSortable>Hely</DataGridHeader>
+                        <DataGridHeader IsCollapsible IsSortable>Kategória</DataGridHeader>
                     </tr>
                 </thead>
             </table>
@@ -30,7 +30,7 @@
                 <thead>
                     <tr>
                         <DataGridHeader IsPinnable IsSortable>Név</DataGridHeader>
-                        <DataGridHeader IsCollapsible IsSortable>Hely</DataGridHeader>
+                        <DataGridHeader IsCollapsible IsSortable>Kategória</DataGridHeader>
                     </tr>
                 </thead>
 
@@ -61,8 +61,19 @@
             <EditForm method="post" EditContext="new EditContext(true)" OnSubmit="OnDefaultAddEditSubmit">
                 <div class='dynamic'>
                     <SimpleTextField AuthOR="@Permissions.EditLocations" Type="text" Display="Név" Name="@nameof(Category.Name)" @bind-Value="this.SelectedItem.Temporal.Name" />
-                    <ComboBox AuthOR="@Permissions.EditLocations" ItemType="@Category" Items="@this.ItemList" Owner="this.SelectedItem.Temporal" Name="@nameof(Category.ParentCategory)" Display="Hely" @bind-Value="this.SelectedItem.Temporal.ParentCategory" />
+                    <ComboBox AuthOR="@Permissions.EditLocations" ItemType="@Category" Items="@this.ItemList" Owner="this.SelectedItem.Temporal" Name="@nameof(Category.ParentCategory)" Display="Kategória" @bind-Value="this.SelectedItem.Temporal.ParentCategory" />
                 </div>
+
+                <span>Alapértelmezett paraméterek</span>
+                @foreach (PartParameter parameter in this.SelectedItem.Temporal.DefaultParameters)
+                {
+                    PartParameter temp = parameter;
+                    <ParameterField ItemType="@PartParameter" AuthOR="@Permissions.EditParts" IsDefaultEditor="true" @bind-Value="temp"></ParameterField>
+                    <a onclick="() => this.OnLogAttenance(member)">Törlés</a>
+                }
+                <button @onclick="() => this.SelectedItem.Temporal.DefaultParameters.Add(new PartParameter())">Paraméter hozzáadása</button>
+
+
                 <AuthorizedView NeededRolesOR="@Permissions.EditLocations">
                     <button type='submit'>Küldés</button>
                 </AuthorizedView>

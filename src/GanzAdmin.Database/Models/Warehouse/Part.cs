@@ -18,7 +18,6 @@ namespace GanzAdmin.Database.Models
         [BsonRef]
         public List<Stockpile> Stock { get; set; } = new List<Stockpile>();
 
-        [BsonRef]
         public int MinimumStock { get; set; } = 0;
 
 
