@@ -5,9 +5,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Components\Tags\**" />
     <Compile Remove="NewFolder\**" />
+    <Content Remove="Components\Tags\**" />
     <Content Remove="NewFolder\**" />
+    <EmbeddedResource Remove="Components\Tags\**" />
     <EmbeddedResource Remove="NewFolder\**" />
+    <None Remove="Components\Tags\**" />
     <None Remove="NewFolder\**" />
   </ItemGroup>
 
@@ -23,7 +27,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Components\Tags\" />
     <Folder Include="wwwroot\img\files\" />
   </ItemGroup>
 

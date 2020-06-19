@@ -23,7 +23,7 @@ namespace GanzAdmin.Database
         public ILiteCollection<Location> Locations { get { return this.m_InnerDb.GetCollection<Location>(); } }
         public ILiteCollection<Category> Categories { get { return this.m_InnerDb.GetCollection<Category>(); } }
         
-        public ILiteCollection<Part> Parts { get { return this.m_InnerDb.GetCollection<Part>().Include(i => i.Category).Include(i => i.Stock); } }
+        public ILiteCollection<Part> Parts { get { return this.m_InnerDb.GetCollection<Part>().Include(i => i.Category).Include(BsonExpression.Create("$.Stock[*].Location")); } }
 
         public void Dispose()
         {

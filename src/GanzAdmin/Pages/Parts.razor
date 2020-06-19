@@ -6,7 +6,9 @@
 <aside class='@(this.ItemList == null ? "loading" : "")'>
     @if (this.ItemList != null)
     {
-        <TreeLevel Items="@(this.ItemList.ToEntities<Part>())" Root="@null" Filter="@((e, r) => (e as Part).Category == null && r == null || (e as Part).Category?.Id == r?.Id)" />
+        <TreeLevel Items="@(this.ItemList.ToEntities<Part>())" 
+                   Root="@null" 
+                   Filter="@((e, r) => (e as Part).Category == null && r == null || (e as Part).Category?.Id == r?.Id)" />
     }
     <AuthorizedView NeededRolesOR="@Permissions.EditParts">
         <NavLink class="addlink" href="@($"/{this.BaseLink}/add")">Új @this.DataName</NavLink>
@@ -21,10 +23,12 @@
                 <thead>
                     <tr>
                         <DataGridHeader IsPinnable IsSortable>Név</DataGridHeader>
-                        <DataGridHeader IsPinnable IsSortable>Kategória</DataGridHeader>
-                        <DataGridHeader IsPinnable IsSortable>Mennyiség</DataGridHeader>
-                        <DataGridHeader IsPinnable IsSortable>Minimum raktári mennyiség</DataGridHeader>
-                        <DataGridHeader IsPinnable IsSortable>Hiányos?</DataGridHeader>
+                        <DataGridHeader IsCollapsible IsSortable>Kategória</DataGridHeader>
+                        <DataGridHeader IsCollapsible>Mennyiség</DataGridHeader>
+                        <DataGridHeader IsCollapsible IsSortable>Minimum raktári mennyiség</DataGridHeader>
+                        <DataGridHeader IsCollapsible IsSortable>Hiányos?</DataGridHeader>
+                        <DataGridHeader IsCollapsible IsSortable>Leírás</DataGridHeader>
+
                     </tr>
                 </thead>
             </table>
@@ -33,30 +37,34 @@
                 <thead>
                     <tr>
                         <DataGridHeader IsPinnable IsSortable>Név</DataGridHeader>
-                        <DataGridHeader IsPinnable IsSortable>Kategória</DataGridHeader>
-                        <DataGridHeader IsPinnable IsSortable>Mennyiség</DataGridHeader>
-                        <DataGridHeader IsPinnable IsSortable>Minimum raktári mennyiség</DataGridHeader>
-                        <DataGridHeader IsPinnable IsSortable>Hiányos?</DataGridHeader>
+                        <DataGridHeader IsCollapsible IsSortable>Kategória</DataGridHeader>
+                        <DataGridHeader IsCollapsible>Mennyiség</DataGridHeader>
+                        <DataGridHeader IsCollapsible IsSortable>Minimum raktári mennyiség</DataGridHeader>
+                        <DataGridHeader IsCollapsible IsSortable>Hiányos?</DataGridHeader>
+                        <DataGridHeader IsCollapsible IsSortable>Leírás</DataGridHeader>
                     </tr>
                 </thead>
 
                 <tbody>
                     @foreach (Part item in this.ItemList)
                     {
+                        long totalAmount = item.Stock.Sum(s => s.Amount);
                     <tr>
                         <td>
                         <NavLink href="@($"/{this.BaseLink}/{item.Id}")">@item.Name</NavLink></td>
                         <td>@item.Category.Name</td>
                         <td>
-                            @foreach(Stockpile stock in item.Stock)
+                            @foreach (Stockpile stock in item.Stock)
                             {
+                                <span>@stock.Location?.Name</span>
                                 <span> (@stock.Amount)</span>
-                                <span><a>-1</a></span>
+                                <span><a @onclick="() => this.OnRemoveOneFromStock(stock)">-1</a></span>
                                 <br />
                             }
                         </td>
                         <td>@item.MinimumStock</td>
-                        <td></td>
+                        <td>@(item.MinimumStock > totalAmount ? "❗" : "")</td>
+                        <td>@item.ShortDescription</td>
                     </tr>
                     }
                 </tbody>
@@ -77,9 +85,28 @@
 
             <EditForm method="post" EditContext="new EditContext(true)" OnSubmit="OnDefaultAddEditSubmit">
                 <div class='dynamic'>
-                    <SimpleTextField AuthOR="@Permissions.EditParts" Type="text" Display="Név" Name="@nameof(Part.Name)" @bind-Value="this.SelectedItem.Temporal.Name" />
-                    <ComboBox AuthOR="@Permissions.EditParts" ItemType="@Category" Items="@GanzAdminDbEngine.Instance.Categories.FindAll()" Owner="this.SelectedItem.Temporal.Category" Name="@nameof(Part.Category)" Display="Kategória" @bind-Value="this.SelectedItem.Temporal.Category" Changed="CategoryChanged"/>
-                    <SimpleNumberField AuthOR="@Permissions.EditParts" Type="text" Display="Min. készlet" Name="@nameof(Part.MinimumStock)" @bind-Value="this.SelectedItem.Temporal.MinimumStock" />
+                    <SimpleTextField AuthOR="@Permissions.EditParts"
+                                     Type="text"
+                                     Display="Név"
+                                     Name="@nameof(Part.Name)"
+                                     @bind-Value="this.SelectedItem.Temporal.Name" />
+                    <ComboBox AuthOR="@Permissions.EditParts"
+                              ItemType="@Category"
+                              Items="@GanzAdminDbEngine.Instance.Categories.FindAll()"
+                              Name="@nameof(Part.Category)"
+                              Display="Kategória"
+                              @bind-Value="this.SelectedItem.Temporal.Category"
+                              Changed="CategoryChanged" />
+                    <SimpleNumberField AuthOR="@Permissions.EditParts"
+                                       Type="text" 
+                                       Display="Min. készlet" 
+                                       Name="@nameof(Part.MinimumStock)" 
+                                       @bind-Value="this.SelectedItem.Temporal.MinimumStock" />
+                    <SimpleTextField AuthOR="@Permissions.EditParts" 
+                                     Type="text" 
+                                     Display="Rövid leírás" 
+                                     Name="@nameof(Part.Name)" 
+                                     @bind-Value="this.SelectedItem.Temporal.ShortDescription" />
 
                     <h3>Raktérkészlet</h3>
                     @foreach (Stockpile stock in this.SelectedItem.Temporal.Stock)
@@ -132,5 +159,18 @@
     private void CategoryChanged()
     {
         this.StateHasChanged();
+    }
+
+    private void OnRemoveOneFromStock(Stockpile stock)
+    {
+        if(stock.Amount > 0)
+        {
+            stock.Amount--;
+            this.JS.InvokeVoidAsync("alertify.success", $"Egy elem leltárból eltávolítva!");
+        }
+        else
+        {
+            this.JS.InvokeVoidAsync("alertify.error", $"Üres lerakatból nem lehet elvenni!");
+        }
     }
 }

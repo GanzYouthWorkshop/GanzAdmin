@@ -67,14 +67,14 @@
                     <ComboBox AuthOR="@Permissions.EditLocations" ItemType="@Category" Items="@this.ItemList" Owner="this.SelectedItem.Temporal" Name="@nameof(Category.ParentCategory)" Display="Kategória" @bind-Value="this.SelectedItem.Temporal.ParentCategory" />
                 </div>
 
-                <span>Alapértelmezett paraméterek</span>
+                <h3>Alapértelmezett paraméterek</h3>
                 @foreach (PartParameter parameter in this.SelectedItem.Temporal.DefaultParameters)
                 {
                     PartParameter temp = parameter;
                     <ParameterField ItemType="@PartParameter" AuthOR="@Permissions.EditParts" IsDefaultEditor="true" @bind-Value="temp"></ParameterField>
-                    <a onclick="() => this.OnLogAttenance(member)">Törlés</a>
+                    <a @onclick="() => this.SelectedItem.Temporal.DefaultParameters.Remove(temp)">Törlés</a>
                 }
-                <button @onclick="() => this.SelectedItem.Temporal.DefaultParameters.Add(new PartParameter())">Paraméter hozzáadása</button>
+                <a @onclick="() => this.SelectedItem.Temporal.DefaultParameters.Add(new PartParameter())">Paraméter hozzáadása</a>
 
 
                 <AuthorizedView NeededRolesOR="@Permissions.EditLocations">
