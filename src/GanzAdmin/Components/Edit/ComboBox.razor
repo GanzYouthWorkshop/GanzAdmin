@@ -4,7 +4,7 @@
 @typeparam ItemType
 @inherits EditField<ItemType>
 
-<p>
+<p class="@(this.Inline ? "inline" : "")">
     <label for="@this.Name">@this.Display:</label>
     <AuthorizedView NeededRolesOR="@this.AuthOR" NeededRolesAND="@this.AuthAND">
         <select name="@this.Name" @onchange="OnValueChanged">
@@ -33,6 +33,9 @@
 @code
 {
     [Parameter]
+    public bool Inline { get; set; }
+
+    [Parameter]
     public IEnumerable<ItemType> Items { get; set; }
 
     [Parameter]
@@ -41,7 +44,7 @@
     protected override Task OnValueChanged(ChangeEventArgs e)
     {
         this.Value = this.Items.FirstOrDefault(i => ((IEntity)i).Id == Convert.ToInt64(e.Value));
-        
+
         this.Changed.InvokeAsync((ItemType)Value);
         return this.ValueChanged.InvokeAsync((ItemType)Value);
     }

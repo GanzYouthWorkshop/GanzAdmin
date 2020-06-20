@@ -2,7 +2,7 @@
 
 @inherits EditField<string>
 
-<p>
+<p class="@(this.Inline ? "inline" : "")">
     <label for="@this.Name">@this.Display:</label>
     <AuthorizedView NeededRolesOR="@this.AuthOR" NeededRolesAND="@this.AuthAND">
         @switch (this.Type)
@@ -28,3 +28,9 @@
 
     </NonAuthorizedView>
 </p>
+
+@code
+{
+    [Parameter]
+    public bool Inline { get; set; }
+}

@@ -57,7 +57,7 @@
                             @foreach (Stockpile stock in item.Stock)
                             {
                                 <span>@stock.Location?.Name</span>
-                                <span> (@stock.Amount)</span>
+                                <span> (@stock.Amount @item.StockUnit)</span>
                                 <span><a @onclick="() => this.OnRemoveOneFromStock(stock)">-1</a></span>
                                 <br />
                             }
@@ -75,6 +75,8 @@
 
 @if (this.SelectedItem != null)
 {
+    var defaults = new List<PartParameter>();
+
     <section class='popup' id='content'>
         <div class='shadow'></div>
         <div class='body'>
@@ -98,22 +100,39 @@
                               @bind-Value="this.SelectedItem.Temporal.Category"
                               Changed="CategoryChanged" />
                     <SimpleNumberField AuthOR="@Permissions.EditParts"
-                                       Type="text" 
-                                       Display="Min. készlet" 
-                                       Name="@nameof(Part.MinimumStock)" 
+                                       Type="text"
+                                       Display="Min. készlet"
+                                       Name="@nameof(Part.MinimumStock)"
                                        @bind-Value="this.SelectedItem.Temporal.MinimumStock" />
-                    <SimpleTextField AuthOR="@Permissions.EditParts" 
-                                     Type="text" 
-                                     Display="Rövid leírás" 
-                                     Name="@nameof(Part.Name)" 
+                    <SimpleTextField AuthOR="@Permissions.EditParts"
+                                     Type="text"
+                                     Display="Raktári készlet egység"
+                                     Name="@nameof(Part.StockUnit)"
+                                     @bind-Value="this.SelectedItem.Temporal.StockUnit" />
+                    <SimpleTextField AuthOR="@Permissions.EditParts"
+                                     Type="text"
+                                     Display="Rövid leírás"
+                                     Name="@nameof(Part.Name)"
                                      @bind-Value="this.SelectedItem.Temporal.ShortDescription" />
 
                     <h3>Raktérkészlet</h3>
                     @foreach (Stockpile stock in this.SelectedItem.Temporal.Stock)
                     {
                         <div>
-                            <ComboBox AuthOR="@Permissions.EditParts" ItemType="@Location" Items="@GanzAdminDbEngine.Instance.Locations.FindAll()" Name="@nameof(Part.Category)" Display="Hely" @bind-Value="stock.Location" />
-                            <SimpleNumberField AuthOR="@Permissions.EditParts" Type="text" Display="Mennyiség" Name="@nameof(Stockpile.Amount)" ItemType="long" @bind-Value="@stock.Amount" />
+                            <ComboBox Inline
+                                      AuthOR="@Permissions.EditParts"
+                                      ItemType="@Location"
+                                      Items="@GanzAdminDbEngine.Instance.Locations.FindAll().Where(l => !l.IsVirtual)"
+                                      Name="@nameof(Part.Category)"
+                                      Display="Hely"
+                                      @bind-Value="stock.Location" />
+                            <SimpleNumberField Inline
+                                               AuthOR="@Permissions.EditParts"
+                                               Type="text"
+                                               Display="Mennyiség"
+                                               Name="@nameof(Stockpile.Amount)"
+                                               ItemType="long"
+                                               @bind-Value="@stock.Amount" />
                             <a @onclick="() => this.SelectedItem.Temporal.Stock.Remove(stock)">X</a>
                         </div>
                     }
@@ -125,11 +144,39 @@
                         @foreach (PartParameter parameter in this.SelectedItem.Temporal.Category.DefaultParameters)
                         {
                             PartParameter temp = parameter;
-                            <ParameterField ItemType="@PartParameter" AuthOR="@Permissions.EditParts" IsDefaultEditor="false" @bind-Value="temp"></ParameterField>
+                            PartParameter search = this.SelectedItem.Temporal.Parameters.FirstOrDefault(p => p.Name == temp.Name);
+                            if (search == null)
+                            {
+                                search = new PartParameter()
+                                {
+                                    Name = temp.Name,
+                                    Unit = temp.Unit,
+                                    DefaultValue = temp.Value,
+                                };
+                                this.SelectedItem.Temporal.Parameters.Add(search);
+
+                            }
+                            defaults.Add(search);
+
+                            <ParameterField ItemType="@PartParameter" AuthOR="@Permissions.EditParts" IsDefaultEditor="false" @bind-Value="search"></ParameterField>
                         }
                     }
 
-                    <span>Opcionális paraméterek</span>
+                    <h3>Opcionális paraméterek</h3>
+                    @foreach (PartParameter parameter in this.SelectedItem.Temporal.Parameters)
+                    {
+                        if (!defaults.Contains(parameter))
+                        {
+                            PartParameter temp = parameter;
+                            <p>
+                                <ParameterField Inline ItemType="@PartParameter" AuthOR="@Permissions.EditParts" IsDefaultEditor="true" @bind-Value="temp"></ParameterField>
+                                <a @onclick="() => this.SelectedItem.Temporal.Parameters.Remove(temp)">X</a>
+                            </p>
+                        }
+                    }
+                    <a @onclick="() => this.SelectedItem.Temporal.Parameters.Add(new PartParameter())">Új paraméter</a>
+
+
                 </div>
 
                 <AuthorizedView NeededRolesOR="@Permissions.EditParts">

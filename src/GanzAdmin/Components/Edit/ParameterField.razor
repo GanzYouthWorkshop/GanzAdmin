@@ -4,71 +4,72 @@
 @typeparam ItemType
 @inherits EditField<PartParameter>
 
-    <p>
-        <AuthorizedView NeededRolesOR="@this.AuthOR" NeededRolesAND="@this.AuthAND">
-            @if (this.IsDefaultEditor)
-            {
-                <input type="text" @bind-value="this.Value.Name" name="@this.Name" placeholder="Név" />
+<p class="@(this.Inline ? "inline" : "")">
+    <AuthorizedView NeededRolesOR="@this.AuthOR" NeededRolesAND="@this.AuthAND">
+        @if (this.IsDefaultEditor)
+        {
+            <input type="text" @bind-value="this.Value.Name" name="@this.Name" placeholder="Név" />
 
-            }
-            else
-            {
-                <label for="@this.Name">@this.Value.Name:</label>
-            }
-        </AuthorizedView>
-        <NonAuthorizedView NeededRolesOR="@this.AuthOR" NeededRolesAND="@this.AuthAND">
+        }
+        else
+        {
             <label for="@this.Name">@this.Value.Name:</label>
-        </NonAuthorizedView>
+        }
+    </AuthorizedView>
+    <NonAuthorizedView NeededRolesOR="@this.AuthOR" NeededRolesAND="@this.AuthAND">
+        <label for="@this.Name">@this.Value.Name:</label>
+    </NonAuthorizedView>
 
-        <AuthorizedView NeededRolesOR="@this.AuthOR" NeededRolesAND="@this.AuthAND">
-            @if (this.Value.IsSelectValue && !this.IsDefaultEditor)
-            {
-                <select name="@this.Name" @onchange="OnValueChanged">
-                    <option value="0">-</option>
-                    @foreach (string item in this.Value.SelectOptions)
+    <AuthorizedView NeededRolesOR="@this.AuthOR" NeededRolesAND="@this.AuthAND">
+        @if (this.Value.IsSelectValue && !this.IsDefaultEditor)
+        {
+            <select name="@this.Name" @onchange="OnValueChanged">
+                <option value="0">-</option>
+                @foreach (string item in this.Value.SelectOptions)
+                {
+                    if (item.Equals(this.Value.Value))
                     {
-                        if (!item.Equals(this.Value.Value))
-                        {
-                            if (item.Equals(this.Value))
-                            {
-                                <option value="@item" selected>@item</option>
-                            }
-                            else
-                            {
-                                <option value="@item">@item</option>
-                            }
-                        }
+                        <option value="@item" selected>@item</option>
                     }
-                </select>
-            }
-            else
-            {
-                <input type="text" @bind-value="this.Value.Value" name="@this.Name" placeholder="Érték" />
-            }
+                    else
+                    {
+                        <option value="@item">@item</option>
+                    }
+                }
+            </select>
+        }
+        else
+        {
+            <input type="text" @bind-value="this.Value.Value" name="@this.Name" placeholder="Érték" />
+        }
 
-            @if (this.IsDefaultEditor)
-            {
-                <input type="text" @bind-value="this.Value.Unit" name='@(this.Name+"unit")' placeholder="Mértékegység" />
-            }
-            else
-            {
-                <span>@this.Value.Unit</span>
-            }
-
-        </AuthorizedView>
-        <NonAuthorizedView NeededRolesOR="@this.AuthOR" NeededRolesAND="@this.AuthAND">
-            <span>@this.Value</span>
+        @if (this.IsDefaultEditor)
+        {
+            <input type="text" @bind-value="this.Value.Unit" name='@(this.Name+"unit")' placeholder="Mértékegység" />
+        }
+        else
+        {
             <span>@this.Value.Unit</span>
-        </NonAuthorizedView>
-    </p>
+        }
+
+    </AuthorizedView>
+    <NonAuthorizedView NeededRolesOR="@this.AuthOR" NeededRolesAND="@this.AuthAND">
+        <span>@this.Value</span>
+        <span>@this.Value.Unit</span>
+    </NonAuthorizedView>
+</p>
 
 @code
 {
+    [Parameter]
+    public bool Inline { get; set; }
+
     [Parameter]
     public bool IsDefaultEditor { get; set; }
 
     protected override Task OnValueChanged(ChangeEventArgs e)
     {
+        this.Value.Value = e.Value.ToString();
         return this.ValueChanged.InvokeAsync((PartParameter)this.Value);
     }
 }
