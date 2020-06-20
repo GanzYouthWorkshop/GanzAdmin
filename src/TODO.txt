@@ -8,12 +8,12 @@ KÉSZ :)
 -A szerepeket ki kell tudni osztani, de csak annyit, amennyit magunk is kapunk
 -Fájltár megcsinálása
 -Tananyagtár főleg a megjelenítés
+-UserProjektek listázássa, megjeleníytése, új naplóbejegyzés írása
 
 =================
 FOLYAMATBAN...
 =================
 -GanzInv funkcionalitásátv visszarakni (helyek-kategóriák-alaktrészek) és kibõvítése (projektek, lerakatok, mennyiségek)
--UserProjektek listázássa, megjeleníytése, új naplóbejegyzés írása
 
 =================
 MÉG NINCS KÉSZ :(
