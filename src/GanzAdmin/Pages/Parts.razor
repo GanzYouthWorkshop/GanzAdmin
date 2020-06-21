@@ -27,8 +27,8 @@
                         <DataGridHeader IsCollapsible>Mennyiség</DataGridHeader>
                         <DataGridHeader IsCollapsible IsSortable>Minimum raktári mennyiség</DataGridHeader>
                         <DataGridHeader IsCollapsible IsSortable>Hiányos?</DataGridHeader>
+                        <DataGridHeader IsCollapsible IsSortable>Termékkódok</DataGridHeader>
                         <DataGridHeader IsCollapsible IsSortable>Leírás</DataGridHeader>
-
                     </tr>
                 </thead>
             </table>
@@ -41,6 +41,7 @@
                         <DataGridHeader IsCollapsible>Mennyiség</DataGridHeader>
                         <DataGridHeader IsCollapsible IsSortable>Minimum raktári mennyiség</DataGridHeader>
                         <DataGridHeader IsCollapsible IsSortable>Hiányos?</DataGridHeader>
+                        <DataGridHeader IsCollapsible IsSortable>Termékkódok</DataGridHeader>
                         <DataGridHeader IsCollapsible IsSortable>Leírás</DataGridHeader>
                     </tr>
                 </thead>
@@ -51,7 +52,8 @@
                         long totalAmount = item.Stock.Sum(s => s.Amount);
                     <tr>
                         <td>
-                        <NavLink href="@($"/{this.BaseLink}/{item.Id}")">@item.Name</NavLink></td>
+                            <NavLink href="@($"/{this.BaseLink}/{item.Id}")">@item.Name</NavLink>
+                        </td>
                         <td>@item.Category.Name</td>
                         <td>
                             @foreach (Stockpile stock in item.Stock)
@@ -64,6 +66,23 @@
                         </td>
                         <td>@item.MinimumStock</td>
                         <td>@(item.MinimumStock > totalAmount ? "❗" : "")</td>
+                        <td>
+                            <table>
+                                @foreach (SupplySource supply in item.SupplySources)
+                                {
+                                    if (supply.Supplier != null)
+                                    {
+                                        <tr>
+                                            <td>@supply.Supplier.Name</td>
+                                            <td><a href="@(supply.Supplier.ItemLinkTemplate.Replace("####", supply.SupplierItemId))" target="_blank">@supply.SupplierItemId</a></td>
+                                        </tr>
+                                        @*<span></span>
+                                        
+                                        <br />*@
+                                    }
+                                }
+                            </table>
+                        </td>
                         <td>@item.ShortDescription</td>
                     </tr>
                     }
@@ -176,7 +195,30 @@
                     }
                     <a @onclick="() => this.SelectedItem.Temporal.Parameters.Add(new PartParameter())">Új paraméter</a>
 
+                    <h3>Beszerezhetőségek</h3>
+                    @foreach (SupplySource supply in this.SelectedItem.Temporal.SupplySources)
+                    {
+                        SupplySource temp = supply;
+                        <div>
+                            <ComboBox Inline
+                                      AuthOR="@Permissions.EditParts"
+                                      ItemType="@Supplier"
+                                      Items="GanzAdminDbEngine.Instance.GetCollection<Supplier>().FindAll()"
+                                      Name="@nameof(Part.SupplySources)"
+                                      Display="Beszállító"
+                                      @bind-Value="temp.Supplier" />
 
+                            <SimpleTextField Inline
+                                             AuthOR="@Permissions.EditParts"
+                                             Type="text"
+                                             Display="Beszállítói termékkód"
+                                             Name="@nameof(SupplySource.SupplierItemId)"
+                                             @bind-Value="temp.SupplierItemId" />
+                            <a @onclick="() => this.SelectedItem.Temporal.SupplySources.Remove(supply)">X</a>
+                        </div>
+                    }
+                    <a @onclick="() => this.SelectedItem.Temporal.SupplySources.Add(new SupplySource())">Új forrás</a>
+                    <hr />
                 </div>
 
                 <AuthorizedView NeededRolesOR="@Permissions.EditParts">

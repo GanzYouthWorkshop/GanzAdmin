@@ -393,6 +393,12 @@ main table th.sorting-asc, main table th.sorting-desc
 	background-color: #0097a7;
 }
 
+#table-wrapper > table td >table
+{
+	margin: -3px -10px;
+	width: calc(100% + 20px);
+}
+
 #data
 {
 	margin-top: -37px;
