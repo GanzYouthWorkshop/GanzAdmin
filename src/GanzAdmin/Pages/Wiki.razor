@@ -48,7 +48,14 @@
             <AuthorizedView NeededRolesOR="@Permissions.EditCourse">
                 <NavLink class="button" href="@($"/{this.BaseLink}/{this.SelectedItem.Original.Id}/edit")">Szerkesztés</NavLink>
             </AuthorizedView>
-            <WysiwygViewer Source="@this.SelectedItem.Original.Content"></WysiwygViewer>
+            @if (!this.SelectedItem.Original.IsCoded)
+            {
+                <WysiwygViewer Source="@this.SelectedItem.Original.Content"></WysiwygViewer>
+            }
+            else
+            {
+                @((MarkupString)this.SelectedItem.Original.Content)
+            }
         }
     }
     else
