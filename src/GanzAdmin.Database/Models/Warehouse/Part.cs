@@ -1,6 +1,8 @@
-﻿using LiteDB;
+﻿using GanzAdmin.Utils;
+using LiteDB;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace GanzAdmin.Database.Models
@@ -19,6 +21,15 @@ namespace GanzAdmin.Database.Models
         public int MinimumStock { get; set; } = 0;
         public string StockUnit { get; set; }
 
+        [BsonIgnore]
+        public bool LowStock
+        {
+            get
+            {
+                return this.MinimumStock > this.Stock.Sum(s => s.Amount);
+            }
+        }
+
         public string ShortDescription { get; set; }
         public string LongDescription { get; set; }
         public string ImagePath { get; set; }
@@ -33,5 +44,9 @@ namespace GanzAdmin.Database.Models
             get { return this.Name; }
         }
 
+        public static List<Part> Search(List<SearchFragment> expression)
+        {
+            return new List<Part>();
+        }
     }
 }

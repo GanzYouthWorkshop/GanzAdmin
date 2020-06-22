@@ -48,24 +48,23 @@
                 <tbody>
                     @foreach (Part item in this.ItemList)
                     {
-                        long totalAmount = item.Stock.Sum(s => s.Amount);
-                    <tr>
-                        <td>
-                        <NavLink href="@($"/{this.BaseLink}/{item.Id}")">@item.Name</NavLink></td>
-                        <td>@item.Category.Name</td>
-                        <td>
-                            @foreach (Stockpile stock in item.Stock)
-                            {
-                                <span>@stock.Location?.Name</span>
-                                <span> (@stock.Amount @item.StockUnit)</span>
-                                <span><a @onclick="() => this.OnRemoveOneFromStock(stock)">-1</a></span>
-                                <br />
-                            }
-                        </td>
-                        <td>@item.MinimumStock</td>
-                        <td>@(item.MinimumStock > totalAmount ? "❗" : "")</td>
-                        <td>@item.ShortDescription</td>
-                    </tr>
+                        <tr>
+                            <td>
+                            <NavLink href="@($"/{this.BaseLink}/{item.Id}")">@item.Name</NavLink></td>
+                            <td>@item.Category.Name</td>
+                            <td>
+                                @foreach (Stockpile stock in item.Stock)
+                                {
+                                    <span>@stock.Location?.Name</span>
+                                    <span> (@stock.Amount @item.StockUnit)</span>
+                                    <span><a @onclick="() => this.OnRemoveOneFromStock(stock)">-1</a></span>
+                                    <br />
+                                }
+                            </td>
+                            <td>@item.MinimumStock</td>
+                            <td>@(item.LowStock ? "❗" : "")</td>
+                            <td>@item.ShortDescription</td>
+                        </tr>
                     }
                 </tbody>
             </table>

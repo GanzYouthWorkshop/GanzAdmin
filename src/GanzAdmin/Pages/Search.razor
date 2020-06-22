@@ -1,0 +1,160 @@
+﻿@page "/search/{SearchExpression}"
+
+<aside class='@(this.ItemList == null ? "loading" : "")'>
+    @if (this.ItemList != null)
+    {
+        @*<TreeLevel Items="@(this.ItemList.ToEntities<Location>())"
+                   Root="@null"
+                   Filter="@((e, r) => (e as Location).ParentLocation == null && r == null || (e as Location).ParentLocation?.Id == r?.Id)"
+                   UrlTemplate="@((e) => $"/{this.BaseLink}/{e.Id}")" />*@
+    }
+</aside>
+
+<main class='@(this.ItemList == null ? "loading" : "")'>
+    @if (this.ItemList != null)
+    {
+        <div id='table-wrapper'>
+            <table id='table-header'>
+                <thead>
+                    <tr>
+                        <DataGridHeader IsPinnable IsSortable>Találat</DataGridHeader>
+                        <DataGridHeader IsSortable>Típus</DataGridHeader>
+                    </tr>
+                </thead>
+            </table>
+
+            <table id='data' class="display nowrap">
+                <thead>
+                    <tr>
+                        <DataGridHeader IsPinnable IsSortable>Találat</DataGridHeader>
+                        <DataGridHeader IsSortable>Típus</DataGridHeader>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @foreach (SearchResult item in this.ItemList)
+                    {
+                        <tr>
+                            <td><NavLink href="@item.Url">@item.Display</NavLink></td>
+                            <td>@item.TypeDisplay</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</main>
+
+@code
+{
+    [Parameter]
+    public string SearchExpression { get; set; }
+
+    //[Inject]
+    //protected GanzAuthProvider AuthManager { get; set; }
+
+    //[Inject]
+    //protected NavigationManager NavMan { get; set; }
+
+    //[Inject]
+    //protected IJSRuntime JS { get; set; }
+
+    //[Inject]
+    //protected IHttpContextAccessor Http { get; set; }
+
+    protected List<SearchResult> ItemList { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Task.Run(() =>
+        {
+        });
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await Task.Run(() =>
+        {
+            this.DoSearch();
+        });
+    }
+
+    private List<SearchFragment> ParseExpression()
+    {
+        List<SearchFragment> result = new List<SearchFragment>();
+
+        //Name (param1;param2=2;pramB<4)
+        if (this.SearchExpression.Contains('(') && this.SearchExpression.Contains(')'))
+        {
+            result.Add(new SearchFragment
+            {
+                Key = this.SearchExpression.Substring(0, this.SearchExpression.IndexOf('(')).Trim(),
+                Type = SearchFragment.ExpressionType.Main,
+                Value = null
+            });
+
+            string[] attribute = this.SearchExpression.Substring(this.SearchExpression.IndexOf('(')).Split(';');
+
+            foreach (string attr in attribute)
+            {
+                string[] temp;
+                char splitter = '\0';
+                SearchFragment.ExpressionType type = SearchFragment.ExpressionType.Attribute;
+
+                if (attr.Contains(':'))
+                {
+                    splitter = ':';
+                }
+                else if (attr.Contains('='))
+                {
+                    splitter = '=';
+                    type = SearchFragment.ExpressionType.EqualTo;
+                }
+                else if (attr.Contains('<'))
+                {
+                    splitter = '<';
+                    type = SearchFragment.ExpressionType.LessThan;
+                }
+                else if (attr.Contains('>'))
+                {
+                    splitter = '>';
+                    type = SearchFragment.ExpressionType.GreaterThan;
+                }
+
+                if (splitter != '\0')
+                {
+                    temp = attr.Split(splitter);
+                    result.Add(new SearchFragment
+                    {
+                        Key = temp[0],
+                        Value = temp[1],
+                        Type = type
+                    });
+                }
+                else
+                {
+                    result.Add(new SearchFragment
+                    {
+                        Key = this.SearchExpression.Substring(0, this.SearchExpression.IndexOf('(')).Trim(),
+                        Type = SearchFragment.ExpressionType.Attribute,
+                        Value = null
+                    });
+                }
+            }
+        }
+
+        return result;
+    }
+
+    private void DoSearch()
+    {
+        List<SearchFragment> fragments = this.ParseExpression();
+
+        this.ItemList = null;
+
+        List<SearchResult> result = new List<SearchResult>();
+        //result.AddRange(Part.Search(fragments));
+
+        this.ItemList = result;
+    }
+}
