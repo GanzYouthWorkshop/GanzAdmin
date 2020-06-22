@@ -50,26 +50,14 @@
     [Parameter]
     public string SearchExpression { get; set; }
 
-    //[Inject]
-    //protected GanzAuthProvider AuthManager { get; set; }
-
-    //[Inject]
-    //protected NavigationManager NavMan { get; set; }
-
-    //[Inject]
-    //protected IJSRuntime JS { get; set; }
-
-    //[Inject]
-    //protected IHttpContextAccessor Http { get; set; }
-
     protected List<SearchResult> ItemList { get; set; }
 
-    protected override async Task OnInitializedAsync()
-    {
-        await Task.Run(() =>
-        {
-        });
-    }
+    //protected override async Task OnInitializedAsync()
+    //{
+    //    await Task.Run(() =>
+    //    {
+    //    });
+    //}
 
     protected override async Task OnParametersSetAsync()
     {
