@@ -22,6 +22,9 @@ namespace GanzAdmin.Database.Models
         public const string EditParts = nameof(EditParts);
         public const string DeleteParts = nameof(DeleteParts);
 
+        public const string ListSuppliers = nameof(ListSuppliers);
+        public const string EditSuppliers = nameof(EditSuppliers);
+        public const string DeleteSuppliers = nameof(DeleteSuppliers);
 
         public const string AddProject = nameof(AddProject);
         public const string EditAnyProject = nameof(EditAnyProject);
@@ -54,6 +57,10 @@ namespace GanzAdmin.Database.Models
             ListParts,
             EditParts,
             DeleteParts,
+
+            ListSuppliers,
+            EditSuppliers,
+            DeleteSuppliers,
 
             AddProject,
             EditAnyProject,

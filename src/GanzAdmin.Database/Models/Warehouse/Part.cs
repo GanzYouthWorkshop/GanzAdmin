@@ -19,6 +19,8 @@ namespace GanzAdmin.Database.Models
         public int MinimumStock { get; set; } = 0;
         public string StockUnit { get; set; }
 
+        public List<SupplySource> SupplySources { get; set; } = new List<SupplySource>();
+
         public string ShortDescription { get; set; }
         public string LongDescription { get; set; }
         public string ImagePath { get; set; }
@@ -33,5 +35,9 @@ namespace GanzAdmin.Database.Models
             get { return this.Name; }
         }
 
+        public override bool Equals(object obj)
+        {
+            return this.IsEqual(obj);
+        }
     }
 }
