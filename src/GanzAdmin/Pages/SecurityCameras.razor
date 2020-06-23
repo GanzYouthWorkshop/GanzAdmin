@@ -1,0 +1,39 @@
+﻿@page "/security-cameras"
+
+@using System.Net;
+@using Microsoft.AspNetCore.Http;
+
+    <main class="full dashboard">
+        <AuthorizedView NeededRolesOR="@Permissions.EditLocations">
+            <div class="grid">
+                <section class="entry-item">
+                    <h2>G2 - KAM1</h2>
+                    <video id="video-player" controls preload="none">
+                        <source src="/content/nvr/index.m3u8" type="application/x-mpegURL">
+                    </video>
+                </section>
+                <section class="entry-item">
+                    <h2>G2 - KAM2</h2>
+                    <video id="video-player" controls preload="none">
+                        <source src="/content/nvr/index.m3u8" type="application/x-mpegURL">
+                    </video>
+                </section>
+                <section class="entry-item">
+                    <h2>G2 - KAM3</h2>
+                    <video id="video-player" controls preload="none">
+                        <source src="/content/nvr/index.m3u8" type="application/x-mpegURL">
+                    </video>
+                </section>
+                <section class="entry-item">
+                    <h2>G2 - KAM4</h2>
+                    <video id="video-player" controls preload="none">
+                        <source src="/content/nvr/index.m3u8" type="application/x-mpegURL">
+                    </video>
+                </section>
+            </div>
+        </AuthorizedView>
+    </main>
+
+@code
+{
+}
