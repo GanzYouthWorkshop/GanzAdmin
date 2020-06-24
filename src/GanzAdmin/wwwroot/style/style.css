@@ -898,6 +898,14 @@ main.filebrowser a img
 }
 /*#endregion*/
 
+iframe.scripted-page
+{
+	border: 0;
+	width: 100%;
+	margin: 0;
+	height: 100%;
+}
+
 /*TODO: Átnézni!*/
 /*#region Egyéb, ezeket át kell nézni és besorolni valahova!*/
 #login.popup .body

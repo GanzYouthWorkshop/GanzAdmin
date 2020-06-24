@@ -129,5 +129,25 @@ function createCmEditor(el, language)
 	editor.on('change', function (cMirror)
 	{
 		el.value = cMirror.getValue();
+
+		if ("createEvent" in document)
+		{
+			var evt = document.createEvent("HTMLEvents");
+			evt.initEvent("change", false, true);
+			el.dispatchEvent(evt);
+		}
+		else
+		{
+			el.fireEvent("onchange");
+		}
 	});
+}
+
+function setScriptedPageHeight(el)
+{
+	if (el)
+	{
+		el.height = "";
+		el.height = el.contentWindow.document.body.scrollHeight + "px";
+	} 
 }

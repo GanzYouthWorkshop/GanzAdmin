@@ -36,10 +36,24 @@
                               @bind-Value="this.SelectedItem.Temporal.IsCoded"/>
             @if (this.SelectedItem.Temporal.IsCoded)
             {
+                string[] frags = this.SelectedItem.Temporal.Content?.Split(CODE_SEPARATOR);
+                string html = frags?.Length > 0 ? frags[0] : null;
+                string css = frags?.Length > 1 ? frags[1] : null;
+                string js = frags?.Length > 2 ? frags[2] : null;
+
                 <div class="triple-editor">
-                    <CodeEditor @ref="this.htmlEditor" Language="htmlmixed"></CodeEditor>
-                    <CodeEditor @ref="this.cssEditor" Language="css"></CodeEditor>
-                    <CodeEditor @ref="this.jsEditor" Language="javascript"></CodeEditor>
+                    <section>
+                        <h2>HTML</h2>
+                        <CodeEditor @ref="this.htmlEditor" Language="htmlmixed" Value="@html"></CodeEditor>
+                    </section>
+                    <section>
+                        <h2>CSS</h2>
+                        <CodeEditor @ref="this.cssEditor" Language="css" Value="@css"></CodeEditor>
+                    </section>
+                    <section>
+                        <h2>JS</h2>
+                        <CodeEditor @ref="this.jsEditor" Language="javascript" Value="@js"></CodeEditor>
+                    </section>
                 </div>
             }
             else
@@ -61,7 +75,7 @@
         else
         {
             <h2>@this.SelectedItem.Original.Name</h2>
-            <small>Utoljára módosítva: @this.SelectedItem.Original.LastModified</small>
+            <p><small>Utoljára módosítva: @this.SelectedItem.Original.LastModified</small></p>
             <AuthorizedView NeededRolesOR="@Permissions.EditCourse">
                 <NavLink class="button" href="@($"/{this.BaseLink}/{this.SelectedItem.Original.Id}/edit")">Szerkesztés</NavLink>
             </AuthorizedView>
@@ -71,7 +85,7 @@
             }
             else
             {
-                @((MarkupString)this.SelectedItem.Original.Content)
+                <iframe class="scripted-page" src="@this.GetHtmlFromValue()" onload="setScriptedPageHeight(this)"></iframe>
             }
         }
     }
@@ -87,6 +101,7 @@
 
 @code
 {
+    public const string CODE_SEPARATOR = "\n{{}}\n";
     protected override string BaseLink { get; set; } = "curriculum";
     protected override string DataName { get; set; } = "lap";
 
@@ -97,10 +112,30 @@
     private CodeEditor jsEditor;
     private CodeEditor cssEditor;
 
+    protected string GetHtmlFromValue()
+    {
+        string[] frags = this.SelectedItem.Temporal.Content.Split(CODE_SEPARATOR);
+
+        string html = "";
+        if (frags.Length > 2)
+        {
+            html = $"<html><head><meta charset='utf-8'><style>{frags[1]}</style></head><body>{frags[0]} <script src='https://code.jquery.com/jquery-3.5.1.slim.min.js'></script><script>{frags[2]}</script></body></html>";
+        }
+        else
+        {
+            html = $"<html><head><meta charset='utf-8'></head><body>{frags[0]}</body></html>";
+        }
+
+        byte[] plainTextBytes = System.Text.Encoding.UTF8.GetBytes(html);
+
+        string base64 = Convert.ToBase64String(plainTextBytes);
+        return "data:text/html;base64," + base64;
+
+    }
 
     protected string GetCodeValue()
     {
-        return this.htmlEditor.Value + "\n\n\n" + this.cssEditor.Value + "\n\n\n" + this.jsEditor.Value;
+        return this.htmlEditor.Value + CODE_SEPARATOR + this.cssEditor.Value + CODE_SEPARATOR + this.jsEditor.Value;
     }
 
     private void OnItemEdit()

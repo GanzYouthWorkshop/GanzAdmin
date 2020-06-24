@@ -15,5 +15,6 @@
     protected override void OnAfterRender(bool firstRender)
     {
         this.JS.InvokeVoidAsync("createCmEditor", this.textbox, this.Language);
+        this.m_HasRendered = true;
     }
 }
