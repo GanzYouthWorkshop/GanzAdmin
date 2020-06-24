@@ -28,7 +28,7 @@ namespace GanzAdmin.Database
             get
             {
                 return this.m_InnerDb.GetCollection<Part>()
-                    .Include(i => i.Category)
+                    .Include(BsonExpression.Create("$.Category"))
                     .Include(BsonExpression.Create("$.Stock[*].Location"))
                     .Include(BsonExpression.Create("$.SupplySources[*].Supplier"));
             }

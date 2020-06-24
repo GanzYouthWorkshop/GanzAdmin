@@ -49,7 +49,7 @@
                 <tbody>
                     @foreach (Part item in this.ItemList)
                     {
-                        long totalAmount = item.Stock.Sum(s => s.Amount);
+                        long totalAmount = item.Stock.Count > 0 ? item.Stock.Sum(s => s.Amount) : 0;
                     <tr>
                         <td>
                             <NavLink href="@($"/{this.BaseLink}/{item.Id}")">@item.Name</NavLink>
