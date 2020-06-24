@@ -17,6 +17,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.JSInterop;
 using GanzAdmin.Configuration;
+using GanzAdmin.API.NVR;
 
 namespace GanzAdmin
 {
@@ -51,6 +52,11 @@ namespace GanzAdmin
 
             GanzAdminDbEngine.Instance = new GanzAdminDbEngine(GanzAdminConfiguration.Instance.DatabaseConnectionString);
             GanzAdminDbEngine.Instance.EnsureCreated();
+
+            new IpCamaraSystem(4)
+            {
+                Name = "g2"
+            }.Open();
 
             if (env.IsDevelopment())
             {
