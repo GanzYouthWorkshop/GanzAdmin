@@ -1,0 +1,19 @@
+﻿@inherits EditField<string>
+
+<textarea @ref="textbox" @onchange="this.OnValueChanged">@this.Value</textarea>
+
+@code
+{
+    [Inject]
+    protected IJSRuntime JS { get; set; }
+
+    [Parameter]
+    public string Language { get; set; }
+
+    private ElementReference textbox;
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        this.JS.InvokeVoidAsync("createCmEditor", this.textbox, this.Language);
+    }
+}

@@ -944,7 +944,14 @@ main.filebrowser a img
 	background-color: #00897b !important;
 }
 
+/*#region Tripla editor wikihez (egyelőre csak oda*/
 
+.triple-editor
+{
+	display: grid;
+	grid-template-columns: [c1] 33% [c2] 33% [c3] 33%;
+}
+/*#endregion*/
 
 
 

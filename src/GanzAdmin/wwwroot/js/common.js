@@ -117,3 +117,17 @@ function createEditorJS(initialData, callbackObj)
 	}
 }
 
+function createCmEditor(el, language)
+{
+	var editor = CodeMirror.fromTextArea(el, {
+		lineNumbers: true,
+		mode: language,
+		gutters: ["CodeMirror-lint-markers"],
+		lint: true,
+	});
+
+	editor.on('change', function (cMirror)
+	{
+		el.value = cMirror.getValue();
+	});
+}
