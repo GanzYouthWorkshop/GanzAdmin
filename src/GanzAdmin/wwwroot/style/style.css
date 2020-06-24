@@ -898,6 +898,15 @@ main.filebrowser a img
 }
 /*#endregion*/
 
+/*#region security camera*/
+video
+{
+	width: 100%;
+}
+/*#endregion*/
+
+
+
 /*TODO: Átnézni!*/
 /*#region Egyéb, ezeket át kell nézni és besorolni valahova!*/
 #login.popup .body

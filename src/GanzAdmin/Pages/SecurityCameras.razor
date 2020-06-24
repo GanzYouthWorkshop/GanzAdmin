@@ -7,28 +7,20 @@
         <AuthorizedView NeededRolesOR="@Permissions.EditLocations">
             <div class="grid">
                 <section class="entry-item">
-                    <h2>G2 - KAM1</h2>
-                    <video id="video-player" controls preload="none">
-                        <source src="/content/nvr/index.m3u8" type="application/x-mpegURL">
-                    </video>
-                </section>
-                <section class="entry-item">
                     <h2>G2 - KAM2</h2>
-                    <video id="video-player" controls preload="none">
-                        <source src="/content/nvr/index.m3u8" type="application/x-mpegURL">
-                    </video>
+                    <video id="video-player-2" />
                 </section>
                 <section class="entry-item">
-                    <h2>G2 - KAM3</h2>
-                    <video id="video-player" controls preload="none">
-                        <source src="/content/nvr/index.m3u8" type="application/x-mpegURL">
-                    </video>
+                    <h2>G2 - KAM1</h2>
+                    <video id="video-player-1" />
                 </section>
                 <section class="entry-item">
                     <h2>G2 - KAM4</h2>
-                    <video id="video-player" controls preload="none">
-                        <source src="/content/nvr/index.m3u8" type="application/x-mpegURL">
-                    </video>
+                    <video id="video-player-4" />
+                </section>
+                <section class="entry-item">
+                    <h2>G2 - KAM3</h2>
+                    <video id="video-player-3" />
                 </section>
             </div>
         </AuthorizedView>
@@ -36,4 +28,16 @@
 
 @code
 {
+    [Inject]
+    protected IJSRuntime JS { get; set; }
+
+    protected override Task OnAfterRenderAsync(bool firstRender)
+    {
+        for (int i = 1; i <= 4; i++)
+        {
+            JS.InvokeVoidAsync("createHlsPlayer", $"video-player-{i}", $"/content/nvr/_{i}.m3u8");
+        }
+
+        return base.OnAfterRenderAsync(firstRender);
+    }
 }

@@ -9,7 +9,7 @@ namespace GanzAdmin.API.NVR
     public class IpCamaraSystem
     {
         public string Name { get; set; }
-        public string Url { get; set; } = "rtsp://192.168.1.20:10554/user=admin_password=tlJwpbo6_channel=1_stream=0.sdp";
+        public string Url { get; set; } = "rtsp://192.168.100.254:554/user=admin&password=&channel={0}&stream=1.sdp";
         public List<IpCameraChannel> Channels { get; set; } = new List<IpCameraChannel>();
 
         public IpCamaraSystem(int channels)
@@ -25,11 +25,11 @@ namespace GanzAdmin.API.NVR
             }
         }
 
-        public void Open(string ip)
+        public void Open()
         {
             foreach(IpCameraChannel channel in this.Channels)
             {
-                channel.Start(ip);
+                channel.Start();
             }
 
             //<video id="video-player" controls preload="none">

@@ -22,7 +22,8 @@ namespace GanzAdmin.API.NVR
 
         private Process m_FfmpegProcess;
 
-        public void Start(string ip)
+        //ffmpeg -i rtsp://192.168.100.254:554/user=admin^&password=^&channel=4^&stream=1.sdp?real_stream--rtp-caching=100 -c:v libx264 -crf 21 -preset veryfast -c:a aac -b:a 128k -ac 2 -f hls -hls_time 4 -hls_playlist_type event -segment_wrap 5 -hls_flags delete_segments  stream.m3u8
+        public void Start()
         {
             if(!this.Runnning)
             {
@@ -30,13 +31,13 @@ namespace GanzAdmin.API.NVR
                 {
                     StartInfo = new ProcessStartInfo()
                     {
-                        FileName = ".\\ffmpeg.exe",
+                        FileName = "ffmpeg.exe",
                         Arguments = String.Join(' ', new string[]
                         {
                              "-fflags nobuffer",
                              "-rtsp_transport tcp",
 
-                             $"-i {this.HandlerUrl}",
+                             $"-i {String.Format(this.HandlerUrl, this.ChannelId)}",
 
                              "-vsync 0",
                              "-copyts",
@@ -51,10 +52,10 @@ namespace GanzAdmin.API.NVR
                              "-segment_format mpegts",
                              @$"-segment_list .\wwwroot\content\nvr\{this.HandlerName}_{this.ChannelId}.m3u8",
                              "-segment_list_type m3u8",
-                             "-segment_list_entry_prefix /stream/",
+                             "-segment_list_entry_prefix /content/nvr/",
                              @$".\wwwroot\content\nvr\{this.HandlerName}_{this.ChannelId}_%d.ts",
                         }),
-                        CreateNoWindow = true,
+                        CreateNoWindow = false,
                     }
                 };
                 this.m_FfmpegProcess.Start();
