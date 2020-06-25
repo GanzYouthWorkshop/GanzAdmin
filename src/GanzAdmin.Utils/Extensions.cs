@@ -41,5 +41,15 @@ namespace GanzAdmin.Utils
         {
             return CultureInfo.CurrentCulture.TextInfo.ToTitleCase(s.ToLower());
         }
+
+        public static float ParseOrNaN(this string s)
+        {
+            float result = float.NaN;
+            if(float.TryParse(s, out result))
+            {
+                return result;
+            }
+            return float.NaN;
+        }
     }
 }

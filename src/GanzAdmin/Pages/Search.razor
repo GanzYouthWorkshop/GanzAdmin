@@ -35,7 +35,7 @@
                     @foreach (SearchResult item in this.ItemList)
                     {
                         <tr>
-                            <td><NavLink href="@item.Url">@item.Display</NavLink></td>
+                            <td><NavLink href="@item.Url" target="_blank">@item.Display <i></i></NavLink></td>
                             <td>@item.TypeDisplay</td>
                         </tr>
                     }
@@ -47,8 +47,8 @@
 
 @code
 {
-    [Parameter]
-    public string SearchExpression { get; set; }
+        [Parameter]
+        public string SearchExpression { get; set; }
 
     protected List<SearchResult> ItemList { get; set; }
 
@@ -81,7 +81,9 @@
                 Value = null
             });
 
-            string[] attribute = this.SearchExpression.Substring(this.SearchExpression.IndexOf('(')).Split(';');
+            int start = this.SearchExpression.IndexOf('(') + 1;
+            int length = this.SearchExpression.IndexOf(')') - start; 
+            string[] attribute = this.SearchExpression.Substring(start, length).Split(';');
 
             foreach (string attr in attribute)
             {
@@ -141,7 +143,7 @@
         this.ItemList = null;
 
         List<SearchResult> result = new List<SearchResult>();
-        //result.AddRange(Part.Search(fragments));
+        result.AddRange(Part.Search(GanzAdminDbEngine.Instance.Parts.FindAll(), fragments).Select(p => new SearchResult() { DataType = typeof(Part), Display = p.Name, Url = $"./parts/{p.Id}" }));
 
         this.ItemList = result;
     }

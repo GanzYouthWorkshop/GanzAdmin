@@ -11,7 +11,7 @@
             </NavLink>
         </h1>
         <form @onsubmit="OnSearch">
-            <input type='text' name='search-string' id='search-string' placeholder='Alkatrészkeresés' autocomplete="off" @onchange="(e) => { this.Search = e.Value.ToString(); }">
+            <input type='text' name='search-string' id='search-string' placeholder='Keresés' autocomplete="off" @onchange="(e) => { this.Search = e.Value.ToString(); }">
             <input type='submit' name='search' id='search' value=''>
 
             <div id='auto-complete'>

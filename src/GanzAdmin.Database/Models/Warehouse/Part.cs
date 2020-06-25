@@ -3,6 +3,7 @@ using LiteDB;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 
 namespace GanzAdmin.Database.Models
@@ -44,9 +45,57 @@ namespace GanzAdmin.Database.Models
             get { return this.Name; }
         }
 
-        public static List<Part> Search(List<SearchFragment> expression)
+        public static List<Part> Search(IEnumerable<Part> parts, List<SearchFragment> expression)
         {
-            return new List<Part>();
+            List<Part> list = new List<Part>();
+            list.AddRange(parts);
+            IEnumerable<Part> result = list;
+
+            foreach(SearchFragment fragment in expression)
+            {
+                string searchKey = fragment.Key.Trim().ToLower();
+                string searchVal = fragment.Value?.Trim().ToLower();
+                float searchNumeric = float.NaN;
+                float.TryParse(searchVal, out searchNumeric);
+
+                switch (fragment.Type)
+                {
+                    case SearchFragment.ExpressionType.Main:
+                        result = result.Where(t => t.Name.ToLower().Contains(searchKey));
+                        break;
+
+                    case SearchFragment.ExpressionType.Attribute:
+                        if(searchKey == "hiányos")
+                        {
+                            result = result.Where(t => t.LowStock);
+                        }
+                        break;
+
+                    case SearchFragment.ExpressionType.SetTo:
+                        result = result.Where(t => t.Parameters.FirstOrDefault(p => p.Name == searchKey)?.Value == searchVal);
+                        break;
+
+                    case SearchFragment.ExpressionType.EqualTo:
+                        if(!float.IsNaN(searchNumeric))
+                        {
+                            result = result.Where(t => t.Parameters.FirstOrDefault(p => p.Name == searchKey)?.Value.ParseOrNaN() == searchNumeric);
+                        }
+                        break;
+
+                    case SearchFragment.ExpressionType.GreaterThan:
+                        searchVal = fragment.Value.Trim().ToLower();
+
+                        result = result.Where(t => t.Parameters.FirstOrDefault(p => p.Name == searchKey)?.Value.ParseOrNaN() > searchNumeric);
+                        break;
+
+                    case SearchFragment.ExpressionType.LessThan:
+                        searchVal = fragment.Value.Trim().ToLower();
+
+                        result = result.Where(t => t.Parameters.FirstOrDefault(p => p.Name == searchKey)?.Value.ParseOrNaN() < searchNumeric);
+                        break;
+                }
+            }
+            return result.ToList();
         }
     }
 }
