@@ -73,7 +73,7 @@
                         PartParameter temp = parameter;
                         <p>
                             <ParameterField Inline ItemType="@PartParameter" AuthOR="@Permissions.EditParts" IsDefaultEditor="true" @bind-Value="temp"></ParameterField>
-                            <a @onclick="() => this.SelectedItem.Temporal.DefaultParameters.Remove(temp)">X</a>
+                            <a @onclick="() => this.SelectedItem.Temporal.DefaultParameters.Remove(temp)"><i></i></a>
                         </p>
                     }
                     <a @onclick="() => this.SelectedItem.Temporal.DefaultParameters.Add(new PartParameter())">Paraméter hozzáadása</a>

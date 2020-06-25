@@ -73,7 +73,7 @@
                                     {
                                         <tr>
                                             <td>@supply.Supplier.Name</td>
-                                            <td><a href="@(supply.Supplier.ItemLinkTemplate.Replace("####", supply.SupplierItemId))" target="_blank">@supply.SupplierItemId</a></td>
+                                            <td><a href="@(supply.Supplier.ItemLinkTemplate.Replace("####", supply.SupplierItemId))" target="_blank">@supply.SupplierItemId <i></i></a></td>
                                         </tr>
                                         @*<span></span>
                                         
@@ -152,7 +152,7 @@
                                                Name="@nameof(Stockpile.Amount)"
                                                ItemType="long"
                                                @bind-Value="@stock.Amount" />
-                            <a @onclick="() => this.SelectedItem.Temporal.Stock.Remove(stock)">X</a>
+                            <a @onclick="() => this.SelectedItem.Temporal.Stock.Remove(stock)"><i></i></a>
                         </div>
                     }
                     <a @onclick="() => this.SelectedItem.Temporal.Stock.Add(new Stockpile())">Új leltári tétel</a>
@@ -189,7 +189,7 @@
                             PartParameter temp = parameter;
                             <p>
                                 <ParameterField Inline ItemType="@PartParameter" AuthOR="@Permissions.EditParts" IsDefaultEditor="true" @bind-Value="temp"></ParameterField>
-                                <a @onclick="() => this.SelectedItem.Temporal.Parameters.Remove(temp)">X</a>
+                                <a @onclick="() => this.SelectedItem.Temporal.Parameters.Remove(temp)"><i></i></a>
                             </p>
                         }
                     }
@@ -214,7 +214,7 @@
                                              Display="Beszállítói termékkód"
                                              Name="@nameof(SupplySource.SupplierItemId)"
                                              @bind-Value="temp.SupplierItemId" />
-                            <a @onclick="() => this.SelectedItem.Temporal.SupplySources.Remove(supply)">X</a>
+                            <a @onclick="() => this.SelectedItem.Temporal.SupplySources.Remove(supply)"><i></i></a>
                         </div>
                     }
                     <a @onclick="() => this.SelectedItem.Temporal.SupplySources.Add(new SupplySource())">Új forrás</a>
