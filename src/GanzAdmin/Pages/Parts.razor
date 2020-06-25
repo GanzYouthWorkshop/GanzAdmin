@@ -115,6 +115,7 @@
                               Items="@GanzAdminDbEngine.Instance.Categories.FindAll()"
                               Name="@nameof(Part.Category)"
                               Display="Kategória"
+                              PreventRenderOnChange="false"
                               @bind-Value="this.SelectedItem.Temporal.Category"
                               Changed="CategoryChanged" />
                     <SimpleNumberField AuthOR="@Permissions.EditParts"

@@ -43,6 +43,7 @@
   <ItemGroup>
     <Folder Include="API\NVR\Externals\" />
     <Folder Include="wwwroot\img\files\" />
+    <Folder Include="wwwroot\js\codemirror\" />
   </ItemGroup>
 
 </Project>

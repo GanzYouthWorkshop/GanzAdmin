@@ -119,6 +119,41 @@ function createEditorJS(initialData, callbackObj)
 	}
 }
 
+function createCmEditor(el, language)
+{
+	var editor = CodeMirror.fromTextArea(el, {
+		lineNumbers: true,
+		mode: language,
+		gutters: ["CodeMirror-lint-markers"],
+		lint: true,
+	});
+
+	editor.on('change', function (cMirror)
+	{
+		el.value = cMirror.getValue();
+
+		if ("createEvent" in document)
+		{
+			var evt = document.createEvent("HTMLEvents");
+			evt.initEvent("change", false, true);
+			el.dispatchEvent(evt);
+		}
+		else
+		{
+			el.fireEvent("onchange");
+		}
+	});
+}
+
+function setScriptedPageHeight(el)
+{
+	if (el)
+	{
+		el.height = "";
+		el.height = el.contentWindow.document.body.scrollHeight + "px";
+	} 
+}
+
 function createHlsPlayer(id, url)
 {
 	if(Hls.isSupported()) {
@@ -132,5 +167,4 @@ function createHlsPlayer(id, url)
             video.muted = true;
             video.play();
         });
-       }
 }

@@ -147,7 +147,7 @@ namespace GanzAdmin.DataHandling
 
         protected override bool ShouldRender()
         {
-            bool result = !Environment.StackTrace.Contains("OnValueChanged");
+            bool result = !Environment.StackTrace.Contains("OnValueChangedOnly");
             return result;
         }
         #endregion
