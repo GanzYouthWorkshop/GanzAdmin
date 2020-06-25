@@ -7,16 +7,14 @@
     <ul>
         <li><NavLink href="/members">Tagok</NavLink></li>
 
-        <li><a href='getparts'>Alkatrészek</a></li>
-        <li><a href='getcategories'>Kategóriák</a></li>
-        <li><a href='getlocations'>Helyek</a></li>
-        <ul id='login-menu'>
-            <li><a href='showlogin'>Bejelentkezés</a></li>
-        </ul>
-        <li><a href='getusers'>Admin panel (dev)</a></li>
+        <li><a href='/parts'>Alkatrészek</a></li>
+        <li><a href='/categories'>Kategóriák</a></li>
+        <li><a href='/locations'>Helyek</a></li>
+        <li><a href='/suppliers'>Beszállítók</a></li>
         <li><NavLink href="/help">Súgó</NavLink></li>
+
         <li><a href="" @onclick="@OnLogOut" @onclick:preventDefault>Kilépés</a></li>
-</ul>
+    </ul>
 </nav>
 
 @code
@@ -29,6 +27,15 @@
 
     [Inject]
     protected IJSRuntime JS { get; set; }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+        {
+            this.JS.InvokeVoidAsync("onMenuReady");
+        }
+    }
+
 
     private void OnLogOut()
     {
