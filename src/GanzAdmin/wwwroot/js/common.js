@@ -156,15 +156,19 @@ function setScriptedPageHeight(el)
 
 function createHlsPlayer(id, url)
 {
-	if(Hls.isSupported()) {
+	if (Hls.isSupported())
+	{
 		var video = document.getElementById(id);
-          var hls = new Hls({
-              debug: false
-          });
-			hls.loadSource(url);
-          hls.attachMedia(video);
-          hls.on(Hls.Events.MEDIA_ATTACHED, function() {
-            video.muted = true;
-            video.play();
-        });
+		var hls = new Hls(
+		{
+			debug: false
+		});
+		hls.loadSource(url);
+		hls.attachMedia(video);
+		hls.on(Hls.Events.MEDIA_ATTACHED, function ()
+		{
+			video.muted = true;
+			video.play();
+		});
+	}
 }
