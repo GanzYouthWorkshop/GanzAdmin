@@ -17,6 +17,16 @@ namespace GanzAdmin.Database
             return result;
         }
 
+        public static List<T> FromEntities<T>(this List<IEntity> items) where T : IEntity
+        {
+            List<T> result = new List<T>();
+            foreach (IEntity item in items)
+            {
+                result.Add((T)item);
+            }
+            return result;
+        }
+
         public static bool IsEqual(this IEntity obj1, object obj2)
         {
             if(obj1 != null && obj2 != null)

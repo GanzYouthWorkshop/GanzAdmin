@@ -18,6 +18,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.JSInterop;
 using GanzAdmin.Configuration;
 using GanzAdmin.API.NVR;
+using GanzAdmin.Tools;
 
 namespace GanzAdmin
 {
@@ -43,6 +44,7 @@ namespace GanzAdmin
             services.AddHttpContextAccessor();
             services.AddSingleton<SessionManager>();
             services.AddScoped<GanzAuthProvider>();
+            services.AddScoped<ToolService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
