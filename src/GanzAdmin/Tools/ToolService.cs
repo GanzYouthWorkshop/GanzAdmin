@@ -11,7 +11,20 @@ namespace GanzAdmin.Tools
         public List<IEntity> CheckedItems { get; set; } = new List<IEntity>();
         public Type CurrentType { get; set; }
 
-        public bool ShowMenu { get; set; } = true;
+        public bool ShowMenu
+        {
+            get { return this.showMenu; }
+            set
+            {
+                this.showMenu = value;
+                if (this.showMenu)
+                {
+                    this.Show?.Invoke(this, null);
+                }
+            }
+        }
+        private bool showMenu;
+        public event EventHandler Show;
 
         public void AddRemove(IEntity entity)
         {

@@ -49,4 +49,11 @@
         this.Description = "Katalogizáló címkéket nyomtat a kiválasztott alkatrészeket.";
         this.SupportedEntities = new List<Type> { typeof(Part) };
     }
+
+    protected override Task OnInitializedAsync()
+    {
+        this.Entities = this.ToolProvider.CheckedItems;
+
+        return base.OnInitializedAsync();
+    }
 }

@@ -1,4 +1,4 @@
-﻿@if (this.ToolProvider.ShowMenu)
+﻿@if (this.Visible)
 {
     <section class='popup' id='content'>
         <div class='shadow'></div>
@@ -6,7 +6,7 @@
         <div class='body'>
             <div class='header'>
                 <h2>@(this.SelectedTool != null ? this.SelectedTool.Name : "Eszközök")</h2>
-                <a class='button' @onclick="() => { this.ToolProvider.ShowMenu = false; }"></a>
+                <a class='button' @onclick="() => { this.Visible = false; }"></a>
             </div>
 
             <div class='dynamic'>
@@ -41,6 +41,9 @@
     [Inject]
     public ToolService ToolProvider { get; set; }
 
+    [Parameter]
+    public bool Visible { get; set; } = false;
+
     private List<ToolBase> AvailableTools
     {
         get
@@ -64,7 +67,20 @@
 
     public void SelectTool(ToolBase tool)
     {
-        tool.Entities = this.ToolProvider.CheckedItems;
         this.SelectedTool = tool;
+    }
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+
+        this.ToolProvider.Show += this.ShowMenu;
+    }
+
+    private void ShowMenu(object sender, EventArgs e)
+    {
+        this.SelectedTool = null;
+        this.Visible = true;
+        this.StateHasChanged();
     }
 }
