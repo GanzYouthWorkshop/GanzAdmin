@@ -1,0 +1,33 @@
+﻿@page "/print"
+@namespace GanzAdmin.Pages
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8'>
+    <title>Nyomtatás</title>
+</head>
+<body>
+    <app>
+        <component type="typeof(App)" render-mode="ServerPrerendered" />
+    </app>
+
+    @*<div id="blazor-error-ui">
+        <environment include="Staging,Production">
+            Sajnos hiba történt =( Lehet, hogy újra kell töltened az oldalt!
+        </environment>
+        <environment include="Development">
+            An unhandled exception has occurred. See browser dev tools for details.
+        </environment>
+        <a href="" class="reload">Frissítés</a>
+        <a class="dismiss">🗙</a>
+    </div>*@
+
+    <!-- SignalR client -->
+    <script src="_framework/blazor.server.js"></script>
+</body>
+</html>
