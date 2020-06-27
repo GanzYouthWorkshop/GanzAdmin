@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using GanzAdmin.Database.Models;
 using GanzAdmin.Authentication;
 using Microsoft.AspNetCore.Http;
+using GanzAdmin.Tools;
 
 namespace GanzAdmin.DataHandling
 {
@@ -28,6 +29,9 @@ namespace GanzAdmin.DataHandling
 
         [Inject]
         protected IHttpContextAccessor Http { get; set; }
+
+        [Inject]
+        protected ToolService ToolProvider { get; set; }
 
         protected abstract string BaseLink { get; set; }
         protected abstract string DataName { get; set; }
@@ -54,6 +58,7 @@ namespace GanzAdmin.DataHandling
             await Task.Run(() =>
             {
                 this.ItemList = this.m_Collection.FindAll().ToList();
+                this.ToolProvider.Reset(typeof(T));
 
                 this.Init();
             });

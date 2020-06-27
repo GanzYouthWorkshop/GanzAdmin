@@ -1,0 +1,58 @@
+﻿@if (true)
+{
+    <h3>Fejlesztés alatt!</h3>
+}
+else
+{
+    <h3>Beszállítói prioritás beállítása</h3>
+    @foreach (Supplier supplier in this.supplierPriority)
+    {
+        Supplier temp = supplier;
+        <div>
+            <ComboBox Inline
+                      AuthOR="@Permissions.EditParts"
+                      ItemType="@Supplier"
+                      Items="GanzAdminDbEngine.Instance.GetCollection<Supplier>().FindAll()"
+                      Name="@nameof(Part.SupplySources)"
+                      Display="Beszállító"
+                      @bind-Value="temp" />
+
+            <a @onclick="() => this.supplierPriority.Remove(temp)"><i></i></a>
+        </div>
+    }
+    <a @onclick="() => this.supplierPriority.Add(new Supplier())">Új prioritás</a>
+    <hr />
+
+    <h3>Rendelendő mennyiségek</h3>
+    @*@foreach (KeyValuePart part in this.Entities.FromEntities<Part>().Select(p => new Dictionary<Part, int>(p, 0))
+        {
+            <div>
+                <SimpleTextField Inline
+                                    AuthOR="@Permissions.EditParts"
+                                    Type="text"
+                                    Display="@part.Name"
+                                    Name="@part.Name"
+                                    @bind-Value="temp.SupplierItemId" />
+                <a @onclick="() => this.SelectedItem.Temporal.SupplySources.Remove(supply)">X</a>
+            </div>
+        }
+        <a @onclick="() => this.SelectedItem.Temporal.SupplySources.Add(new SupplySource())">Új forrás</a>*@
+    <hr />
+}
+
+@inherits ToolBase
+
+@code
+{
+    private int Step = 0;
+
+    private List<Supplier> supplierPriority = new List<Supplier>();
+
+    public PrintOrderTool()
+    {
+        this.Icon = "";
+        this.Name = "Nyomtatható rendelés";
+        this.Description = "Összegyűjti az összes kijelölt alkatrészt és a beállított prioritások alapján rendelőlapokat hoz létre.";
+        this.SupportedEntities = new List<Type> { typeof(Part) };
+    }
+}

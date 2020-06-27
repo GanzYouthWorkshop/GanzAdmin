@@ -1,7 +1,7 @@
 ﻿@using GanzAdmin.Authentication;
 
 <nav>
-    <span id='selected-items' title='Eszközök'></span>
+    <span id='selected-items' title='Eszközök' @onclick="() => { this.ToolProvider.ShowMenu = true; }"></span>
 
     <span id='menu' title='Menü'></span>
     <ul>
@@ -27,6 +27,9 @@
 
     [Inject]
     protected IJSRuntime JS { get; set; }
+
+    [Inject]
+    public ToolService ToolProvider { get; set; }
 
     protected override void OnAfterRender(bool firstRender)
     {

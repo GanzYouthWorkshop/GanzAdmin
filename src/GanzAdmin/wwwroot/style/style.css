@@ -1008,3 +1008,22 @@ main .breadcrumb a
 	border: 2px solid #00897b;
 }
 /*#endregion*/
+
+
+.tool {
+	display: grid;
+	grid-template-columns: [c1]64px [c2] auto;
+}
+
+.tool:hover {
+    background-color: #b2dfdb;
+}
+
+.tool i {
+    font-size: 40px;
+	margin: 0.5em auto;
+}
+
+.tool h3 {
+    text-transform: uppercase;
+}
