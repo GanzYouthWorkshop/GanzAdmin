@@ -5,20 +5,22 @@
 
 <div>
     @((MarkupString)this.PrintContent)
-    DEF
 </div>
 
 @code
 {
-    [Inject]
-    protected IHttpContextAccessor Http { get; set; }
+        [Inject]
+        protected IHttpContextAccessor Http { get; set; }
 
     public string PrintContent { get; set; }
 
     protected override Task OnInitializedAsync()
     {
-        this.PrintContent = this.Http.HttpContext.Request.Query.FirstOrDefault(q => q.Key == "print").Value;
-
+        if (this.Http.HttpContext.Request.Method == "POST")
+        {
+            this.PrintContent = this.Http.HttpContext.Request.Form.FirstOrDefault(q => q.Key == "print").Value;
+            this.StateHasChanged();
+        }
         return base.OnInitializedAsync();
     }
 }

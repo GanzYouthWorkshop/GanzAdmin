@@ -51,7 +51,7 @@
         }
 
         Microsoft.AspNetCore.Antiforgery.AntiforgeryTokenSet csrf = this.antiforgery.GetTokens(this.Http.HttpContext);
-        string formData = $"{{ \"print\": \"{result}\", \"{csrf.HeaderName}\": \"{csrf.RequestToken}\" }}";
+        string formData = $"{{ \"print\": \"{result}\", \"{csrf.FormFieldName}\": \"{csrf.RequestToken}\" }}";
         this.JS.InvokeVoidAsync("createPost", "./print", formData);
     }
 
