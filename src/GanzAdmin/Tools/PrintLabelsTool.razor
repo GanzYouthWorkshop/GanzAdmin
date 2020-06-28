@@ -1,4 +1,6 @@
-﻿@inherits ToolBase
+﻿@using GanzAdmin.Pages.Print;
+
+@inherits ToolBase
 
 <p>
     <label for="labeltype">Címke típus:</label>
@@ -14,13 +16,6 @@
 @code
 {
     public int LabelType { get; set; }
-
-    [Inject]
-    protected Microsoft.AspNetCore.Antiforgery.IAntiforgery antiforgery { get; set; }
-
-    [Inject]
-    protected Microsoft.AspNetCore.Http.IHttpContextAccessor Http { get; set; }
-
 
     public PrintLabelsTool()
     {
@@ -39,7 +34,6 @@
 
     private void GenerateLabels()
     {
-        string skeleton = "<html><head><meta charset='utf-8'></head><body>{0}</body></html>";
         string result = "";
         foreach(Part part in this.Entities.FromEntities<Part>())
         {
@@ -50,20 +44,19 @@
             }
         }
 
-        Microsoft.AspNetCore.Antiforgery.AntiforgeryTokenSet csrf = this.antiforgery.GetTokens(this.Http.HttpContext);
-        string formData = $"{{ \"print\": \"{result}\", \"{csrf.FormFieldName}\": \"{csrf.RequestToken}\" }}";
-        this.JS.InvokeVoidAsync("createPost", "./print", formData);
+
+        PrintUtils.PrintContent(this.JS, result);
     }
 
     private string GenerateSmallLabel(Part part)
     {
-        return $"<div class=''><span>{part.Name}</span></div>";
+        return $"<div class='small label'><img class='icon' src='' /><span>{part.Name}<small>{part.ShortDescription}</span></div>";
     }
 
     private string GenerateBigLabel(Part part)
     {
-        //http://api.qrserver.com/v1/create-qr-code/?color=000000&bgcolor=FFFFFF&data=ABCD&qzone=1&margin=0&size=425x425&ecc=L
-        return "";
+        string qr1 = "http://api.qrserver.com/v1/create-qr-code/?color=000000&bgcolor=FFFFFF&data=ABCD&qzone=1&margin=0&size=425x425&ecc=L";
+        return $"<div class='big label'><img class='qr' src='{qr1}' /><span>{part.Name}<small>{part.ShortDescription}</span></div>";
     }
 
 
