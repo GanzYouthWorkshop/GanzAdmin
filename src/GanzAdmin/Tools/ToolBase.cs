@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
 
 namespace GanzAdmin.Tools
 {
@@ -12,6 +13,9 @@ namespace GanzAdmin.Tools
         [Inject]
         public ToolService ToolProvider { get; set; }
 
+        [Inject]
+        protected IJSRuntime JS { get; set; }
+
         public string Icon { get; protected set; }
         public string Name { get; protected set; }
         public string Description { get; protected set; }
@@ -19,5 +23,10 @@ namespace GanzAdmin.Tools
 
         [Parameter]
         public List<IEntity> Entities { get; set; }
+
+        protected void OpenNewWindow(string url)
+        {
+            this.JS.InvokeVoidAsync("window.open", url, "_blank");
+        }
     }
 }
