@@ -972,6 +972,11 @@ iframe.scripted-page
 	display: grid;
 	grid-template-columns: [c1] 33% [c2] 33% [c3] 33%;
 }
+
+.triple-editor .CodeMirror
+{
+	height: 500px;
+}
 /*#endregion*/
 
 

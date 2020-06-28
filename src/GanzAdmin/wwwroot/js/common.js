@@ -124,6 +124,7 @@ function createCmEditor(el, language)
 	var editor = CodeMirror.fromTextArea(el, {
 		lineNumbers: true,
 		mode: language,
+		htmlMode: true,
 		gutters: ["CodeMirror-lint-markers"],
 		lint: true,
 	});
