@@ -50,13 +50,14 @@
 
     private string GenerateSmallLabel(Part part)
     {
-        return $"<div class='small label'><img class='icon' src='' /><span>{part.Name}<small>{part.ShortDescription}</span></div>";
+        return $"<div class='small label'><img class='icon' src='' /><span>{part.Name}<small>{part.ShortDescription}</small></span></div>";
     }
 
     private string GenerateBigLabel(Part part)
     {
         string qr1 = "http://api.qrserver.com/v1/create-qr-code/?color=000000&bgcolor=FFFFFF&data=ABCD&qzone=1&margin=0&size=425x425&ecc=L";
-        return $"<div class='big label'><img class='qr' src='{qr1}' /><span>{part.Name}<small>{part.ShortDescription}</span></div>";
+        string qr2 = "http://api.qrserver.com/v1/create-qr-code/?color=000000&bgcolor=FFFFFF&data=ABCD&qzone=1&margin=0&size=425x425&ecc=L";
+        return $"<div class='big label'><span><h1>{part.Name}</h1>{part.ShortDescription}</span><div class='qr'><img src='{qr1}' />GanzAdmin</div><div class='qr'><img src='{qr2}' />Datasheet</div></div>";
     }
 
 
