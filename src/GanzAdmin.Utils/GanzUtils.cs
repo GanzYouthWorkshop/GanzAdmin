@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -24,7 +25,6 @@ namespace GanzAdmin.Utils
             string base64 = Convert.ToBase64String(plainTextBytes);
 
             return $"data:{mime};base64,{base64}";
-
         }
     }
 }

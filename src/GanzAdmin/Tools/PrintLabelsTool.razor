@@ -15,6 +15,13 @@
 {
     public int LabelType { get; set; }
 
+    [Inject]
+    protected Microsoft.AspNetCore.Antiforgery.IAntiforgery antiforgery { get; set; }
+
+    [Inject]
+    protected Microsoft.AspNetCore.Http.IHttpContextAccessor Http { get; set; }
+
+
     public PrintLabelsTool()
     {
         this.Icon = "";
@@ -43,8 +50,9 @@
             }
         }
 
-        string data = GanzUtils.CreateDataUrl(String.Format(skeleton, result), "text/html");
-        this.OpenNewWindow("http://google.com");
+        Microsoft.AspNetCore.Antiforgery.AntiforgeryTokenSet csrf = this.antiforgery.GetTokens(this.Http.HttpContext);
+        string formData = $"{{ \"print\": \"{result}\", \"{csrf.HeaderName}\": \"{csrf.RequestToken}\" }}";
+        this.JS.InvokeVoidAsync("createPost", "./print", formData);
     }
 
     private string GenerateSmallLabel(Part part)
@@ -57,4 +65,6 @@
         //http://api.qrserver.com/v1/create-qr-code/?color=000000&bgcolor=FFFFFF&data=ABCD&qzone=1&margin=0&size=425x425&ecc=L
         return "";
     }
+
+
 }
