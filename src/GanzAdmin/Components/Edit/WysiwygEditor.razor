@@ -1,33 +1,14 @@
 ﻿@using GanzAdmin.Authentication.Components;
 @using GanzAdmin.Database.Models;
 
+@inherits EditField<string>
+
 <div id="editorjs"></div>
 
 @code
 {
-    private bool m_HasRendered = false;
-    private static bool m_SetParamReset = false;
     [Inject]
     protected IJSRuntime JS { get; set; }
-
-    [Parameter]
-    public string Value
-    {
-        get { return this.m_Value; }
-        set { this.m_Value = value; }
-    }
-    private string m_Value;
-
-
-    [Parameter]
-    public EventCallback<string> ValueChanged { get; set; }
-
-    protected Task OnValueChanged(ChangeEventArgs e)
-    {
-        this.m_Value = (string)e.Value;
-        m_SetParamReset = true;
-        return this.ValueChanged.InvokeAsync(this.m_Value);
-    }
 
     protected override void OnAfterRender(bool firstRender)
     {
