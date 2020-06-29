@@ -18,6 +18,7 @@
 
 body
 {
+	font-family: 'Segoe UI';
 	background: #EEEEEE;
 }
 
@@ -30,6 +31,7 @@ body
 	box-shadow: #CCCCDD 7px 7px 0px;
 }
 
+/*#region Címkék*/
 .label
 {
 	border: 1px solid black;
@@ -58,3 +60,27 @@ body
 	width: 9cm;
 	height: 14cm;
 }
+/*#endregion*/
+
+/*#region Rendelőlap*/
+#order-sheet .header
+{
+	margin-bottom: 2em;
+}
+
+#order-sheet .header td
+{
+	border: 0;
+}
+
+#order-sheet .header img
+{
+	height: 100px;
+}
+
+#order-sheet table
+{
+	width: 100%;
+	text-align: left;
+}
+/*#endregion*/
