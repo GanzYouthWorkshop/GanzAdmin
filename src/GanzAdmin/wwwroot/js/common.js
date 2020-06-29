@@ -173,3 +173,27 @@ function createHlsPlayer(id, url)
 		});
 	}
 }
+
+function createPost(url, values)
+{
+	var form = document.createElement("form");
+	form.target = "_blank";
+	form.method = "POST";
+	form.action = url;
+
+	var json = JSON.parse(values); 
+	console.log(values);
+	console.log(json);
+	for (i in json)
+	{
+		var input = document.createElement("input");
+		input.type = "text";
+		input.name = i;
+		input.value = json[i];
+		form.appendChild(input);
+    }
+
+	document.body.appendChild(form);
+	form.submit();
+	document.body.removeChild(form);
+}

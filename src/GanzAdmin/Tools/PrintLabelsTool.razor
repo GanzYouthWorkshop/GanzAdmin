@@ -1,46 +1,21 @@
-﻿<h3>Beszállítói prioritás beállítása</h3>
-@foreach (Supplier supplier in this.supplierPriority)
-{
-    Supplier temp = supplier;
-    <div>
-        <ComboBox Inline
-                  AuthOR="@Permissions.EditParts"
-                  ItemType="@Supplier"
-                  Items="GanzAdminDbEngine.Instance.GetCollection<Supplier>().FindAll()"
-                  Name="@nameof(Part.SupplySources)"
-                  Display="Beszállító"
-                  @bind-Value="temp" />
-
-        <a @onclick="() => this.supplierPriority.Remove(temp)"><i></i></a>
-    </div>
-}
-<a @onclick="() => this.supplierPriority.Add(new Supplier())">Új prioritás</a>
-<hr />
-
-<h3>Rendelendő mennyiségek</h3>
-@*@foreach (KeyValuePart part in this.Entities.FromEntities<Part>().Select(p => new Dictionary<Part, int>(p, 0))
-{
-    <div>
-        <SimpleTextField Inline
-                            AuthOR="@Permissions.EditParts"
-                            Type="text"
-                            Display="@part.Name"
-                            Name="@part.Name"
-                            @bind-Value="temp.SupplierItemId" />
-        <a @onclick="() => this.SelectedItem.Temporal.SupplySources.Remove(supply)">X</a>
-    </div>
-}
-<a @onclick="() => this.SelectedItem.Temporal.SupplySources.Add(new SupplySource())">Új forrás</a>*@
-<hr />
-
+﻿@using GanzAdmin.Pages.Print;
 
 @inherits ToolBase
 
+<p>
+    <label for="labeltype">Címke típus:</label>
+
+    <select name="labeltype" @bind="this.LabelType">
+        <option selected value="1">Szortiment szekrény</option>
+        <option value="2">Önzáró zacskó</option>
+    </select>
+</p>
+<button @onclick="() => this.GenerateLabels()">Küldés</button>
+
+
 @code
 {
-    private int Step = 0;
-
-    private List<Supplier> supplierPriority = new List<Supplier>();
+    public int LabelType { get; set; }
 
     public PrintLabelsTool()
     {
@@ -56,4 +31,33 @@
 
         return base.OnInitializedAsync();
     }
+
+    private void GenerateLabels()
+    {
+        string result = "";
+        foreach(Part part in this.Entities.FromEntities<Part>())
+        {
+            switch(this.LabelType)
+            {
+                case 1: result += this.GenerateSmallLabel(part); break;
+                case 2: result += this.GenerateBigLabel(part); break;
+            }
+        }
+
+
+        PrintUtils.PrintContent(this.JS, result);
+    }
+
+    private string GenerateSmallLabel(Part part)
+    {
+        return $"<div class='small label'><img class='icon' src='' /><span>{part.Name}<small>{part.ShortDescription}</span></div>";
+    }
+
+    private string GenerateBigLabel(Part part)
+    {
+        string qr1 = "http://api.qrserver.com/v1/create-qr-code/?color=000000&bgcolor=FFFFFF&data=ABCD&qzone=1&margin=0&size=425x425&ecc=L";
+        return $"<div class='big label'><img class='qr' src='{qr1}' /><span>{part.Name}<small>{part.ShortDescription}</span></div>";
+    }
+
+
 }

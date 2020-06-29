@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -16,6 +17,14 @@ namespace GanzAdmin.Utils
             }
 
             return result;
+        }
+
+        public static string CreateDataUrl(string content, string mime)
+        {
+            byte[] plainTextBytes = Encoding.UTF8.GetBytes(content);
+            string base64 = Convert.ToBase64String(plainTextBytes);
+
+            return $"data:{mime};base64,{base64}";
         }
     }
 }

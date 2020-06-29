@@ -1,0 +1,26 @@
+﻿@page "/print"
+@layout PrintLayout
+
+@using Microsoft.AspNetCore.Http;
+
+<div>
+    @((MarkupString)this.PrintContent)
+</div>
+
+@code
+{
+        [Inject]
+        protected IHttpContextAccessor Http { get; set; }
+
+    public string PrintContent { get; set; }
+
+    protected override Task OnInitializedAsync()
+    {
+        if (this.Http.HttpContext.Request.Method == "POST")
+        {
+            this.PrintContent = this.Http.HttpContext.Request.Form.FirstOrDefault(q => q.Key == "print").Value;
+            this.StateHasChanged();
+        }
+        return base.OnInitializedAsync();
+    }
+}

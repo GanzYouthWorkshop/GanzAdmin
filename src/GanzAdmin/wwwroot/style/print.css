@@ -1,0 +1,86 @@
+﻿@media print
+{
+	body
+	{
+		background: #FFFFFF;
+		margin: 0 !important;
+	}
+
+	#print-area
+	{
+		margin: 0 !important;
+		width: 100% !important;
+		background-color: #FFFFFF;
+		padding: 0 !important;
+		box-shadow: none !important;
+	}
+}
+
+body
+{
+	font-family: 'Segoe UI';
+	background: #EEEEEE;
+}
+
+#print-area
+{
+	margin: 3em auto;
+	width: 18cm;
+	background-color: #FFFFFF;
+	padding: 1.5cm;
+	box-shadow: #CCCCDD 7px 7px 0px;
+}
+
+/*#region Címkék*/
+.label
+{
+	border: 1px solid black;
+	overflow: hidden;
+	display: flex;
+}
+
+.label.small
+{
+	
+	width: 2.4cm;
+	height: 1.5cm;
+
+	padding-left: 48px;
+	
+	text-align: center;
+	font-weight: bold;
+	
+	background-repeat: no-repeat;
+	background-image: url(../img/symbol/chip.gif);
+	background-position: 3px 6px;	
+}
+
+.label.big
+{
+	width: 9cm;
+	height: 14cm;
+}
+/*#endregion*/
+
+/*#region Rendelőlap*/
+#order-sheet .header
+{
+	margin-bottom: 2em;
+}
+
+#order-sheet .header td
+{
+	border: 0;
+}
+
+#order-sheet .header img
+{
+	height: 100px;
+}
+
+#order-sheet table
+{
+	width: 100%;
+	text-align: left;
+}
+/*#endregion*/
