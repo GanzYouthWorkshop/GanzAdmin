@@ -1,19 +1,20 @@
 ﻿<h3>Beszállítói prioritás beállítása</h3>
-@foreach(Supplier supplier in this.supplierPriority)
+@for(int i = 0; i < this.supplierPriority.Count; i++)
 {
-    Supplier temp = supplier;
+    SupplierWrapper supp = this.supplierPriority[i];
+    var t = GanzAdminDbEngine.Instance.GetCollection<Supplier>().FindAll().ToList();
     <div>
         <ComboBox Inline
                   AuthOR="@Permissions.EditParts"
                   ItemType="@Supplier"
                   Items="GanzAdminDbEngine.Instance.GetCollection<Supplier>().FindAll()"
                   Display="Beszállító"
-                  @bind-Value="temp" />
+                  @bind-Value="supp.Supplier" />
 
-        <a @onclick="() => this.supplierPriority.Remove(temp)"><i></i></a>
+        <a @onclick="() => this.supplierPriority.Remove(this.supplierPriority[i])"><i></i></a>
     </div>
 }
-<a @onclick="() => this.supplierPriority.Add(new Supplier())">Új prioritás</a>
+<a @onclick="() => this.supplierPriority.Add(new SupplierWrapper())">Új prioritás</a>
 <hr />
 
 <h3>Rendelendő mennyiségek</h3>
@@ -39,8 +40,12 @@
         public int Amount { get; set; }
     }
 
-    [Parameter]
-    public List<Supplier> supplierPriority { get; set; } = new List<Supplier>();
+    private class SupplierWrapper
+    {
+        public Supplier Supplier { get; set; } = new Supplier();
+    }
+
+    private List<SupplierWrapper> supplierPriority { get; set; } = new List<SupplierWrapper>();
 
     private List<OrderData> orderData { get; set; }
 
@@ -65,15 +70,15 @@
         foreach(OrderData order in this.orderData)
         {
             string code = "";
-            foreach(Supplier supplier in this.supplierPriority)
+            foreach(SupplierWrapper supplier in this.supplierPriority)
             {
-                SupplySource temp = order.Part.SupplySources.FirstOrDefault(ss => ss.Supplier.Equals(supplier));
+                SupplySource temp = order.Part.SupplySources.FirstOrDefault(ss => ss.Supplier.Equals(supplier.Supplier));
                 if (temp != null)
                 {
                     code = temp.SupplierItemId;
                 }
             }
-            result += $"<tr><td>{order.Part.Name}</td><td>{code}</td><td>{order.Amount}</td></tr>";
+            result += $"<tr><td>{order.Part.Name}</td><td>{code}</td><td>{order.Amount} {order.Part.StockUnit}</td></tr>";
         }
         result += "</table></div>";
 
