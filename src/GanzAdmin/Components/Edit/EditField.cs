@@ -64,12 +64,12 @@ namespace GanzAdmin.Components.Edit
             }
         }
 
-        private Task OnValueChangedOnly()
+        protected Task OnValueChangedOnly()
         {
             return this.ValueChanged.InvokeAsync(this.m_Value);
         }
 
-        private Task OnValueChangedWithRender()
+        protected Task OnValueChangedWithRender()
         {
             return this.ValueChanged.InvokeAsync(this.m_Value);
         }

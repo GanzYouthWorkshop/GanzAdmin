@@ -7,7 +7,6 @@
                   AuthOR="@Permissions.EditParts"
                   ItemType="@Supplier"
                   Items="GanzAdminDbEngine.Instance.GetCollection<Supplier>().FindAll()"
-                  Name="@nameof(Part.SupplySources)"
                   Display="Beszállító"
                   @bind-Value="temp" />
 
@@ -40,7 +39,9 @@
         public int Amount { get; set; }
     }
 
-    private List<Supplier> supplierPriority { get; set; } = new List<Supplier>();
+    [Parameter]
+    public List<Supplier> supplierPriority { get; set; } = new List<Supplier>();
+
     private List<OrderData> orderData { get; set; }
 
     public PrintOrderTool()
