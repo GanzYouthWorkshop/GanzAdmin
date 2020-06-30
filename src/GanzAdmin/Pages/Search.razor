@@ -47,8 +47,8 @@
 
 @code
 {
-        [Parameter]
-        public string SearchExpression { get; set; }
+    [Parameter]
+    public string SearchExpression { get; set; }
 
     protected List<SearchResult> ItemList { get; set; }
 
@@ -82,7 +82,7 @@
             });
 
             int start = this.SearchExpression.IndexOf('(') + 1;
-            int length = this.SearchExpression.IndexOf(')') - start; 
+            int length = this.SearchExpression.IndexOf(')') - start;
             string[] attribute = this.SearchExpression.Substring(start, length).Split(';');
 
             foreach (string attr in attribute)
@@ -125,12 +125,21 @@
                 {
                     result.Add(new SearchFragment
                     {
-                        Key = this.SearchExpression.Substring(0, this.SearchExpression.IndexOf('(')).Trim(),
+                        Key = attr,
                         Type = SearchFragment.ExpressionType.Attribute,
                         Value = null
                     });
                 }
             }
+        }
+        else
+        {
+            result.Add(new SearchFragment
+            {
+                Key = this.SearchExpression.Trim(),
+                Type = SearchFragment.ExpressionType.Main,
+                Value = null
+            });
         }
 
         return result;
