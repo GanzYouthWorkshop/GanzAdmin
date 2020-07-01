@@ -16,3 +16,4 @@ src/GanzAdmin.ServerAdministration/bin
 src/GanzAdmin.ServerAdministration/obj
 src/GanzAdmin/config.xml
 *.user
+src/GanzAdmin/wwwroot/filestorage

@@ -22,9 +22,8 @@
     case "txt":
     case "ini":
     case "md":
-        <div>@File.ReadAllText(this.FileName)</div>
+        <div><pre>@File.ReadAllText(this.LocalFile)</pre></div>
         break;
-
     case "doc":
     case "docx":
     case "xls":
@@ -46,10 +45,8 @@
     private IWebHostEnvironment m_Hosting { get; set; }
 
     [Parameter]
-    public string FileName { get; set; }
+    public string LocalFile { get; set; }
 
-    public string WebFile
-    {
-        get { return this.FileName.Substring(this.m_Hosting.WebRootPath.Length).Replace('\\', '/'); }
-    }
+    [Parameter]
+    public string WebFile { get; set; }
 }

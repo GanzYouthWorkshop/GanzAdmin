@@ -67,7 +67,18 @@ function createEditorJS(initialData, callbackObj)
 				header: { class: Header, inlineToolbar: itb },
 				list: { class: List, inlineToolbar: itb },
 				checklist: { class: Checklist, inlineToolbar: itb },
-				image: ImageTool,
+				image:
+				{
+					class: ImageTool,
+					config:
+					{
+						endpoints:
+						{
+							byFile: './api/upload', // Your backend file uploader endpoint
+							byUrl: './api/upload', // Your endpoint that provides uploading by Url
+						}
+					}
+				},
 				delimiter: Delimiter,
 				table: { class: Table, inlineToolbar: itb },
 				code: { class: CodeTool, inlineToolbar: itb },

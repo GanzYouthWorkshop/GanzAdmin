@@ -84,6 +84,15 @@
             </table>
             break;
 
+        case "image":
+            <img src="@(data.GetProperty("file").GetProperty("url").GetString())">
+            string caption = data.GetProperty("caption").GetString();
+            if(caption != null)
+            {
+                <p>@caption</p>
+            }
+            break;
+
         case "embed":
             <iframe width="@data.GetProperty("width").GetRawText()"
                     height="@data.GetProperty("height").GetRawText()"
