@@ -12,7 +12,7 @@ namespace GanzAdmin.API.FileController
 {
     [Route("api/upload")]
     [ApiController]
-    [IgnoreAntiforgeryTokenAttribute(Order = 1001)]
+    [IgnoreAntiforgeryToken(Order = 1001)]
     public class UploadController : Controller
     {
         private readonly IWebHostEnvironment environment;
@@ -20,12 +20,6 @@ namespace GanzAdmin.API.FileController
         public UploadController(IWebHostEnvironment environment)
         {
             this.environment = environment;
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> FetchUrl()
-        {
-            return this.StatusCode(404);
         }
 
         [HttpPost]
