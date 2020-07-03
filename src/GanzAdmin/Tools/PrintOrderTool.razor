@@ -76,6 +76,7 @@
                 if (temp != null)
                 {
                     code = temp.SupplierItemId;
+                    break;
                 }
             }
             result += $"<tr><td>{order.Part.Name}</td><td>{code}</td><td>{order.Amount} {order.Part.StockUnit}</td></tr>";

@@ -76,7 +76,7 @@
                                     {
                                         <tr>
                                             <td>@supply.Supplier.Name</td>
-                                            <td><a href="@(supply.Supplier.ItemLinkTemplate.Replace("####", supply.SupplierItemId))" target="_blank">@supply.SupplierItemId <i></i></a></td>
+                                            <td><a href="@(supply.Supplier.ItemLinkTemplate?.Replace("####", supply.SupplierItemId))" target="_blank">@supply.SupplierItemId <i></i></a></td>
                                         </tr>
                                         @*<span></span>
                                         
