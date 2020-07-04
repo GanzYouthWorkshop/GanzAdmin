@@ -75,7 +75,7 @@ function createEditorJS(initialData, callbackObj)
 						endpoints:
 						{
 							byFile: './api/upload', // Your backend file uploader endpoint
-							byUrl: './api/upload', // Your endpoint that provides uploading by Url
+							byUrl: './api/fetch-url', // Your endpoint that provides uploading by Url
 						}
 					}
 				},
