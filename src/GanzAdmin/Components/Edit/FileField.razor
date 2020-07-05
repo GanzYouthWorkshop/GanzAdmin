@@ -1,0 +1,56 @@
+﻿@using GanzAdmin.Authentication.Components;
+@using GanzAdmin.Database.Models;
+
+@inherits EditField<string>
+
+<p class="@(this.Inline ? "inline" : "")">
+    <label for="@this.Name">@this.Display:</label>
+    <AuthorizedView NeededRolesOR="@this.AuthOR" NeededRolesAND="@this.AuthAND">
+        <div class="filebox" @ref="this.html">
+            <input class="" type="file" name="@this.Name" />
+            <label for="file"><strong>Choose a file</strong><span class="box__dragndrop"> or drag it here</span>.</label>
+        </div>
+    </AuthorizedView>
+    <NonAuthorizedView NeededRolesOR="@this.AuthOR" NeededRolesAND="@this.AuthAND">
+        @*<span>@((this.Value as IEntity).DisplayValue)</span>*@
+    </NonAuthorizedView>
+</p>
+
+@code
+{
+    [Inject]
+    protected IJSRuntime JS { get; set; }
+
+    [Parameter]
+    public bool Inline { get; set; }
+
+    [Parameter]
+    public bool MultiSelect { get; set; }
+
+    private ElementReference html;
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        base.OnAfterRender(firstRender);
+
+        if(firstRender)
+        {
+            this.JS.InvokeVoidAsync("createUploader", html);
+        }
+    }
+
+    protected override Task OnValueChanged(ChangeEventArgs e)
+    {
+        //this.Value = this.Items.FirstOrDefault(i => ((IEntity)i).Id == Convert.ToInt64(e.Value));
+
+        //this.Changed.InvokeAsync((ItemType)Value);
+        if (this.PreventRenderOnChange)
+        {
+            return this.OnValueChangedOnly();
+        }
+        else
+        {
+            return this.OnValueChangedWithRender();
+        }
+    }
+}

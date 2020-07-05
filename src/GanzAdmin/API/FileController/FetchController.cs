@@ -34,10 +34,7 @@ namespace GanzAdmin.API.FileController
         {
             try
             {
-                var t = HttpContext.Request.Form;
-                string result = "";
-
-                result = $"{{ \"success\" : 1, \"file\": {{ \"url\" : \"{model.url}\" }} }}";
+                string result =  $"{{ \"success\" : 1, \"file\": {{ \"url\" : \"{model.url}\" }} }}";
 
                 return this.StatusCode(200, result);
             }

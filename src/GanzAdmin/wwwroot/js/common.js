@@ -211,3 +211,30 @@ function createPost(url, values)
 	form.submit();
 	document.body.removeChild(form);
 }
+
+function createUploader(el)
+{
+	if (el)
+	{
+		$(el).on('drag dragstart dragend dragover dragenter dragleave drop', function (e)
+		{
+			e.preventDefault();
+			e.stopPropagation();
+		});
+		
+		$(el).on('dragover dragenter', function ()
+		{
+			$(this).addClass('is-dragover');
+		});
+		
+		$(el).on('dragleave dragend drop', function ()
+		{
+			$(this).removeClass('is-dragover');
+		});
+
+		$(el).on('drop', function (e)
+		{
+			droppedFiles = e.originalEvent.dataTransfer.files;
+		});
+    }
+}

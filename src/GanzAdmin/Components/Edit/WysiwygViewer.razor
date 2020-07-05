@@ -33,7 +33,17 @@
             break;
 
         case "warning":
-            <div class="warning box">
+            string htmlClass = "";
+            string title = data.GetProperty("title").GetString();
+            if(title.ToLower().Contains("figyelem"))
+            {
+                htmlClass = "warning";
+            }
+            else if (title.ToLower().Contains("tipp"))
+            {
+                htmlClass = "info";
+            }
+            <div class="@(htmlClass + " box")">
                 <p><b>@((MarkupString)data.GetProperty("title").GetString())</b></p>
                 <p>@((MarkupString)data.GetProperty("message").GetString())</p>
             </div>
