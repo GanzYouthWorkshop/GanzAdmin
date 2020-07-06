@@ -212,29 +212,70 @@ function createPost(url, values)
 	document.body.removeChild(form);
 }
 
-function createUploader(el)
+function createUploader(form)
 {
-	if (el)
+	if (form)
 	{
-		$(el).on('drag dragstart dragend dragover dragenter dragleave drop', function (e)
+		$(form).on('drag dragstart dragend dragover dragenter dragleave drop', function (e)
 		{
 			e.preventDefault();
 			e.stopPropagation();
 		});
 		
-		$(el).on('dragover dragenter', function ()
+		$(form).on('dragover dragenter', function ()
 		{
-			$(this).addClass('is-dragover');
+			$(this).parent().addClass('is-dragover');
 		});
 		
-		$(el).on('dragleave dragend drop', function ()
+		$(form).on('dragleave dragend drop', function ()
 		{
-			$(this).removeClass('is-dragover');
+			$(this).parent().removeClass('is-dragover');
 		});
 
-		$(el).on('drop', function (e)
+		$(form).on('drop', function (e)
 		{
+			console.log(e);
 			droppedFiles = e.originalEvent.dataTransfer.files;
+
+			var jform = $(form);
+			var ajaxData = new FormData(jform.get(0));
+
+			if (droppedFiles)
+			{
+				var input = jform.find('input').first();
+				$.each(droppedFiles, function (i, file)
+				{
+					ajaxData.append(input.attr('name'), file);
+				});
+			}
+
+			$.ajax(
+			{
+				url: jform.attr('action'),
+				type: jform.attr('method'),
+				data: ajaxData,
+				dataType: 'json',
+				cache: false,
+				contentType: false,
+				processData: false,
+				complete: function ()
+				{
+					jform.parent().removeClass('is-uploading');
+				},
+				success: function(data)
+				{
+					console.log(data);
+					jform.find("input[type='hidden']").first().val(data.file.url).change();
+					jform.parent().addClass(data.success == true ? 'is-success' : 'is-error');
+					if (!data.success) $errorMsg.text(data.error);
+				},
+				error: function()
+				{
+					// Log the error, show an alert, whatever works for you
+					alert("hiba");
+				}
+			});
 		});
+
     }
 }

@@ -6,9 +6,16 @@
 <p class="@(this.Inline ? "inline" : "")">
     <label for="@this.Name">@this.Display:</label>
     <AuthorizedView NeededRolesOR="@this.AuthOR" NeededRolesAND="@this.AuthAND">
-        <div class="filebox" @ref="this.html">
-            <input class="" type="file" name="@this.Name" />
-            <label for="file"><strong>Choose a file</strong><span class="box__dragndrop"> or drag it here</span>.</label>
+        <div class="filebox">
+            <form @ref="this.html" class="box" method="post" action="./api/upload" enctype="multipart/form-data">
+                @if(this.IsImage)
+                {
+                    <img class="upload-preview" src="@this.Value" />
+                }
+                <input type="hidden" @bind="@this.Value" />
+                <input class="" type="file" name="@this.Name" />
+                <strong>Húzd ide a fájlt!</strong>
+            </form>
         </div>
     </AuthorizedView>
     <NonAuthorizedView NeededRolesOR="@this.AuthOR" NeededRolesAND="@this.AuthAND">
@@ -27,7 +34,33 @@
     [Parameter]
     public bool MultiSelect { get; set; }
 
+    [Parameter]
+    public EventCallback UploadStarted { get; set; }
+
     private ElementReference html;
+
+    public bool IsImage
+    {
+        get
+        {
+            if(this.Value != null)
+            {
+                switch(this.Value.Split('.').Last().ToLower())
+                {
+                    case "bmp":
+                    case "png":
+                    case "jpg":
+                    case "jpeg":
+                    case "gif":
+                        return true;
+
+                    default:
+                        return false;
+                }
+            }
+            return false;
+        }
+    }
 
     protected override void OnAfterRender(bool firstRender)
     {
@@ -36,21 +69,6 @@
         if(firstRender)
         {
             this.JS.InvokeVoidAsync("createUploader", html);
-        }
-    }
-
-    protected override Task OnValueChanged(ChangeEventArgs e)
-    {
-        //this.Value = this.Items.FirstOrDefault(i => ((IEntity)i).Id == Convert.ToInt64(e.Value));
-
-        //this.Changed.InvokeAsync((ItemType)Value);
-        if (this.PreventRenderOnChange)
-        {
-            return this.OnValueChangedOnly();
-        }
-        else
-        {
-            return this.OnValueChangedWithRender();
         }
     }
 }

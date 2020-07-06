@@ -1072,4 +1072,29 @@ div.filebox.is-dragover
 {
 	border: 3px dashed #00897b;
 }
+
+.filebox.is-uploading
+{
+	background-image: url(./img/loading.gif);
+	background-repeat: no-repeat;
+	background-position: center;
+}
+
+.filebox.is-uploading form
+{
+	display: none;
+}
+
+.filebox.is-success
+{
+	background-color: forestgreen;
+	color: #FFFFFF;
+}
+
+.filebox img.upload-preview
+{
+	width: 32px;
+	height: 32px;
+	float: left;
+}
 /*#endregion*/
