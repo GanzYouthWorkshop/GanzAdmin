@@ -39,7 +39,7 @@ namespace GanzAdmin.API.FileController
                         {
                         }
 
-                        string filename = DateTime.Now.ToString("yyMMdd_hhmm") + "_" + file.FileName;
+                        string filename = DateTime.Now.ToString("yyMMdd_HHmm") + "_" + file.FileName;
                         string path = GanzUtils.ProperPathCombine('\\', environment.WebRootPath, "content\\uploads", requestedPath, filename);
 
                         using (FileStream stream = new FileStream(path, FileMode.Create))

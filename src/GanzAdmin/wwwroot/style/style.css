@@ -1057,10 +1057,16 @@ main .breadcrumb a
 /*#region Feltöltés (csak form, a fájlböngészőé máshol van)*/
 div.filebox
 {
+	width: 200px;
+	height: 64px;
 	border: 3px dashed #CCCCCC;
-	padding: 1em 0.3em;
 	text-align: center;
 	display: inline-block;
+}
+
+div.filebox form
+{
+	padding: 1em 0.3em;
 }
 
 div.filebox input
@@ -1096,5 +1102,10 @@ div.filebox.is-dragover
 	width: 32px;
 	height: 32px;
 	float: left;
+}
+
+div.filebox small
+{
+	display:block;
 }
 /*#endregion*/

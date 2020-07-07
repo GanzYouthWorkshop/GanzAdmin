@@ -264,8 +264,12 @@ function createUploader(form)
 				},
 				success: function(data)
 				{
-					console.log(data);
-					jform.find("input[type='hidden']").first().val(data.file.url).change();
+					var hidden = jform.find("input[type='hidden']").first();
+					hidden.val(data.file.url);
+
+					var event = new Event('change');
+					hidden[0].dispatchEvent(event);
+
 					jform.parent().addClass(data.success == true ? 'is-success' : 'is-error');
 					if (!data.success) $errorMsg.text(data.error);
 				},
