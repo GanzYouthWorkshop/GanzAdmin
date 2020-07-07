@@ -13,6 +13,8 @@ using GanzAdmin.Database.Models;
 using GanzAdmin.Authentication;
 using Microsoft.AspNetCore.Http;
 using GanzAdmin.Tools;
+using Microsoft.AspNetCore.Hosting;
+using System.IO;
 
 namespace GanzAdmin.DataHandling
 {
@@ -29,6 +31,9 @@ namespace GanzAdmin.DataHandling
 
         [Inject]
         protected IHttpContextAccessor Http { get; set; }
+
+        [Inject]
+        protected IWebHostEnvironment WebHost { get; set; }
 
         [Inject]
         protected ToolService ToolProvider { get; set; }
@@ -196,6 +201,24 @@ namespace GanzAdmin.DataHandling
 
         }
 
+        #endregion
+
+        #region Segédmetódusok
+        protected void DeleteUploadedFile(string contentPath)
+        {
+            try
+            {
+                string fullPath = GanzUtils.ProperPathCombine('\\', this.WebHost.WebRootPath, contentPath);
+                if (File.Exists(fullPath))
+                {
+                    File.Delete(fullPath);
+                }
+            }
+            catch(Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine(ex.Message);
+            }
+        }
         #endregion
     }
 }
