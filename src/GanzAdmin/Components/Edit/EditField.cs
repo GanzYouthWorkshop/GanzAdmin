@@ -42,7 +42,7 @@ namespace GanzAdmin.Components.Edit
         [Parameter]
         public EventCallback<T> Changed { get; set; }
 
-        //Namost ez itt ronda. De lemondom miért!
+        //Namost ez itt ronda. De elmondom miért!
         //Ha egy érték változik az egész szülő-komponsens újrarajzolódik és ez a legtöbb esetben baromság. De azért néha szükség lehet rá.
         //Mivel más lehetőség nincs a jelzésre, ezért a Stack trace-ben megnézünk egy értéket és ha bennevan, akkor nem nemm frissítani (pl. OnValueChanged)
         //De ha nha szükség van rá ezért más értéknek kell a stack trace-ben lennie mint amúgy ezért kétféle metódus ugyanazt csinálja de - ugye milyen cseles? - más a nevük

@@ -15,41 +15,46 @@
     <nav class="breadcrumb">
         <span>&gt;</span><a href="" @onclick='() => OnBreadCrumb("")' @onclick:preventDefault>Home</a><span> / </span>
         @{
-            string build = "";
-            string relPath = this.Path.Remove(0, this.Base.Length);
-            foreach (string s in relPath.Split('\\', StringSplitOptions.RemoveEmptyEntries))
+            if (this.m_Loaded)
             {
-                build += $"{s}\\";
-                string tmp = build;
-                <a href="@build" @onclick="() => OnBreadCrumb(tmp)" @onclick:preventDefault>@s</a><span> / </span>
+                string build = "";
+                foreach (string s in WebPath.Split('\\', StringSplitOptions.RemoveEmptyEntries))
+                {
+                    build += $"{s}\\";
+                    string tmp = build;
+                    <a href="@build" @onclick="() => OnBreadCrumb(tmp)" @onclick:preventDefault>@s</a><span> / </span>
+                }
             }
         }
     </nav>
-    @foreach (string file in Directory.GetDirectories(this.Path))
+    @if (this.m_Loaded)
     {
-        <FileBox IsFolder="true" Path="@file.Split('\\', '/').Last()" Clicked="OnSelect" DoubleClicked="OnOpen" />
-    }
+        foreach (string file in Directory.GetDirectories(this.LocalPath))
+        {
+            <FileBox IsFolder="true" Path="@file.Split('\\', '/').Last()" Clicked="OnSelect" DoubleClicked="OnOpen" />
+        }
 
-    @foreach (string file in Directory.GetFiles(this.Path))
-    {
-        <FileBox IsFolder="false" Path="@file.Split('\\', '/').Last()" Clicked="OnSelect" DoubleClicked="OnOpen" />
+        foreach (string file in Directory.GetFiles(this.LocalPath))
+        {
+            <FileBox IsFolder="false" Path="@file.Split('\\', '/').Last()" Clicked="OnSelect" DoubleClicked="OnOpen" />
+        }
     }
 </main>
 
-@if (this.OpenedFile != null)
+@if (this.WebSelectedFile != null)
 {
     <section class='popup' id='content'>
         <div class='shadow'></div>
 
         <div class='body'>
             <div class='header'>
-                <h2>@this.OpenedFile.Split("\\").Last()</h2>
-                <a href="#" class='button' @onclick='() => this.OpenedFile = null' @onclick:preventDefault></a>
-                <a href="@this.OpenedFile.Substring(this.m_Hosting.WebRootPath.Length)" download="lol" class='button'></a>
+                <h2>@this.WebSelectedFile.Split("\\").Last()</h2>
+                <a href="#" class='button' @onclick='() => this.WebSelectedFile = null' @onclick:preventDefault></a>
+                <a href="@this.WebSelectedFile" target="_blank" download class='button'></a>
             </div>
 
             <div class="file-preview">
-                <FileViewer FileName="@this.OpenedFile" />
+                <FileViewer LocalFile="@this.LocalSelectedFile" WebFile="@this.WebSelectedFile" />
             </div>
         </div>
     </section>
@@ -63,14 +68,23 @@
     [Inject]
     protected NavigationManager NavMan { get; set; }
 
-    [Parameter]
-    public string Path { get; set; }
+    [Inject]
+    protected GanzAuthProvider Auth { get; set; }
 
-    public string Base { get; set; }
+    private bool m_Loaded;
+
+    public string LocalPath
+    {
+        get { return GanzUtils.ProperPathCombine('\\', this.m_Hosting.ContentRootPath, "\\wwwroot\\", this.WebBase, this.WebPath); }
+    }
+
+    public string WebBase { get; set; }
+    public string WebPath { get; set; }
+
+    public string LocalSelectedFile { get { return GanzUtils.ProperPathCombine('\\', this.m_Hosting.ContentRootPath, "\\wwwroot\\", this.WebSelectedFile); } }
+    public string WebSelectedFile { get; set; }
 
     public string aside { get; set; }
-
-    public string OpenedFile { get; set; }
 
     protected override Task OnInitializedAsync()
     {
@@ -78,28 +92,32 @@
         {
             if (this.NavMan.Uri.Contains("own"))
             {
-                this.Base = @"C:\Users\Szlatyka\Documents\GIT\GanzAdmin\src\GanzAdmin\wwwroot\content";
+                string member = this.Auth.CurrentMember.Username;
+                this.WebBase = @$"\filestorage\own\{member}";
+                Directory.CreateDirectory(this.LocalPath);
             }
             else if (this.NavMan.Uri.Contains("shared"))
             {
-                this.Base = @"\filestorage\shared";
+                this.WebBase = @"\filestorage\shared";
             }
             else if (this.NavMan.Uri.Contains("secret"))
             {
-                this.Base = @"\filestorage\own";
+                this.WebBase = @"\filestorage\secret";
             }
             else
             {
-                this.Base = null;
+                this.WebBase = null;
             }
 
-            this.Path = this.Base;
+            this.WebPath = "\\";
+
+            this.m_Loaded = true;
         }));
     }
 
     public void OnBreadCrumb(string sender)
     {
-        this.Path = this.Base + "\\" + sender;
+        this.WebPath = sender;
     }
 
     public void OnOpen(object sender)
@@ -107,13 +125,12 @@
         FileBox info = sender as FileBox;
         if (info.IsFolder)
         {
-            this.Path = this.Path + "\\" + info.Path;
+            this.WebPath = GanzUtils.ProperPathCombine('\\', this.WebPath, info.Path);
         }
         else
         {
-            this.OpenedFile = this.m_Hosting.WebRootPath +  this.Path + "\\" + info.Path;
+            this.WebSelectedFile = GanzUtils.ProperPathCombine('\\', this.WebBase, this.WebPath, info.Path);
         }
-
     }
 
     public void OnSelect(object sender)
@@ -121,11 +138,11 @@
         FileBox info = sender as FileBox;
         if (info.IsFolder)
         {
-
+            //TODO: SIDEBAR
         }
         else
         {
-
+            //TODO: SIDEBAR
         }
     }
 }

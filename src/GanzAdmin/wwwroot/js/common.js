@@ -67,7 +67,18 @@ function createEditorJS(initialData, callbackObj)
 				header: { class: Header, inlineToolbar: itb },
 				list: { class: List, inlineToolbar: itb },
 				checklist: { class: Checklist, inlineToolbar: itb },
-				image: ImageTool,
+				image:
+				{
+					class: ImageTool,
+					config:
+					{
+						endpoints:
+						{
+							byFile: './api/upload', // Your backend file uploader endpoint
+							byUrl: './api/fetch-url', // Your endpoint that provides uploading by Url
+						}
+					}
+				},
 				delimiter: Delimiter,
 				table: { class: Table, inlineToolbar: itb },
 				code: { class: CodeTool, inlineToolbar: itb },
@@ -199,4 +210,76 @@ function createPost(url, values)
 	document.body.appendChild(form);
 	form.submit();
 	document.body.removeChild(form);
+}
+
+function createUploader(form)
+{
+	if (form)
+	{
+		$(form).on('drag dragstart dragend dragover dragenter dragleave drop', function (e)
+		{
+			e.preventDefault();
+			e.stopPropagation();
+		});
+		
+		$(form).on('dragover dragenter', function ()
+		{
+			$(this).parent().addClass('is-dragover');
+		});
+		
+		$(form).on('dragleave dragend drop', function ()
+		{
+			$(this).parent().removeClass('is-dragover');
+		});
+
+		$(form).on('drop', function (e)
+		{
+			console.log(e);
+			droppedFiles = e.originalEvent.dataTransfer.files;
+
+			var jform = $(form);
+			var ajaxData = new FormData(jform.get(0));
+
+			if (droppedFiles)
+			{
+				var input = jform.find('input').first();
+				$.each(droppedFiles, function (i, file)
+				{
+					ajaxData.append(input.attr('name'), file);
+				});
+			}
+
+			$.ajax(
+			{
+				url: jform.attr('action'),
+				type: jform.attr('method'),
+				data: ajaxData,
+				dataType: 'json',
+				cache: false,
+				contentType: false,
+				processData: false,
+				complete: function ()
+				{
+					jform.parent().removeClass('is-uploading');
+				},
+				success: function(data)
+				{
+					var hidden = jform.find("input[type='hidden']").first();
+					hidden.val(data.file.url);
+
+					var event = new Event('change');
+					hidden[0].dispatchEvent(event);
+
+					jform.parent().addClass(data.success == true ? 'is-success' : 'is-error');
+					if (!data.success) $errorMsg.text(data.error);
+				},
+				error: function()
+				{
+					// Log the error, show an alert, whatever works for you
+					alert("hiba");
+				}
+			});
+		});
+
+    }
 }

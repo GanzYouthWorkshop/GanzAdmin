@@ -902,6 +902,26 @@ main.filebrowser a img
 	margin: 0 0 1em 2em;
 	font-style: italic;
 }
+
+.box
+{
+	padding: 0.3em 1em;
+	border-radius: 3px;
+	margin-bottom: 1em;
+}
+
+.warning.box
+{
+	color: #222222;
+	background-color: #fedf18;
+}
+
+.info.box
+{
+	color: #FFFFFF;
+	background-color: #00897b;
+}
+
 /*#endregion*/
 
 /*#region security camera*/
@@ -1032,3 +1052,60 @@ main .breadcrumb a
 .tool h3 {
     text-transform: uppercase;
 }
+
+
+/*#region Feltöltés (csak form, a fájlböngészőé máshol van)*/
+div.filebox
+{
+	width: 200px;
+	height: 64px;
+	border: 3px dashed #CCCCCC;
+	text-align: center;
+	display: inline-block;
+}
+
+div.filebox form
+{
+	padding: 1em 0.3em;
+}
+
+div.filebox input
+{
+	display: none;
+}
+
+div.filebox.is-dragover
+{
+	border: 3px dashed #00897b;
+}
+
+.filebox.is-uploading
+{
+	background-image: url(./img/loading.gif);
+	background-repeat: no-repeat;
+	background-position: center;
+}
+
+.filebox.is-uploading form
+{
+	display: none;
+}
+
+.filebox.is-success
+{
+	background-color: forestgreen;
+	color: #FFFFFF;
+}
+
+.filebox img.upload-preview
+{
+	width: 32px;
+	height: 32px;
+	float: left;
+}
+
+div.filebox small
+{
+	display:block;
+}
+/*#endregion*/

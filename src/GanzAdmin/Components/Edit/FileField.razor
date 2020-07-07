@@ -1,0 +1,111 @@
+﻿@using GanzAdmin.Authentication.Components;
+@using GanzAdmin.Database.Models;
+
+@inherits EditField<string>
+
+<p class="@(this.Inline ? "inline" : "")">
+    <label for="@this.Name">@this.Display:</label>
+    <AuthorizedView NeededRolesOR="@this.AuthOR" NeededRolesAND="@this.AuthAND">
+        <div class="filebox">
+            <form @ref="this.html" method="post" action="./api/upload" enctype="multipart/form-data">
+                @if(this.IsImage)
+                {
+                    <img class="upload-preview" src="@this.Value" />
+                }
+                @if(this.Value != null)
+                {
+                    <small>@(this.Value.Split('/').Last().Substring(12))</small>
+                }
+                <input type="hidden" value="@this.Value" @onchange="(e) => { this.OnValueChanged(e); }" />
+                <input class="" type="file" name="@this.Name" />
+                <strong>Húzd ide a fájlt!</strong>
+            </form>
+        </div>
+    </AuthorizedView>
+    <NonAuthorizedView NeededRolesOR="@this.AuthOR" NeededRolesAND="@this.AuthAND">
+        @*<span>@((this.Value as IEntity).DisplayValue)</span>*@
+    </NonAuthorizedView>
+</p>
+
+@code
+{
+    [Inject]
+    protected IJSRuntime JS { get; set; }
+
+    [Inject]
+    protected IWebHostEnvironment Environment { get; set; }
+
+    [Parameter]
+    public bool Inline { get; set; }
+
+    [Parameter]
+    public bool MultiSelect { get; set; }
+
+    [Parameter]
+    public EventCallback UploadStarted { get; set; }
+
+    private bool firstUpload = true;
+
+    private ElementReference html;
+
+    public bool IsImage
+    {
+        get
+        {
+            if(this.Value != null)
+            {
+                switch(this.Value.Split('.').Last().ToLower())
+                {
+                    case "bmp":
+                    case "png":
+                    case "jpg":
+                    case "jpeg":
+                    case "gif":
+                        return true;
+
+                    default:
+                        return false;
+                }
+            }
+            return false;
+        }
+    }
+
+    protected override Task OnInitializedAsync()
+    {
+        this.PreventRenderOnChange = false;
+        return base.OnInitializedAsync();
+    }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        base.OnAfterRender(firstRender);
+
+        if(firstRender)
+        {
+            this.JS.InvokeVoidAsync("createUploader", html);
+        }
+    }
+
+    protected override Task OnValueChanged(ChangeEventArgs e)
+    {
+        if (!firstUpload)
+        {
+            try
+            {
+                System.IO.File.Delete(GanzUtils.ProperPathCombine('\\', this.Environment.WebRootPath, this.m_Value));
+            }
+            catch (Exception)
+            {
+
+            }
+        }
+        firstUpload = false;
+
+
+        this.m_HasRendered = false;
+        this.StateHasChanged();
+
+        return base.OnValueChanged(e);
+    }
+}
