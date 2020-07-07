@@ -11,6 +11,7 @@ namespace GanzAdmin.Database.Models
         public long Id { get; set; }
 
         public string Name { get; set; }
+        public string IconUrl { get; set; }
         public Category ParentCategory { get; set; }
 
         public List<PartParameter> DefaultParameters { get; set; } = new List<PartParameter>();
