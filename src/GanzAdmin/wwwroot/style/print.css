@@ -47,17 +47,34 @@ body
 .label.small
 {
 	
-	width: 2.4cm;
+	width: 4cm;
 	height: 1.5cm;
-
-	padding-left: 48px;
 	
-	text-align: center;
 	font-weight: bold;
 	
 	background-repeat: no-repeat;
 	background-image: url(../img/symbol/chip.gif);
 	background-position: 3px 6px;	
+}
+
+.label.small img
+{
+	width: 1.5cm;
+	height: 1.5cm;
+	float: left;
+}
+
+.label.small div
+{
+	text-align: center;
+	overflow:hidden;
+}
+
+.label.small div small
+{
+	display: block;
+	font-size: 0.8em;
+	font-weight: normal;
 }
 
 .label.big

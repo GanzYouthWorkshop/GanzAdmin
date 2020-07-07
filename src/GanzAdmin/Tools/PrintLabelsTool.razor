@@ -50,7 +50,7 @@
 
     private string GenerateSmallLabel(Part part)
     {
-        return $"<div class='small label'><img class='icon' src='' /><span>{part.Name}<small>{part.ShortDescription}</small></span></div>";
+        return $"<div class='small label'><img class='icon' src='{part.Category.IconUrl}' /><div>{part.Name}<small>{part.ShortDescription}</small></div></div>";
     }
 
     private string GenerateBigLabel(Part part)
