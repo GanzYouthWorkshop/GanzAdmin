@@ -33,10 +33,17 @@ namespace GanzAdmin.Database.Models
             }
         }
 
+        [BsonIgnore]
+        public long SumInStock
+        {
+            get
+            {
+                return this.Stock.Sum(s => s.Amount);
+            }
+        }
+
         public string ShortDescription { get; set; }
-        public string LongDescription { get; set; }
-        public string ImagePath { get; set; }
-        public string DateSheet { get; set; }
+        public string DateSheetUrl { get; set; }
 
         public List<PartParameter> Parameters { get; set; } = new List<PartParameter>();
 

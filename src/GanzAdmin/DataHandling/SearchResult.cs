@@ -11,6 +11,7 @@ namespace GanzAdmin.DataHandling
         public string Display { get; set; }
         public Type DataType { get; set; }
         public string Url { get; set; }
+        public string Information { get; set; }
 
         public string TypeDisplay
         {

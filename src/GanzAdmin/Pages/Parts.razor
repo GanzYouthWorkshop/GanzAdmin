@@ -28,6 +28,7 @@
                         <DataGridHeader IsCollapsible>Mennyiség</DataGridHeader>
                         <DataGridHeader IsCollapsible IsSortable>Minimum raktári mennyiség</DataGridHeader>
                         <DataGridHeader IsCollapsible IsSortable>Hiányos?</DataGridHeader>
+                        <DataGridHeader IsCollapsible IsSortable>Adatlap</DataGridHeader>
                         <DataGridHeader IsCollapsible IsSortable>Termékkódok</DataGridHeader>
                         <DataGridHeader IsCollapsible IsSortable>Leírás</DataGridHeader>
                     </tr>
@@ -43,6 +44,7 @@
                         <DataGridHeader IsCollapsible>Mennyiség</DataGridHeader>
                         <DataGridHeader IsCollapsible IsSortable>Minimum raktári mennyiség</DataGridHeader>
                         <DataGridHeader IsCollapsible IsSortable>Hiányos?</DataGridHeader>
+                        <DataGridHeader IsCollapsible IsSortable>Adatlap</DataGridHeader>
                         <DataGridHeader IsCollapsible IsSortable>Termékkódok</DataGridHeader>
                         <DataGridHeader IsCollapsible IsSortable>Leírás</DataGridHeader>
                     </tr>
@@ -56,18 +58,32 @@
                         <td>
                             <NavLink href="@($"/{this.BaseLink}/{item.Id}")">@item.Name</NavLink>
                         </td>
-                        <td>@item.Category.Name</td>
                         <td>
-                            @foreach (Stockpile stock in item.Stock)
+                            @if(!string.IsNullOrEmpty(item.Category.IconUrl))
                             {
-                                <span>@stock.Location?.Name</span>
-                                <span> (@stock.Amount @item.StockUnit)</span>
-                                <span><a @onclick="() => this.OnRemoveOneFromStock(stock)">-1</a></span>
-                                <br />
+                                <img class="img-icon-16" src="@item.Category.IconUrl" />
+                            }
+                            @item.Category.Name
+                        </td>
+                        <td>
+                            <table>
+                                @foreach (Stockpile stock in item.Stock)
+                                {
+                                    <tr>
+                                        <td>@stock.Location?.Name (@stock.Amount @item.StockUnit)</td>
+                                        <td><a @onclick="() => this.OnRemoveOneFromStock(item, stock)">-1</a></td>
+                                    </tr>
+                                }
+                            </table>
+                        </td>
+                        <td class="center">@item.MinimumStock @item.StockUnit</td>
+                        <td class="center">@(item.LowStock ? "🟥" : "🟩")</td>
+                        <td class="center">
+                            @if(!string.IsNullOrEmpty(item.DateSheetUrl))
+                            {
+                                <a href="@item.DateSheetUrl" target="_blank">Adatlap <i></i></a>
                             }
                         </td>
-                        <td>@item.MinimumStock</td>
-                        <td>@(item.LowStock ? "❗" : "")</td>
                         <td>
                             <table>
                                 @foreach (SupplySource supply in item.SupplySources)
@@ -78,9 +94,6 @@
                                             <td>@supply.Supplier.Name</td>
                                             <td><a href="@(supply.Supplier.ItemLinkTemplate?.Replace("####", supply.SupplierItemId))" target="_blank">@supply.SupplierItemId <i></i></a></td>
                                         </tr>
-                                        @*<span></span>
-                                        
-                                        <br />*@
                                     }
                                 }
                             </table>
@@ -136,6 +149,9 @@
                                      Display="Rövid leírás"
                                      Name="@nameof(Part.Name)"
                                      @bind-Value="this.SelectedItem.Temporal.ShortDescription" />
+                    <FileField AuthOR="@Permissions.EditParts"
+                               Display="Adatlap"
+                               @bind-Value="this.SelectedItem.Temporal.DateSheetUrl" />
 
                     <h3>Raktérkészlet</h3>
                     @foreach (Stockpile stock in this.SelectedItem.Temporal.Stock)
@@ -253,11 +269,14 @@
         this.StateHasChanged();
     }
 
-    private void OnRemoveOneFromStock(Stockpile stock)
+    private void OnRemoveOneFromStock(Part part, Stockpile stock)
     {
         if(stock.Amount > 0)
         {
             stock.Amount--;
+            this.m_Collection.Update(part);
+            GanzAdminDbEngine.Instance.Transact();
+
             this.JS.InvokeVoidAsync("alertify.success", $"Egy elem leltárból eltávolítva!");
         }
         else
@@ -265,4 +284,27 @@
             this.JS.InvokeVoidAsync("alertify.error", $"Üres lerakatból nem lehet elvenni!");
         }
     }
+
+    protected override void BeforeEdit()
+    {
+        if (this.SelectedItem.Original.DateSheetUrl != this.SelectedItem.Temporal.DateSheetUrl)
+        {
+            this.DeleteUploadedFile(this.SelectedItem.Original.DateSheetUrl);
+        }
+    }
+
+    protected void BeforeCancel()
+    {
+        if (this.SelectedItem.Original.DateSheetUrl != this.SelectedItem.Temporal.DateSheetUrl)
+        {
+            this.DeleteUploadedFile(this.SelectedItem.Temporal.DateSheetUrl);
+        }
+    }
+
+    protected void BeforeDelete()
+    {
+        this.DeleteUploadedFile(this.SelectedItem.Temporal.DateSheetUrl);
+        this.DeleteUploadedFile(this.SelectedItem.Original.DateSheetUrl);
+    }
+
 }

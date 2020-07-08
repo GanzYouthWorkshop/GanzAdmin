@@ -14,6 +14,7 @@ namespace GanzAdmin.Utils
         private interface IGetSet
         {
             public Type ValueType { get; }
+            public List<string> Attributes { get; }
             public bool Init(PropertyInfo info);
         }
 
@@ -23,6 +24,7 @@ namespace GanzAdmin.Utils
             public Action<T, K> Setter { get; private set; }
 
             public Type ValueType { get; }
+            public List<string> Attributes { get; } = new List<string>();
 
             public GetSet()
             {
@@ -100,6 +102,15 @@ namespace GanzAdmin.Utils
 
                 dynamic value = getSet.Getter(this.Temporal);
                 getSet.Setter(this.Original, value);
+
+                //Itt kéne kezelni a fájltörlést, de valahogy okosan kéne  jövőben, ilyen delegálttal, kb. mint egy plugin
+                //if((getSet as IGetSet).Attributes.Contains(nameof(FileUrlAttribute)))
+                //{
+                //    if(getSet.Getter(this.Temporal) != getSet.Getter(this.Original))
+                //    {
+
+                //    }
+                //}
             }
 
             return this.Original;
@@ -116,6 +127,11 @@ namespace GanzAdmin.Utils
                 bool valid = (getSet as IGetSet).Init(info);
                 if (valid)
                 {
+                    IEnumerable<Attribute> attributes = info.GetCustomAttributes();
+                    foreach (Attribute attribute in attributes)
+                    {
+                        ((IGetSet)getSet).Attributes.Add((attribute.TypeId as Type).Name);
+                    }
                     PropertyData.Add(info.Name, getSet);
                 }
             }
