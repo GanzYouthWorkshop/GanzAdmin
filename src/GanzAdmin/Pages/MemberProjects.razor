@@ -23,19 +23,21 @@
         {
             @foreach (MemberProject item in this.ItemList)
             {
-                <section class="entry-item">
-                    <img srv="@item.Logo" />
-                    <h2>@item.Name</h2>
-                    <p>Állapot: @item.IsFinished</p>
-                    <p>
-                        Résztvevők:
-                        @foreach (Member member in item.Members)
-                        {
-                            <span>@member.Name, </span>
-                        }
-                    </p>
-                    <p><WysiwygViewer Source="@item.Description" /></p>
-                    <NavLink class="button" href="@($"/{this.BaseLink}/{item.Id}")">Részletek</NavLink>
+                <section class="entry-item project">
+                    <img src="@item.Logo" />
+                    <div>
+                        <h2>@item.Name</h2>
+                        <p>Állapot: @(item.IsFinished ? "Kész" : "Folyamatban")</p>
+                        <p>
+                            Résztvevők:
+                            @foreach (Member member in item.Members)
+                            {
+                                <span>@member.Name, </span>
+                            }
+                        </p>
+                        <p><WysiwygViewer Source="@item.Description" /></p>
+                        <NavLink class="button" href="@($"/{this.BaseLink}/{item.Id}")">Részletek</NavLink>
+                    </div>
                 </section>
             }
         }
@@ -109,7 +111,7 @@ else
                         <SimpleTextField @bind-Value="this.SelectedItem.Temporal.Name" Name="name" Display="Projektnév" Type="text"></SimpleTextField>
 
                         @*TODO fel kéne tudni tölteni a képet*@
-                        <img src="@this.SelectedItem.Original.Logo" />
+                        <FileField Display="Projekt logó" @bind-Value="@this.SelectedItem.Temporal.Logo" />
 
                         <SimpleCheckField Type="switch" Display="Befejezett" Name="finished" @bind-Value="@this.SelectedItem.Temporal.IsFinished" />
 
@@ -349,4 +351,27 @@ else
             this.NavMan.NavigateTo($"/{BaseLink}/{PopupDisplay}");
         });
     }
+
+    protected override void BeforeEdit()
+    {
+        if (this.SelectedItem.Original.Logo != this.SelectedItem.Temporal.Logo)
+        {
+            this.DeleteUploadedFile(this.SelectedItem.Original.Logo);
+        }
+    }
+
+    protected void BeforeCancel()
+    {
+        if (this.SelectedItem.Original.Logo != this.SelectedItem.Temporal.Logo)
+        {
+            this.DeleteUploadedFile(this.SelectedItem.Temporal.Logo);
+        }
+    }
+
+    protected void BeforeDelete()
+    {
+        this.DeleteUploadedFile(this.SelectedItem.Temporal.Logo);
+        this.DeleteUploadedFile(this.SelectedItem.Original.Logo);
+    }
+
 }

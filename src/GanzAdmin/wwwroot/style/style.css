@@ -89,6 +89,7 @@ input[type=submit]:hover, input[type=button]:hover, button:hover, a.button:hover
 }
 
 /*#endregion*/
+
 /*#region Fejléc, keresőterület, felső menü*/
 header {
 	position: absolute;
@@ -1031,9 +1032,9 @@ main .breadcrumb a
 
 .simple-ui section img
 {
-	float: left;
-	width: 250px;
-	height: 250px;
+	width: 200px;
+	height: 200px;
+	margin: 1em;
 }
 
 #editorjs
@@ -1118,3 +1119,10 @@ div.filebox small
 	display:block;
 }
 /*#endregion*/
+
+.entry-item.project
+{
+	padding: 1em;
+	display: grid;
+	grid-template-columns: 250px auto;
+}
