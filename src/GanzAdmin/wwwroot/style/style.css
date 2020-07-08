@@ -75,8 +75,20 @@ input[type=submit]:hover, input[type=button]:hover, button:hover, a.button:hover
 	border: 1px solid #CCCCCC;
 	border-radius: 2px;
 }
-/*#endregion*/
 
+.img-icon-8
+{
+	width: 8px;
+	height: 8px;
+}
+
+.img-icon-16
+{
+	width: 16px;
+	height: 16px;
+}
+
+/*#endregion*/
 /*#region Fejléc, keresőterület, felső menü*/
 header {
 	position: absolute;
@@ -552,7 +564,7 @@ main table tr.alert td
 	height: calc(100% - 2em)
 }
 
-.popup .body .file-preview *
+.popup .body .file-preview > *
 {
 	display: block;
 	width: 100%;
@@ -999,9 +1011,6 @@ iframe.scripted-page
 }
 /*#endregion*/
 
-
-
-
 main .breadcrumb a
 {
 	display: inline-block;
@@ -1010,7 +1019,7 @@ main .breadcrumb a
 	text-align: left;
 	margin: 0;
 	border: 0;
-	padding: 0 0.5em;
+	padding: 0.5em;
 }
 
 

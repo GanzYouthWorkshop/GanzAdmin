@@ -120,7 +120,7 @@
         }
     }
 
-    protected virtual void BeforeDelete()
+    protected void BeforeDelete()
     {
         this.DeleteUploadedFile(this.SelectedItem.Temporal.IconUrl);
         this.DeleteUploadedFile(this.SelectedItem.Original.IconUrl);

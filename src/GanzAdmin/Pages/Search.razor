@@ -1,13 +1,7 @@
 ﻿@page "/search/{SearchExpression}"
 
 <aside class='@(this.ItemList == null ? "loading" : "")'>
-    @if (this.ItemList != null)
-    {
-        @*<TreeLevel Items="@(this.ItemList.ToEntities<Location>())"
-                   Root="@null"
-                   Filter="@((e, r) => (e as Location).ParentLocation == null && r == null || (e as Location).ParentLocation?.Id == r?.Id)"
-                   UrlTemplate="@((e) => $"/{this.BaseLink}/{e.Id}")" />*@
-    }
+    <a hreg="~/search/(Hiányos)">Hiányos alkatrészek</a>
 </aside>
 
 <main class='@(this.ItemList == null ? "loading" : "")'>
@@ -19,6 +13,7 @@
                     <tr>
                         <DataGridHeader IsPinnable IsSortable>Találat</DataGridHeader>
                         <DataGridHeader IsSortable>Típus</DataGridHeader>
+                        <DataGridHeader IsSortable>Információ</DataGridHeader>
                     </tr>
                 </thead>
             </table>
@@ -28,6 +23,7 @@
                     <tr>
                         <DataGridHeader IsPinnable IsSortable>Találat</DataGridHeader>
                         <DataGridHeader IsSortable>Típus</DataGridHeader>
+                        <DataGridHeader IsSortable>Információ</DataGridHeader>
                     </tr>
                 </thead>
 
@@ -37,6 +33,7 @@
                         <tr>
                             <td><NavLink href="@item.Url" target="_blank">@item.Display <i></i></NavLink></td>
                             <td>@item.TypeDisplay</td>
+                            <td>@item.Information.</td>
                         </tr>
                     }
                 </tbody>
@@ -152,7 +149,12 @@
         this.ItemList = null;
 
         List<SearchResult> result = new List<SearchResult>();
-        result.AddRange(Part.Search(GanzAdminDbEngine.Instance.Parts.FindAll(), fragments).Select(p => new SearchResult() { DataType = typeof(Part), Display = p.Name, Url = $"./parts/{p.Id}" }));
+        result.AddRange(Part.Search(GanzAdminDbEngine.Instance.Parts.FindAll(), fragments).Select(p => new SearchResult()
+        {
+            DataType = typeof(Part),
+            Display = p.Name, Url = $"./parts/{p.Id}",
+            Information = $"{p.ShortDescription}, {p.SumInStock} {p.StockUnit}",
+        }));
 
         this.ItemList = result;
     }

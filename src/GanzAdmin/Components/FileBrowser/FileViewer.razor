@@ -2,7 +2,7 @@
 @using System.IO;
 @using Microsoft.AspNetCore.Hosting;
 
-@switch(this.WebFile.Split('/', '\\').Last().Split('.').Last().ToLower())
+@switch (this.extension)
 {
     case "bmp":
     case "png":
@@ -24,6 +24,24 @@
     case "md":
         <div><pre>@File.ReadAllText(this.LocalFile)</pre></div>
         break;
+    case "cs":
+    case "cpp":
+    case "c":
+    case "h":
+    case "hpp":
+    case "ino":
+        string highlight = "cpp";
+        switch (this.extension)
+        {
+            case "ino": highlight = "arduino"; break;
+            case "cs": highlight = "csharp"; break;
+            case "cpp":
+            case "c":
+            case "h":
+            case "hpp": highlight = "cpp"; break;
+        }
+        <div><pre @ref="this.html" class="@highlight"><code>@File.ReadAllText(this.LocalFile)</code></pre></div>
+        break;
     case "doc":
     case "docx":
     case "xls":
@@ -35,8 +53,8 @@
     case "rar":
     case "iso":
     default:
-        <span>Nincs online nézet :(</span>
-        break;
+<span>Nincs online nézet :(</span>
+break;
 }
 
 @code
@@ -44,9 +62,29 @@
     [Inject]
     private IWebHostEnvironment m_Hosting { get; set; }
 
+    [Inject]
+    private IJSRuntime JS { get; set; }
+
     [Parameter]
     public string LocalFile { get; set; }
 
     [Parameter]
     public string WebFile { get; set; }
+
+    private string extension
+    {
+        get
+        {
+            return this.WebFile.Split('/', '\\').Last().Split('.').Last().ToLower();
+        }
+    }
+
+    private ElementReference html;
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        base.OnAfterRender(firstRender);
+
+        this.JS.InvokeVoidAsync("hljs.highlightBlock", html);
+    }
 }
