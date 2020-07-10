@@ -80,7 +80,10 @@ else
                                     <span class='circle'></span>
                                 </div>
                                 <div class='content'>
-                                    <NavLink class="button" href="@($"/{this.BaseLink}/{this.SelectedItem.Original.Id}/log/{entry.Id}")">Szerkesztés</NavLink>
+                                    @if (this.HasLocalAuthorization)
+                                    {
+                                        <NavLink class="button" href="@($"/{this.BaseLink}/{this.SelectedItem.Original.Id}/log/{entry.Id}")">Szerkesztés</NavLink>
+                                    }
                                     <WysiwygViewer Source="@entry.Content"></WysiwygViewer>
                                 </div>
                             </li>

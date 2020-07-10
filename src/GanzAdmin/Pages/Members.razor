@@ -43,10 +43,12 @@
                             <td>@member.Active</td>
                             <td>@member.PaidUntil</td>
                             <td>
-                                @if (!member.Attendances.Exists(a => a.Occasion.Date == DateTime.Today))
-                                {
-                                    <a @onclick="() => this.OnLogAttenance(member)">Jelenléti ív kitöltés</a>
-                                }
+                                <AuthorizedView NeededRolesOR="@Permissions.EditParts">
+                                    @if (!member.Attendances.Exists(a => a.Occasion.Date == DateTime.Today))
+                                    {
+                                        <a @onclick="() => this.OnLogAttenance(member)">Jelenléti ív kitöltés</a>
+                                    }
+                                </AuthorizedView>
                             </td>
                         </tr>
                     }
@@ -80,16 +82,26 @@
                     <SimpleTextField AuthOR="@Permissions.EditMembers" Type="text" Display="Felhasználónév" Name="@nameof(Member.Username)" @bind-Value="this.SelectedItem.Temporal.Username" />
                     <SimpleTextField AuthOR="@Permissions.EditMembers" Type="password" Display="Jelszó" Name="@nameof(Member.Password)" @bind-Value="this.SelectedItem.Temporal.Password" />
 
-                    @foreach (string permission in Permissions.AllPermissions)
-                    {
-                        bool temp = this.SelectedItem.Temporal.Roles.Contains(permission);
-                        <SimpleCheckField AuthOR="@permission"
-                                          Type="switch"
-                                          Display="@permission"
-                                          Name="@permission"
-                                          Value="@temp"
-                                          ValueChanged="@(e => this.EditPermission(permission, e))" />
-                    }
+                    <div class="permissoins-container">
+                        @foreach (string permission in Permissions.AllPermissions)
+                        {
+                            if (permission != null)
+                            {
+                                bool temp = this.SelectedItem.Temporal.Roles.Contains(permission);
+                                <SimpleCheckField AuthAND="@($"{Permissions.EditParts} {permission}")"
+                                                  Inline
+                                                  Type="switch"
+                                                  Display="@permission"
+                                                  Name="@permission"
+                                                  Value="@temp"
+                                                  ValueChanged="@(e => this.EditPermission(permission, e))" />
+                            }
+                            else
+                            {
+                                <span></span>
+                            }
+                        }
+                    </div>
                 </div>
                 <AuthorizedView NeededRolesOR="@Permissions.EditMembers">
                     <button type='submit'>Küldés</button>

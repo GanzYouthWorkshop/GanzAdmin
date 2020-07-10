@@ -71,7 +71,9 @@
                                 {
                                     <tr>
                                         <td>@stock.Location?.Name (@stock.Amount @item.StockUnit)</td>
-                                        <td><a @onclick="() => this.OnRemoveOneFromStock(item, stock)">-1</a></td>
+                                        <td>
+                                            <AuthorizedView NeededRolesOR="@Permissions.ManagePartStock"><a @onclick="() => this.OnRemoveOneFromStock(item, stock)">-1</a></AuthorizedView>
+                                        </td>
                                     </tr>
                                 }
                             </table>
@@ -158,23 +160,27 @@
                     {
                         <div>
                             <ComboBox Inline
-                                      AuthOR="@Permissions.EditParts"
+                                      AuthOR="@($"{Permissions.EditParts} {Permissions.ManagePartStock}")"
                                       ItemType="@Location"
                                       Items="@GanzAdminDbEngine.Instance.Locations.FindAll().Where(l => !l.IsVirtual)"
                                       Name="@nameof(Part.Category)"
                                       Display="Hely"
                                       @bind-Value="stock.Location" />
                             <SimpleNumberField Inline
-                                               AuthOR="@Permissions.EditParts"
+                                               AuthOR="@($"{Permissions.EditParts} {Permissions.ManagePartStock}")"
                                                Type="text"
                                                Display="Mennyiség"
                                                Name="@nameof(Stockpile.Amount)"
                                                ItemType="long"
                                                @bind-Value="@stock.Amount" />
-                            <a @onclick="() => this.SelectedItem.Temporal.Stock.Remove(stock)"><i></i></a>
+                            <AuthorizedView NeededRolesOR="@($"{Permissions.EditParts} {Permissions.ManagePartStock}")">
+                                <a @onclick="() => this.SelectedItem.Temporal.Stock.Remove(stock)"><i></i></a>
+                            </AuthorizedView>
                         </div>
                     }
-                    <a @onclick="() => this.SelectedItem.Temporal.Stock.Add(new Stockpile())">Új leltári tétel</a>
+                    <AuthorizedView NeededRolesOR="@($"{Permissions.EditParts} {Permissions.ManagePartStock}")">
+                        <a @onclick="() => this.SelectedItem.Temporal.Stock.Add(new Stockpile())">Új leltári tétel</a>
+                    </AuthorizedView>
 
                     <h3>Kategória paraméterek</h3>
                     @if (this.SelectedItem.Temporal.Category != null)
@@ -196,7 +202,7 @@
                             }
                             defaults.Add(search);
 
-                            <ParameterField ItemType="@PartParameter" AuthOR="@Permissions.EditParts" IsDefaultEditor="false" @bind-Value="search"></ParameterField>
+                            <ParameterField ItemType="@PartParameter" AuthOR="@Permissions.ManagePartParameters" IsDefaultEditor="false" @bind-Value="search"></ParameterField>
                         }
                     }
 
@@ -207,12 +213,20 @@
                         {
                             PartParameter temp = parameter;
                             <p>
-                                <ParameterField Inline ItemType="@PartParameter" AuthOR="@Permissions.EditParts" IsDefaultEditor="true" @bind-Value="temp"></ParameterField>
-                                <a @onclick="() => this.SelectedItem.Temporal.Parameters.Remove(temp)"><i></i></a>
+                                <ParameterField Inline
+                                                ItemType="@PartParameter"
+                                                AuthOR="@($"{Permissions.EditParts} {Permissions.ManagePartParameters}")"
+                                                IsDefaultEditor="true"
+                                                @bind-Value="temp" />
+                                <AuthorizedView NeededRolesOR="@($"{Permissions.EditParts} {Permissions.ManagePartParameters}")">
+                                    <a @onclick="() => this.SelectedItem.Temporal.Parameters.Remove(temp)"><i></i></a>
+                                </AuthorizedView>
                             </p>
                         }
                     }
-                    <a @onclick="() => this.SelectedItem.Temporal.Parameters.Add(new PartParameter())">Új paraméter</a>
+                    <AuthorizedView NeededRolesOR="@($"{Permissions.EditParts} {Permissions.ManagePartParameters}")">
+                        <a @onclick="() => this.SelectedItem.Temporal.Parameters.Add(new PartParameter())">Új paraméter</a>
+                    </AuthorizedView>
 
                     <h3>Beszerezhetőségek</h3>
                     @foreach (SupplySource supply in this.SelectedItem.Temporal.SupplySources)
@@ -220,7 +234,7 @@
                         SupplySource temp = supply;
                         <div>
                             <ComboBox Inline
-                                      AuthOR="@Permissions.EditParts"
+                                      AuthOR="@($"{Permissions.EditParts} {Permissions.ManagePartStock}")"
                                       ItemType="@Supplier"
                                       Items="GanzAdminDbEngine.Instance.GetCollection<Supplier>().FindAll()"
                                       Name="@nameof(Part.SupplySources)"
@@ -228,19 +242,23 @@
                                       @bind-Value="temp.Supplier" />
 
                             <SimpleTextField Inline
-                                             AuthOR="@Permissions.EditParts"
+                                             AuthOR="@($"{Permissions.EditParts} {Permissions.ManagePartStock}")"
                                              Type="text"
                                              Display="Beszállítói termékkód"
                                              Name="@nameof(SupplySource.SupplierItemId)"
                                              @bind-Value="temp.SupplierItemId" />
-                            <a @onclick="() => this.SelectedItem.Temporal.SupplySources.Remove(supply)"><i></i></a>
+                            <AuthorizedView NeededRolesOR="@($"{Permissions.EditParts} {Permissions.ManagePartStock}")">
+                                <a @onclick="() => this.SelectedItem.Temporal.SupplySources.Remove(supply)"><i></i></a>
+                            </AuthorizedView>
                         </div>
                     }
-                    <a @onclick="() => this.SelectedItem.Temporal.SupplySources.Add(new SupplySource())">Új forrás</a>
+                    <AuthorizedView NeededRolesOR="@($"{Permissions.EditParts} {Permissions.ManagePartStock}")">
+                        <a @onclick="() => this.SelectedItem.Temporal.SupplySources.Add(new SupplySource())">Új forrás</a>
+                    </AuthorizedView>
                     <hr />
                 </div>
 
-                <AuthorizedView NeededRolesOR="@Permissions.EditParts">
+                <AuthorizedView NeededRolesOR="@($"{Permissions.EditParts} {Permissions.ManagePartStock} {Permissions.ManagePartParameters}")">
                     <button type='submit'>Küldés</button>
                 </AuthorizedView>
                 @if (this.PopupDisplay != "add")

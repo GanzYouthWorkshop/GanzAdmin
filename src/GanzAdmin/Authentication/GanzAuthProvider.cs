@@ -73,11 +73,11 @@ namespace GanzAdmin.Authentication
                 {
                     return true;
                 }
-                else if (OrRoles != null && (member.Roles.ContainsAny(OrRoles.Split(',').ToList()) || member.Roles.Contains(Permissions.Overlord)))
+                else if (OrRoles != null && (member.Roles.ContainsAny(OrRoles.Split(' ').ToList()) || member.Roles.Contains(Permissions.Overlord)))
                 {
                     return true;
                 }
-                else if (AndRoles != null && (member.Roles.ContainsAny(AndRoles.Split(',').ToList()) || member.Roles.Contains(Permissions.Overlord)))
+                else if (AndRoles != null && (member.Roles.ContainsAll(AndRoles.Split(' ').ToList()) || member.Roles.Contains(Permissions.Overlord)))
                 {
                     return true;
                 }
