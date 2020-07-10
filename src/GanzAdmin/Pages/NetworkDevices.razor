@@ -12,7 +12,7 @@
                    Filter="@((e, r) => (e as Location).ParentLocation == null && r == null || (e as Location).ParentLocation?.Id == r?.Id)"
                    UrlTemplate="@((e) => $"/{this.BaseLink}/{e.Id}")"/>*@
     }
-    <AuthorizedView NeededRolesOR="@Permissions.EditLocations">
+    <AuthorizedView NeededRolesOR="@Permissions.AccessNetworkDiagnostics">
         <NavLink class="addlink" href="@($"/{this.BaseLink}/add")">Új @this.DataName</NavLink>
     </AuthorizedView>
 </aside>
@@ -90,16 +90,16 @@
 
             <EditForm method="post" EditContext="new EditContext(true)" OnSubmit="OnDefaultAddEditSubmit">
                 <div class='dynamic'>
-                    <SimpleTextField AuthOR="@Permissions.EditLocations" Type="text" Display="Név" @bind-Value="this.SelectedItem.Temporal.Name" />
-                    <SimpleTextField AuthOR="@Permissions.EditLocations" Type="text" Display="Cím" @bind-Value="this.SelectedItem.Temporal.Address" />
-                    <SimpleTextField AuthOR="@Permissions.EditLocations" Type="text" Display="Leírás" @bind-Value="this.SelectedItem.Temporal.Description" />
+                    <SimpleTextField AuthOR="@Permissions.AccessNetworkDiagnostics" Type="text" Display="Név" @bind-Value="this.SelectedItem.Temporal.Name" />
+                    <SimpleTextField AuthOR="@Permissions.AccessNetworkDiagnostics" Type="text" Display="Cím" @bind-Value="this.SelectedItem.Temporal.Address" />
+                    <SimpleTextField AuthOR="@Permissions.AccessNetworkDiagnostics" Type="text" Display="Leírás" @bind-Value="this.SelectedItem.Temporal.Description" />
                 </div>
-                <AuthorizedView NeededRolesOR="@Permissions.EditLocations">
+                <AuthorizedView NeededRolesOR="@Permissions.AccessNetworkDiagnostics">
                     <button type='submit'>Küldés</button>
                 </AuthorizedView>
                 @if (this.PopupDisplay != "add")
                 {
-                    <AuthorizedView NeededRolesOR="@Permissions.DeleteLocations">
+                    <AuthorizedView NeededRolesOR="@Permissions.AccessNetworkDiagnostics">
                         <input type='button' class="delete" value="Törlés" @onclick="OnDefaultDeleteSubmit" />
                     </AuthorizedView>
                 }
