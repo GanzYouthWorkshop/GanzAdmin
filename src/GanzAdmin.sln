@@ -9,11 +9,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GanzAdmin.Database", "GanzA
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GanzAdmin.Utils", "GanzAdmin.Utils\GanzAdmin.Utils.csproj", "{D1F42547-121E-4624-A199-66BFF21EA2F5}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{8A98D0FC-8F47-4B68-9978-AAD60DBC3406}"
-	ProjectSection(SolutionItems) = preProject
-		TODO.txt = TODO.txt
-	EndProjectSection
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GanzAdmin.ServerAdministration", "GanzAdmin.ServerAdministration\GanzAdmin.ServerAdministration.csproj", "{A30F99CD-6FF2-4968-BDF3-8BD169302038}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Main", "Main", "{700C96C6-9CAE-4459-A090-134A09C73A6A}"
