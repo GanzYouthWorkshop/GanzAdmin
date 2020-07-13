@@ -35,7 +35,7 @@
     {
         for (int i = 1; i <= 4; i++)
         {
-            JS.InvokeVoidAsync("createHlsPlayer", $"video-player-{i}", $"/content/nvr/_{i}.m3u8");
+            JS.InvokeVoidAsync("createHlsPlayer", $"video-player-{i}", $"/content/nvr/g2_{i}.m3u8");
         }
 
         return base.OnAfterRenderAsync(firstRender);
