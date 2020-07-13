@@ -354,6 +354,7 @@ main h1, h2
 
 #table-header
 {
+	display: none;
 	position: relative;
 	z-index: 3;
 }
@@ -387,7 +388,12 @@ main table
 {
 	width: 100%;
 	border-collapse: collapse;
-	table-layout: fixed;
+}
+
+#data thead
+{
+	position: sticky;
+	top: 0;
 }
 
 main table th
@@ -410,16 +416,6 @@ main table th.sorting-asc, main table th.sorting-desc
 {
 	margin: -3px -10px;
 	width: calc(100% + 20px);
-}
-
-#data
-{
-	margin-top: -37px;
-}
-
-#data thead tr:first-child
-{
-	visibility: hidden;
 }
 
 main table td

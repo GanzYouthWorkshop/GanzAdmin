@@ -12,7 +12,7 @@
 		$('.pinned').css('left', $(this).scrollLeft());
 	});
 		
-	$('main').delegate('#table-header th i.collapse', 'click', function()
+	$('main').delegate('#data th i.collapse', 'click', function()
 	{
 		var nth = $('th').index($(this).parent())+1;
 			
@@ -21,7 +21,7 @@
 		$('#data td:nth-child('+nth+'), #data th:nth-child('+nth+')').toggleClass('collapsed');
 	});
 		
-	$('main').delegate('#table-header th i.sort', 'click', function()
+	$('main').delegate('#data th i.sort', 'click', function()
 	{
 		var direction = false;
 		if($(this).parent().hasClass('sorting-asc'))
@@ -52,7 +52,7 @@
 		sortTable('#data', nth, direction);
 	});
 		
-	$('main').delegate('#table-header th i.pin', 'click', function()
+	$('main').delegate('#data th i.pin', 'click', function()
 	{
 		if(!pinFirstColumn)
 		{
