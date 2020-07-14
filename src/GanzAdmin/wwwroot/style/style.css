@@ -64,6 +64,42 @@ input[type=submit]:hover, input[type=button]:hover, button:hover, a.button:hover
 	background-color: #00897b;
 }
 
+label
+{
+	display: inline-block;
+	width: 150px;
+	text-align: left;
+}
+
+input[type=text], input[type=password], textarea, select
+{
+	font-family: 'Segoe UI';
+	border: 3px solid #999999;
+	padding: 0.2em;
+	width: 20em;
+}
+
+input[type=text]:focus, input[type=password]:focus, textarea:focus
+{
+	border: 3px solid #00897b;
+}
+
+input.short
+{
+	width: 4em;
+}
+
+input.delete
+{
+	float: right;
+	background-color: #c41111;
+}
+
+input.delete:hover
+{
+	background-color: #f40000;
+}
+
 
 /*#endregion*/
 
@@ -581,42 +617,6 @@ main table tr.alert td
 	cursor: pointer;
 	padding: 2px;
 	color: #343434;
-}
-
-.popup label, #login label
-{
-	display: inline-block;
-	width: 150px;
-	text-align: left;
-}
-
-.popup input[type=text], .popup input[type=password], .popup textarea, .popup select
-{
-	font-family: 'Segoe UI';
-	border: 3px solid #999999;
-	padding: 0.2em;
-	width: 20em;
-}
-
-.popup input[type=text]:focus, .popup input[type=password]:focus, .popup textarea:focus
-{
-	border: 3px solid #00897b;
-}
-
-.popup input.short
-{
-	width: 4em;
-}
-
-.popup input.delete
-{
-	float: right;
-	background-color: #c41111;
-}
-
-.popup input.delete:hover
-{
-	background-color: #f40000;
 }
 
 .popup #params i
