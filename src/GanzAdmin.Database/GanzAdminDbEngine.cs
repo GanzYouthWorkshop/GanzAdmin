@@ -41,7 +41,12 @@ namespace GanzAdmin.Database
 
         public ILiteCollection<Kit> Kits
         {
-            get { return this.m_InnerDb.GetCollection<Kit>().Include(BsonExpression.Create("$.Parts[*].Part")); }
+            get
+            {
+                return this.m_InnerDb.GetCollection<Kit>()
+                    .Include(BsonExpression.Create("$.Parts[*].Part"))
+                    .Include(BsonExpression.Create("$.Parts[*].Part.Stock[*].Location"));
+            }
         }
 
 

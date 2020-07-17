@@ -48,9 +48,6 @@ else
                     <AuthorizedView NeededRolesOR="@Permissions.EditKit">
                         <NavLink class="button" href="@($"/{this.BaseLink}/{this.SelectedItem.Original.Id}/edit")">Szerkesztés</NavLink>
                     </AuthorizedView>
-                    <AuthorizedView NeededRolesOR="@Permissions.ManagePartStock">
-                        <NavLink class="button" @onclick="OnPartsGiveout">Alkatrészek kiadása</NavLink>
-                    </AuthorizedView>
                     <img srv="@this.SelectedItem.Original.ImageUrl" />
                     <WysiwygViewer Source="@this.SelectedItem.Original.Description"></WysiwygViewer>
                     
@@ -134,6 +131,20 @@ else
         Edit,
     }
 
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+
+        await Task.Run(() =>
+        {
+            this.ToolProvider.CheckedItems.Clear();
+            if(this.SelectedItem != null)
+            {
+                this.ToolProvider.CheckedItems.Add(this.SelectedItem.Original);
+            }
+        });
+    }
+
     [Parameter]
     public string PopupDisplay2 { get; set; }
 
@@ -153,17 +164,6 @@ else
             {
                 return DisplayType.Show;
             }
-        }
-    }
-
-    private void OnPartsGiveout()
-    {
-        //TODO: Ki kéne találni, hogy hogyan/honnan adjuk ki az alkatrészeket (FIFO? kézi kiválasztás?)
-        GanzAdminDbEngine.Instance.BeginTransaction();
-
-        foreach (KitPart part in this.SelectedItem.Original.Parts)
-        {
-            part.Part.stock
         }
     }
 

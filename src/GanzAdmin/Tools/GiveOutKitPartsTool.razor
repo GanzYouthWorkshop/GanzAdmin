@@ -1,0 +1,94 @@
+﻿@using GanzAdmin.Pages.Print;
+
+@inherits ToolBase
+
+@if (this.Data != null)
+{
+    <p>Választ ki melyik helyről akarod kiadni az alaktrészeket!</p>
+
+    Kit selectedKit = this.ToolProvider.CheckedItems.First() as Kit;
+
+    foreach (GiveOutData data in this.Data)
+    {
+        List<Stockpile> stock = data.Part.Part.Stock;
+        var availableStocks = stock.Where(s => s.Amount >= data.Part.Amount);
+        if (availableStocks.Count() > 0)
+        {
+            <div>
+                <ComboBox Inline
+                          ItemType="@Location"
+                          Items="stock.Where(s => s.Amount >= data.Part.Amount).Select(s => s.Location)"
+                          Display="@($"{data.Part.Part.Name} ({data.Part.Amount} {data.Part.Part.StockUnit})")"
+                          @bind-Value="data.SelectedLocation" />
+            </div>
+        }
+        else
+        {
+            <div>@data.Part.Part.Name (@data.Part.Amount @data.Part.Part.StockUnit): automata könyvelés nem megoldható</div>
+        }
+    }
+    <button @onclick="() => this.GiveOutItems()">Küldés</button>
+}
+else
+{
+    <p>Az eszköz használatához előbb meg kell nyitni egy kit oldalát!</p>
+}
+
+@code
+{
+    private class GiveOutData
+    {
+        public KitPart Part { get; set; }
+        public Location SelectedLocation { get; set; }
+    }
+
+    private List<GiveOutData> Data { get; set; }
+
+    public GiveOutKitPartsTool()
+    {
+        this.Icon = "";
+        this.Name = "Kit alkatrészek kiadás";
+        this.Description = "Kiadja raktárról a kithez tartozó alkatrészeket.";
+        this.SupportedEntities = new List<Type> { typeof(Kit) };
+    }
+
+    protected override Task OnInitializedAsync()
+    {
+        this.Entities = this.ToolProvider.CheckedItems;
+
+        if (this.ToolProvider.CheckedItems.Count > 0)
+        {
+            this.Data = new List<GiveOutData>();
+
+            foreach (KitPart part in (this.ToolProvider.CheckedItems.First() as Kit).Parts)
+            {
+                this.Data.Add(new GiveOutData()
+                {
+                    Part = part,
+                    SelectedLocation = new Location()
+                });
+            }
+        }
+
+        return base.OnInitializedAsync();
+    }
+
+    private void GiveOutItems()
+    {
+        GanzAdminDbEngine.Instance.BeginTransaction();
+        foreach(GiveOutData data in this.Data)
+        {
+            if(data.SelectedLocation != null)
+            {
+                Stockpile stockpile;
+
+                stockpile.Amount -= data.Part.Amount;
+
+                GanzAdminDbEngine.Instance.Parts.Update(data.Part.Part);
+            }
+        }
+        GanzAdminDbEngine.Instance.Transact();
+
+        this.JS.InvokeAsync();
+    }
+}
