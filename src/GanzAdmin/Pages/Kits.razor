@@ -1,0 +1,143 @@
+﻿@page "/kits"
+@page "/kits/{PopupDisplay}"
+@page "/kits/{PopupDisplay}/{PopupDisplay2}"
+
+@using  GanzAdmin.Components.Edit;
+
+@inherits DataHandlingController<Kit>
+
+
+@if (this.SelectedItem == null)
+{
+    <!--#region Listázás-->
+    <aside class='@(this.ItemList == null ? "loading" : "")'>
+        <AuthorizedView NeededRolesOR="@Permissions.EditLocations">
+            <NavLink class="addlink" href="@($"/{this.BaseLink}/add")">Új @this.DataName</NavLink>
+        </AuthorizedView>
+    </aside>
+
+    <main class='@(this.ItemList == null ? "simple-ui loading" : "simple-ui")'>
+        @if (this.ItemList != null)
+        {
+            @foreach (Kit item in this.ItemList)
+            {
+                <section class="entry-item project">
+                    <img src="@item.ImageUrl" />
+                    <div>
+                        <h2>@item.Name</h2>
+                        <p>Elkészíthető: @(item.IsAvailableForBuild ? "Igen!" : "Sajnos nem :(")</p>
+                        <p><WysiwygViewer Source="@item.Description" /></p>
+                        <NavLink class="button" href="@($"/{this.BaseLink}/{item.Id}")">Részletek</NavLink>
+                    </div>
+                </section>
+            }
+        }
+    </main>
+    <!--#endregion-->
+}
+else
+{
+    <main class='full'>
+        @switch (this.Display)
+        {
+            case DisplayType.Show:
+                <!--#region Részletek-->
+                <section>
+                    <h2>@this.SelectedItem.Original.Name</h2>
+                        <NavLink class="button" href="@($"/{this.BaseLink}/{this.SelectedItem.Original.Id}/edit")">Szerkesztés</NavLink>
+                    <img srv="@this.SelectedItem.Original.ImageUrl" />
+                    <WysiwygViewer Source="@this.SelectedItem.Original.Description"></WysiwygViewer>
+                </section>
+                <!--#endregion-->
+                break;
+
+            case DisplayType.Add:
+            case DisplayType.EditSummary:
+                <!--#region Hozzáadás/Szerkesztés-->
+                    <EditForm EditContext="new EditContext(true)"  OnSubmit="OnDefaultAddEditSubmit">
+                        <h2>"@this.SelectedItem.Original.Name" szerkesztése</h2>
+                        <SimpleTextField @bind-Value="this.SelectedItem.Temporal.Name" Name="name" Display="Projektnév" Type="text"></SimpleTextField>
+
+                        @*TODO fel kéne tudni tölteni a képet*@
+                        <FileField Display="Projekt logó" @bind-Value="@this.SelectedItem.Temporal.ImageUrl" />
+
+                        @*TODO: Kelleni fog egy tag-szerkesztő felület is!*@
+                        <p>
+                            Résztvevők: TODO
+                        </p>
+
+
+                        <WysiwygEditor @bind-Value="this.SelectedItem.Temporal.Description"></WysiwygEditor>
+
+                        <button type='submit'>Küldés</button>
+                        @if (this.Display == DisplayType.EditSummary)
+                        {
+                            <AuthorizedView NeededRolesOR="@Permissions.DeleteProject">
+                                <input type='button' class="delete" value="Törlés" @onclick="OnDefaultDeleteSubmit" />
+                            </AuthorizedView>
+                        }
+                    </EditForm>
+                <!--#endregion-->
+                break;
+        }
+    </main>
+}
+
+@code
+{
+    protected override string BaseLink { get; set; } = "kits";
+    protected override string DataName { get; set; } = "kit";
+
+    private TemporalObject<LogEntry> SelectedLogEntry { get; set; }
+
+    private enum DisplayType
+    {
+        Show,
+        Add,
+        EditSummary,
+    }
+
+    [Parameter]
+    public string PopupDisplay2 { get; set; }
+
+    private DisplayType Display
+    {
+        get
+        {
+            if (this.NavMan.Uri.EndsWith("edit"))
+            {
+                return DisplayType.EditSummary;
+            }
+            else if (this.NavMan.Uri.EndsWith("add"))
+            {
+                return DisplayType.Add;
+            }
+            else
+            {
+                return DisplayType.Show;
+            }
+        }
+    }
+
+    protected override void BeforeEdit()
+    {
+        if (this.SelectedItem.Original.ImageUrl != this.SelectedItem.Temporal.ImageUrl)
+        {
+            this.DeleteUploadedFile(this.SelectedItem.Original.ImageUrl);
+        }
+    }
+
+    protected void BeforeCancel()
+    {
+        if (this.SelectedItem.Original.ImageUrl != this.SelectedItem.Temporal.ImageUrl)
+        {
+            this.DeleteUploadedFile(this.SelectedItem.Temporal.ImageUrl);
+        }
+    }
+
+    protected override void BeforeDelete()
+    {
+        this.DeleteUploadedFile(this.SelectedItem.Temporal.ImageUrl);
+        this.DeleteUploadedFile(this.SelectedItem.Original.ImageUrl);
+    }
+}

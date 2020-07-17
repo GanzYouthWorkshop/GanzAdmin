@@ -184,11 +184,6 @@ else
 
     private TemporalObject<LogEntry> SelectedLogEntry { get; set; }
 
-    public MemberProjects()
-    {
-        this.m_Collection = GanzAdminDbEngine.Instance.GetCollection<MemberProject>().Include(i => i.Members);
-    }
-
     public List<Member> AllMembers
     {
         get
