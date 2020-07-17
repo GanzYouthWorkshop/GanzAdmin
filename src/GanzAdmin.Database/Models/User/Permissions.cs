@@ -34,6 +34,11 @@ namespace GanzAdmin.Database.Models
         public const string EditAnyProject = nameof(EditAnyProject);
         public const string DeleteProject = nameof(DeleteProject);
 
+        public const string AddKit = nameof(AddKit);
+        public const string EditKit = nameof(EditKit);
+        public const string DeleteKit = nameof(DeleteKit);
+
+
         public const string AddCourse = nameof(AddCourse);
         public const string EditCourse = nameof(EditCourse);
         public const string DeleteCourse = nameof(DeleteCourse);
@@ -76,6 +81,10 @@ namespace GanzAdmin.Database.Models
             AddProject,
             EditAnyProject,
             DeleteProject,
+
+            AddKit,
+            EditKit,
+            DeleteKit,
 
             AddCourse,
             EditCourse,
