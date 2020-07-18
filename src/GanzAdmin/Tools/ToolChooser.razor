@@ -75,6 +75,8 @@
         base.OnInitialized();
 
         this.ToolProvider.Show += this.ShowMenu;
+        this.ToolProvider.Hide += this.HideMenu;
+
     }
 
     private void ShowMenu(object sender, EventArgs e)
@@ -83,4 +85,11 @@
         this.Visible = true;
         this.StateHasChanged();
     }
+
+    private void HideMenu(object sender, EventArgs e)
+    {
+        this.Visible = false;
+        this.StateHasChanged();
+    }
+
 }

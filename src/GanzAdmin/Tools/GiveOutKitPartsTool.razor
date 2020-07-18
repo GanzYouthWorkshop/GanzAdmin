@@ -24,9 +24,11 @@
         }
         else
         {
+            data.Valid = false;
             <div>@data.Part.Part.Name (@data.Part.Amount @data.Part.Part.StockUnit): automata könyvelés nem megoldható</div>
         }
     }
+    <p><b>Mielőbb rányomsz a "Küldés" gombra add ki az alkatrészeket!</b></p>
     <button @onclick="() => this.GiveOutItems()">Küldés</button>
 }
 else
@@ -40,6 +42,7 @@ else
     {
         public KitPart Part { get; set; }
         public Location SelectedLocation { get; set; }
+        public bool Valid { get; set; } = true;
     }
 
     private List<GiveOutData> Data { get; set; }
@@ -47,7 +50,7 @@ else
     public GiveOutKitPartsTool()
     {
         this.Icon = "";
-        this.Name = "Kit alkatrészek kiadás";
+        this.Name = "Kit alkatrészek kiadása";
         this.Description = "Kiadja raktárról a kithez tartozó alkatrészeket.";
         this.SupportedEntities = new List<Type> { typeof(Kit) };
     }
@@ -75,20 +78,45 @@ else
 
     private void GiveOutItems()
     {
+        bool result = true;
+        string resultString = "";
+
         GanzAdminDbEngine.Instance.BeginTransaction();
         foreach(GiveOutData data in this.Data)
         {
-            if(data.SelectedLocation != null)
+            if(data.Valid)
             {
-                Stockpile stockpile;
+                if (data.SelectedLocation != null && data.SelectedLocation.Id != 0)
+                {
+                    Stockpile stockpile = data.Part.Part.Stock.FirstOrDefault(s => s.Location == data.SelectedLocation);
+                    if (stockpile != null)
+                    {
+                        stockpile.Amount -= data.Part.Amount;
 
-                stockpile.Amount -= data.Part.Amount;
+                        GanzAdminDbEngine.Instance.Parts.Update(data.Part.Part);
 
-                GanzAdminDbEngine.Instance.Parts.Update(data.Part.Part);
+                        resultString += $"-{data.Part.Amount} {data.Part.Part.StockUnit} {data.Part.Part.Name}<br>";
+                    }
+                }
+                else
+                {
+                    result = false;
+                    break;
+                }
             }
         }
-        GanzAdminDbEngine.Instance.Transact();
 
-        this.JS.InvokeAsync();
+        if(result)
+        {
+            GanzAdminDbEngine.Instance.Transact();
+
+            this.JS.InvokeVoidAsync("alertify.success", $"A következő alaktrészek kiadásra kerültek!<br>{resultString}");
+            this.ToolProvider.ShowMenu = false;
+        }
+        else
+        {
+            GanzAdminDbEngine.Instance.Rollback();
+            this.JS.InvokeVoidAsync("alertify.error", $"Hibás a kiadandó alaktrészek helykiválasztása!");
+        }
     }
 }
