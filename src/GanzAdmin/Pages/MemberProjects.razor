@@ -87,17 +87,6 @@ else
                                     <WysiwygViewer Source="@entry.Content"></WysiwygViewer>
                                 </div>
                             </li>
-
-
-
-                            @*<section class="entry-item">
-                                <h4>@entry.StartTime</h4>
-                                @if (HasLocalAuthorization)
-                                {
-                                    <NavLink class="button" href="@($"/{this.BaseLink}/{this.SelectedItem.Original.Id}/log/{entry.Id}")">Szerkesztés</NavLink>
-                                }
-                                <WysiwygViewer Source="@entry.Content"></WysiwygViewer>
-                            </section>*@
                         }
                     </ul>
                 </section>
@@ -111,21 +100,11 @@ else
                 {
                     <EditForm EditContext="new EditContext(true)"  OnSubmit="OnDefaultAddEditSubmit">
                         <h2>"@this.SelectedItem.Original.Name" szerkesztése</h2>
+
                         <SimpleTextField @bind-Value="this.SelectedItem.Temporal.Name" Name="name" Display="Projektnév" Type="text"></SimpleTextField>
-
-                        @*TODO fel kéne tudni tölteni a képet*@
                         <FileField Display="Projekt logó" @bind-Value="@this.SelectedItem.Temporal.Logo" />
-
                         <SimpleCheckField Type="switch" Display="Befejezett" Name="finished" @bind-Value="@this.SelectedItem.Temporal.IsFinished" />
-
-                        @*TODO: Kelleni fog egy tag-szerkesztő felület is!*@
-                        <p>
-                            Résztvevők: TODO
-                        </p>
-
                         <TagsEditor AuthOR="" ItemType="Member"  Items="this.AllMembers" @bind-Value="@this.SelectedItem.Temporal.Members"></TagsEditor>
-
-
                         <WysiwygEditor @bind-Value="this.SelectedItem.Temporal.Description"></WysiwygEditor>
 
                         <button type='submit'>Küldés</button>
@@ -183,11 +162,6 @@ else
     protected override string DataName { get; set; } = "projekt";
 
     private TemporalObject<LogEntry> SelectedLogEntry { get; set; }
-
-    public MemberProjects()
-    {
-        this.m_Collection = GanzAdminDbEngine.Instance.GetCollection<MemberProject>().Include(i => i.Members);
-    }
 
     public List<Member> AllMembers
     {

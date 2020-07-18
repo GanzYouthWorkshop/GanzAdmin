@@ -21,10 +21,15 @@ namespace GanzAdmin.Tools
                 {
                     this.Show?.Invoke(this, null);
                 }
+                else
+                {
+                    this.Hide?.Invoke(this, null);
+                }
             }
         }
         private bool showMenu;
         public event EventHandler Show;
+        public event EventHandler Hide;
 
         public void AddRemove(IEntity entity)
         {
