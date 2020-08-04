@@ -81,31 +81,35 @@ namespace GanzAdmin.API.NVR
 
                 DateTime deletionThreshold = DateTime.Now.AddMinutes(-5);
 
+                int counter = 0;
+
+                
+
                 if (File.Exists(streamFile))
                 {
                     string streamFileContents = File.ReadAllText(streamFile);
 
-                    foreach (string file in files)
-                    {
-                        DateTime fileModified = File.GetLastWriteTime(file);
-                        if (!streamFile.Contains(file))
-                        {
-                            if (File.Exists(file) && fileModified < deletionThreshold)
-                            {
-                                try
-                                {
-                                    File.Delete(file);
-                                }
-                                catch(Exception)
-                                {
+                    List<string> orderedFiles = files.Where(f => !streamFileContents.Contains(f.Split('\\').Last()) && !f.Contains("m3u8")).OrderByDescending(f => f).Skip(4).ToList();
 
-                                }
-                                
+                    foreach (string file in orderedFiles)
+                    {
+                        if (File.Exists(file))
+                        {
+                            try
+                            {
+                                File.Delete(file);
+                                counter++;
                             }
+                            catch(Exception ex)
+                            {
+
+                            }
+                                
                         }
                     }
                 }
 
+                Console.WriteLine($"Régi kamerafájlok ({this.HandlerName}/{this.ChannelId}) közül {counter} törölve");
                 Thread.Sleep(10000);
             }
         }

@@ -14,7 +14,7 @@ namespace GanzAdmin.Utils
 
             using (SHA256 mySHA256 = SHA256.Create())
             {
-                result = mySHA256.ComputeHash(Encoding.UTF8.GetBytes(text)).ToString();
+                result = BitConverter.ToString(mySHA256.ComputeHash(Encoding.UTF8.GetBytes(text)));
             }
 
             return result;

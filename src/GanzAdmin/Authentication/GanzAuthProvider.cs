@@ -51,13 +51,16 @@ namespace GanzAdmin.Authentication
             this.m_Http = httpProxy;
             this.m_Javascript = jsRuntime;
 
-            IRequestCookieCollection cookies = this.m_Http.HttpContext.Request.Cookies;
-
-            if (cookies.ContainsKey(AUTH_COOKIE))
+            if(this.m_Http.HttpContext != null)
             {
-                var cookie = cookies[AUTH_COOKIE];
+                IRequestCookieCollection cookies = this.m_Http.HttpContext.Request.Cookies;
 
-                this.CurrentSession = this.m_SessionManager.CheckTokenValidity(cookie);
+                if (cookies.ContainsKey(AUTH_COOKIE))
+                {
+                    var cookie = cookies[AUTH_COOKIE];
+
+                    this.CurrentSession = this.m_SessionManager.CheckTokenValidity(cookie);
+                }
             }
         }
 
