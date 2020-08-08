@@ -8,17 +8,17 @@
 			
 	$('#table-wrapper').scroll(function()
 	{
-		$('#table-header').css('top', $(this).scrollTop());
 		$('.pinned').css('left', $(this).scrollLeft());
 	});
 		
 	$('main').delegate('#data th i.collapse', 'click', function()
 	{
-		var nth = $('th').index($(this).parent())+1;
+		var nth = $('th').index($(this).parent()) + 1;
 			
 		$(this).parent().hasClass('collapsed') ? $(this).html('') : $(this).html('');
+
 		$(this).parent().toggleClass('collapsed');
-		$('#data td:nth-child('+nth+'), #data th:nth-child('+nth+')').toggleClass('collapsed');
+		$('#data td:nth-child('+nth+')').toggleClass('collapsed');
 	});
 		
 	$('main').delegate('#data th i.sort', 'click', function()
@@ -41,9 +41,9 @@
 		else
 		{
 			direction = true;
-			$('#table-header th').removeClass('sorting-asc');
-			$('#table-header th').removeClass('sorting-desc');
-			$('#table-header th i.sort').html('');
+			$('#data th').removeClass('sorting-asc');
+			$('#data th').removeClass('sorting-desc');
+			$('#data th i.sort').html('');
 			$(this).html('');
 			$(this).parent().addClass('sorting-asc');
 		}
@@ -54,21 +54,29 @@
 		
 	$('main').delegate('#data th i.pin', 'click', function()
 	{
-		if(!pinFirstColumn)
-		{
-			$(this).css('transform', 'rotate(0)');
+		var nth = $('th').index($(this).parent()) + 1;
+
+		var rot = $(this).parent().hasClass('pinned') ? 0 : -90;
+
+		$(this).parent().toggleClass('pinned');
+		$('#data td:nth-child(' + nth + ')').toggleClass('pinned');
+		$('#data th:nth-child(' + nth + ')').toggleClass('pinned');
+
+		//if(!pinFirstColumn)
+		//{
+		//	$(this).css('transform', 'rotate(0)');
 				
-			$('.pinnable').addClass('pinned');
-			$('.pinned').css('left', $(this).scrollLeft());
-		}
-		else
-		{
-			$(this).css('transform', 'rotate(-90deg)');
+		//	$('.pinnable').addClass('pinned');
+		//	$('.pinned').css('left', $(this).scrollLeft());
+		//}
+		//else
+		//{
+		//	$(this).css('transform', 'rotate(-90deg)');
 				
-			$('.pinned').css('left', '0');
-			$('.pinnable').removeClass('pinned');
-		}
-		pinFirstColumn = !pinFirstColumn;
+		//	$('.pinned').css('left', '0');
+		//	$('.pinnable').removeClass('pinned');
+		//}
+		//pinFirstColumn = !pinFirstColumn;
 	});
 		
 	$('main').delegate('#data input[type=checkbox]', 'click', function()
@@ -81,7 +89,7 @@
 
 function sortTable(selector, column, direction)
 {
-	var rows = $(selector + ' tbody  tr').get();
+	var rows = $(selector + ' > tbody > tr').get();
 	var dir = direction ? 1 : -1;
 
 	rows.sort(function (a, b)

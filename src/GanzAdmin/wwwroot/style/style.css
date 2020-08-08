@@ -505,6 +505,11 @@ main table td.collapsed, main table th.collapsed span
 	font-size: 0;
 }
 
+main table td.collapsed *
+{
+	display: none;
+}
+
 main table td.collapsed:nth-child(n)
 {
 	background-color: #DDDDDD;
