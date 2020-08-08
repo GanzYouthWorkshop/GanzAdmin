@@ -62,7 +62,7 @@ namespace GanzAdmin.DataHandling
         {
             await Task.Run(() =>
             {
-                this.ItemList = this.m_Collection.FindAll().ToList();
+                this.ItemList = this.m_Collection.FindAll().OrderBy(t => t.DisplayValue).ToList();
                 this.ToolProvider.Reset(typeof(T));
 
                 this.Init();

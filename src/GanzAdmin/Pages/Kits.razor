@@ -11,7 +11,7 @@
 {
     <!--#region Listázás-->
     <aside class='@(this.ItemList == null ? "loading" : "")'>
-        <AuthorizedView NeededRolesOR="@Permissions.EditLocations">
+        <AuthorizedView NeededRolesOR="@Permissions.AddKit">
             <NavLink class="addlink" href="@($"/{this.BaseLink}/add")">Új @this.DataName</NavLink>
         </AuthorizedView>
     </aside>
