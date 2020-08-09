@@ -488,6 +488,11 @@ main table td.pinnable a
 	border-bottom: 1px solid #DFDFDF;
 }
 
+main table td.pinned,main table th.pinned
+{
+	position: sticky;
+}
+
 main table td.pinnable.pinned a
 {
 	border-right: 2px solid #0097a7;
