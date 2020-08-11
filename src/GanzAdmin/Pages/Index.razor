@@ -86,6 +86,12 @@
                         <p>Közös fájlok</p>
                     </NavLink>
                 </AuthorizedView>
+                <AuthorizedView NeededRolesOR="@Permissions.AccessSecretFileStorage">
+                    <NavLink href="/files/secret">
+                        <i></i>
+                        <p>Titkos fájlok (BIZALMAS!)</p>
+                    </NavLink>
+                </AuthorizedView>
             </section>
 
             <section class="entry-item">

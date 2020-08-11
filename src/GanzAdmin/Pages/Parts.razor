@@ -178,7 +178,7 @@
                                              AuthOR="@($"{Permissions.EditParts} {Permissions.ManagePartStock}")"
                                              Type="text"
                                              Display="Megj."
-                                             Name="@nameof(StockPile.Comment)"
+                                             Name="@nameof(Stockpile.Comment)"
                                              @bind-Value="@stock.Comment" />
                             <AuthorizedView NeededRolesOR="@($"{Permissions.EditParts} {Permissions.ManagePartStock}")">
                                 <a @onclick="() => this.SelectedItem.Temporal.Stock.Remove(stock)"><i></i></a>
