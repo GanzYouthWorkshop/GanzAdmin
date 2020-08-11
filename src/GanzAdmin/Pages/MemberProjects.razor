@@ -59,7 +59,7 @@ else
                         <NavLink class="button" href="@($"/{this.BaseLink}/{this.SelectedItem.Original.Id}/log/add")">Új naplóbejegyzés</NavLink>
                     }
                     <img srv="@this.SelectedItem.Original.Logo" />
-                    <p>Állapot: @this.SelectedItem.Original.IsFinished</p>
+                    <p>Állapot: @(this.SelectedItem.Original.IsFinished ? "Kész" : "Folyamatban")</p>
                     <p>
                         Résztvevők:
                         @foreach (Member member in this.SelectedItem.Original.Members)

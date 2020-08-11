@@ -42,7 +42,7 @@
                         <DataGridHeader IsPinnable IsSortable>Név</DataGridHeader>
                         <DataGridHeader IsCollapsible IsSortable>Kategória</DataGridHeader>
                         <DataGridHeader IsCollapsible>Mennyiség</DataGridHeader>
-                        <DataGridHeader IsCollapsible IsSortable>Minimum raktári mennyiség</DataGridHeader>
+                        <DataGridHeader IsCollapsible IsSortable>Min. mennyiség</DataGridHeader>
                         <DataGridHeader IsCollapsible IsSortable>Hiányos?</DataGridHeader>
                         <DataGridHeader IsCollapsible IsSortable>Adatlap</DataGridHeader>
                         <DataGridHeader IsCollapsible IsSortable>Termékkódok</DataGridHeader>
@@ -65,12 +65,13 @@
                             }
                             @item.Category.Name
                         </td>
-                        <td>
+                        <td class="top">
                             <table>
                                 @foreach (Stockpile stock in item.Stock)
                                 {
                                     <tr>
                                         <td>@stock.Location?.Name (@stock.Amount @item.StockUnit)</td>
+										<td>@stock.Comment</td>
                                         <td>
                                             <AuthorizedView NeededRolesOR="@Permissions.ManagePartStock"><a @onclick="() => this.OnRemoveOneFromStock(item, stock)">-1</a></AuthorizedView>
                                         </td>
@@ -86,7 +87,7 @@
                                 <a href="@item.DateSheetUrl" target="_blank">Adatlap <i></i></a>
                             }
                         </td>
-                        <td>
+                        <td class="top">
                             <table>
                                 @foreach (SupplySource supply in item.SupplySources)
                                 {
@@ -173,6 +174,12 @@
                                                Name="@nameof(Stockpile.Amount)"
                                                ItemType="long"
                                                @bind-Value="@stock.Amount" />
+							<SimpleTextField Inline
+                                             AuthOR="@($"{Permissions.EditParts} {Permissions.ManagePartStock}")"
+                                             Type="text"
+                                             Display="Megj."
+                                             Name="@nameof(StockPile.Comment)"
+                                             @bind-Value="@stock.Comment" />
                             <AuthorizedView NeededRolesOR="@($"{Permissions.EditParts} {Permissions.ManagePartStock}")">
                                 <a @onclick="() => this.SelectedItem.Temporal.Stock.Remove(stock)"><i></i></a>
                             </AuthorizedView>

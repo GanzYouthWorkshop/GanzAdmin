@@ -40,7 +40,7 @@
                     {
                         <tr>
                             <td><NavLink href="@($"/{this.BaseLink}/{member.Id}")">@member.Name</NavLink></td>
-                            <td>@member.Active</td>
+                            <td>@(member.Active ? "Igen" : "Nem")</td>
                             <td>@member.PaidUntil</td>
                             <td>
                                 <AuthorizedView NeededRolesOR="@Permissions.EditParts">
@@ -80,7 +80,7 @@
 
 
                     <SimpleTextField AuthOR="@Permissions.EditMembers" Type="text" Display="Felhasználónév" Name="@nameof(Member.Username)" @bind-Value="this.SelectedItem.Temporal.Username" />
-                    <SimpleTextField AuthOR="@Permissions.EditMembers" Type="password" Display="Jelszó" Name="@nameof(Member.Password)" @bind-Value="this.SelectedItem.Temporal.Password" />
+                    <SimpleTextField AuthOR="@Permissions.EditMembers" Type="password" Display="Jelszó" Name="@nameof(Member.Password)" @bind-Value="this.Password" />
 
                     <div class="permissoins-container">
                         @foreach (string permission in Permissions.AllPermissions)
@@ -127,14 +127,31 @@
     protected override string BaseLink { get; set; } = "members";
     protected override string DataName { get; set; } = "tag";
 
+    private bool PasswordChanged { get; set; }
+
+    private string Password
+    {
+        get { return this.m_Password; }
+        set { this.m_Password = value; this.PasswordChanged = true; }
+    }
+    private string m_Password;
+
+
     protected override void BeforeAdd()
     {
-        this.SelectedItem.Temporal.Password = GanzUtils.Sha256(this.SelectedItem.Temporal.Password);
+        this.SelectedItem.Temporal.Password = GanzUtils.Sha256(this.Password);
     }
 
     protected override void BeforeEdit()
     {
-        this.SelectedItem.Temporal.Password = GanzUtils.Sha256(this.SelectedItem.Temporal.Password);
+        if(this.PasswordChanged)
+        {
+            this.SelectedItem.Temporal.Password = GanzUtils.Sha256(this.Password);
+        }
+        else
+        {
+            this.SelectedItem.Temporal.Password = this.SelectedItem.Original.Password;
+        }
     }
 
     private void OnLogAttenance(Member member)
