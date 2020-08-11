@@ -114,12 +114,12 @@ function createEditorJS(initialData, callbackObj)
 
 							falstad:
 							{
-								regex: /https?:\/\/www.falstad.com\/circuit\/circuitjs.html\?cct=(.*)/gim,
-								embedUrl: 'https://www.falstad.com/circuit/circuitjs.html?cct=<%= remote_id %>',
+								regex: /https?:\/\/www.falstad.com\/circuit\/circuitjs.html\?ctz=(.*)/,
+								embedUrl: 'https://www.falstad.com/circuit/circuitjs.html?ctz=<%= remote_id %>',
 								html: "<iframe height='300' scrolling='no' frameborder='no' allowtransparency='true' allowfullscreen='true' style='width: 100%;'></iframe>",
 								height: 400,
 								width: 800,
-								//id: (groups) => groups.join('')
+								id: (groups) => groups[1]
 							},
 						}
 					}

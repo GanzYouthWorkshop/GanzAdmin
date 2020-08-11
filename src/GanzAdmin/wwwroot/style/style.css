@@ -22,6 +22,11 @@ i
 	text-align: right;
 }
 
+.top
+{
+    vertical-align: top;
+}
+
 .loading
 {
 	background-image: url(../img/loading.gif);
