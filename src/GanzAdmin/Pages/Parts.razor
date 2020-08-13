@@ -59,7 +59,7 @@
                             <NavLink href="@($"/{this.BaseLink}/{item.Id}")">@item.Name</NavLink>
                         </td>
                         <td>
-                            @if(!string.IsNullOrEmpty(item.Category.IconUrl))
+                            @if(!string.IsNullOrEmpty(item.Category?.IconUrl))
                             {
                                 <img class="img-icon-16" src="@item.Category.IconUrl" />
                             }

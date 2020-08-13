@@ -33,7 +33,7 @@
         }
     </AuthorizedView>
     <NonAuthorizedView NeededRolesOR="@this.AuthOR" NeededRolesAND="@this.AuthAND">
-        <span>@this.Value</span>
+        <span>@(this.Value ? this.TrueValue : this.FalseValue)</span>
     </NonAuthorizedView>
 </p>
 
@@ -46,5 +46,5 @@
     public string TrueValue { get; set; } = "True";
 
 	[Parameter]
-    public bool FalseValue { get; set; } = "False";
+    public string FalseValue { get; set; } = "False";
 }

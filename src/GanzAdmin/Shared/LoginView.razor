@@ -53,7 +53,7 @@
     {
         if (this.AuthProvider.TrySignIn(this.User, this.Pass))
         {
-            this.NavMan.NavigateTo("/");
+            this.NavMan.NavigateTo(this.NavMan.Uri);
             JS.InvokeVoidAsync("alertify.success", "Sikeres belépés!");
         }
         else
