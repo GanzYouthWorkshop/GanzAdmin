@@ -6,9 +6,9 @@
 <aside class='@(this.ItemList == null ? "loading" : "")'>
     @if (this.ItemList != null)
     {
-        <TreeLevel Items="@(this.ItemList.ToEntities<Part>())" 
+        @*<TreeLevel Items="@(this.ItemList.ToEntities<Part>())" 
                    Root="@null" 
-                   Filter="@((e, r) => (e as Part).Category == null && r == null || (e as Part).Category?.Id == r?.Id)" />
+                   Filter="@((e, r) => (e as Part).Category == null && r == null || (e as Part).Category?.Id == r?.Id)" />*@
     }
     <AuthorizedView NeededRolesOR="@Permissions.EditParts">
         <NavLink class="addlink" href="@($"/{this.BaseLink}/add")">Új @this.DataName</NavLink>
@@ -19,7 +19,7 @@
     @if (this.ItemList != null)
     {
         <div id='table-wrapper'>
-            <table id='table-header'>
+            @*<table id='table-header'>
                 <thead>
                     <tr>
                         <DataGridHeader></DataGridHeader>
@@ -33,7 +33,7 @@
                         <DataGridHeader IsCollapsible IsSortable>Leírás</DataGridHeader>
                     </tr>
                 </thead>
-            </table>
+            </table>*@
 
             <table id='data' class="display nowrap">
                 <thead>
@@ -59,11 +59,18 @@
                             <NavLink href="@($"/{this.BaseLink}/{item.Id}")">@item.Name</NavLink>
                         </td>
                         <td>
-                            @if(!string.IsNullOrEmpty(item.Category.IconUrl))
+                            @if (item.Category != null)
                             {
-                                <img class="img-icon-16" src="@item.Category.IconUrl" />
+                                if (!string.IsNullOrEmpty(item.Category.IconUrl))
+                                {
+                                    <img class="img-icon-16" src="@item.Category.IconUrl" />
+                                }
+                                @item.Category.Name
                             }
-                            @item.Category.Name
+                            else
+                            {
+                                <span>-</span>
+                            }
                         </td>
                         <td class="top">
                             <table>
