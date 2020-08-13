@@ -1,16 +1,5 @@
 ﻿function setupDataGrid()
 {
-	$('main').delegate('a:not(.ignore)', 'click', function (e)
-	{
-		//e.preventDefault();
-		//decodeLinkCommand($(this).attr('href'));
-	});
-			
-	$('#table-wrapper').scroll(function()
-	{
-		$('.pinned').css('left', $(this).scrollLeft());
-	});
-		
 	$('main').delegate('#data th i.collapse', 'click', function()
 	{
 		var nth = $('th').index($(this).parent()) + 1;
@@ -56,27 +45,12 @@
 	{
 		var nth = $('th').index($(this).parent()) + 1;
 
-		var rot = $(this).parent().hasClass('pinned') ? 0 : -90;
+		var rot = $(this).parent().hasClass('pinned') ? 0 : 90;
+		console.log(rot);
+		$(this).css('transform', 'rotate(' + rot + 'deg)');
 
 		$(this).parent().toggleClass('pinned');
-		$('#data td:nth-child(' + nth + ')').toggleClass('pinned');
-		$('#data th:nth-child(' + nth + ')').toggleClass('pinned');
-
-		//if(!pinFirstColumn)
-		//{
-		//	$(this).css('transform', 'rotate(0)');
-				
-		//	$('.pinnable').addClass('pinned');
-		//	$('.pinned').css('left', $(this).scrollLeft());
-		//}
-		//else
-		//{
-		//	$(this).css('transform', 'rotate(-90deg)');
-				
-		//	$('.pinned').css('left', '0');
-		//	$('.pinnable').removeClass('pinned');
-		//}
-		//pinFirstColumn = !pinFirstColumn;
+		$('#data > tbody > tr > td:nth-child(' + nth + ')').toggleClass('pinned');
 	});
 		
 	$('main').delegate('#data input[type=checkbox]', 'click', function()

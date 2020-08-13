@@ -423,13 +423,15 @@ main table th.collapsed i.sort
 main table
 {
 	width: 100%;
-	border-collapse: collapse;
+	border-collapse: separate;
+	border-spacing: 0;
 }
 
 #data thead
 {
 	position: sticky;
 	top: 0;
+	z-index: 1;
 }
 
 main table th
@@ -488,10 +490,11 @@ main table td.pinnable a
 	border-bottom: 1px solid #DFDFDF;
 }
 
-main table td.pinned,main table th.pinned
+main table td.pinned, main table th.pinned
 {
 	position: sticky;
 	left: 0;
+	border-right: 3px solid #c41111;
 }
 
 main table td.pinnable.pinned a
