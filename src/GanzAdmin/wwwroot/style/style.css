@@ -491,6 +491,7 @@ main table td.pinnable a
 main table td.pinned,main table th.pinned
 {
 	position: sticky;
+	left: 0;
 }
 
 main table td.pinnable.pinned a
