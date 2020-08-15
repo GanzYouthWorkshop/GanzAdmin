@@ -1,5 +1,6 @@
 ﻿function onBlazorReady()
 {
+	onBlazorRender();
 
 	alertify.init();
 
@@ -29,7 +30,10 @@ function onBlazorRender()
 				format: 'Y. m. d. H:i'
 		});
 	});	
-}
+
+	document.querySelectorAll('code pre').forEach((block) => {
+		hljs.highlightBlock(block);
+	});}
 
 function createEditorJS(initialData, callbackObj)
 {
