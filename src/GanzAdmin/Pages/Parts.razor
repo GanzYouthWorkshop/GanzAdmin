@@ -328,7 +328,7 @@
         return true;
     }
 
-    protected bool BeforeDelete()
+    protected override bool BeforeDelete()
     {
         this.DeleteUploadedFile(this.SelectedItem.Temporal.DateSheetUrl);
         this.DeleteUploadedFile(this.SelectedItem.Original.DateSheetUrl);

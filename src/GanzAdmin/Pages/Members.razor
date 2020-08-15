@@ -163,6 +163,18 @@
         return true;
     }
 
+    protected override bool BeforeDelete()
+    {
+        if (this.SelectedItem.Original.Roles.Contains(Permissions.Overlord) && !this.AuthManager.CurrentMember.Roles.Contains(Permissions.Overlord))
+        {
+            return false;
+        }
+        else
+        {
+            return true;
+        }
+    }
+
     private void OnLogAttenance(Member member)
     {
         GanzAdminDbFunctions.LogAttendance(member, DateTime.Today);
