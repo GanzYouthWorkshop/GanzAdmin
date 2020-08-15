@@ -79,7 +79,8 @@ namespace GanzAdmin.Tools
 
         private void NavMan_LocationChanged(object sender, LocationChangedEventArgs e)
         {
-            //throw new NotImplementedException();
+            //TODO: [KG] Activate when actually works
+            //this.Reset(null);
         }
 
         public void AddRemove(IEntity entity)
