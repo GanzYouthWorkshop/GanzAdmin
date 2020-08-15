@@ -127,32 +127,35 @@ namespace GanzAdmin.DataHandling
 
         private void Add()
         {
-            this.BeforeAdd();
+            if (this.BeforeAdd())
+            {
+                this.m_Collection.Insert(this.SelectedItem.FoldBack());
+                GanzAdminDbEngine.Instance.Transact();
 
-            this.m_Collection.Insert(this.SelectedItem.FoldBack());
-            GanzAdminDbEngine.Instance.Transact();
-
-            this.JS.InvokeVoidAsync("alertify.success", $"{this.DataName.ToCapital()} hozzáadva!");
+                this.JS.InvokeVoidAsync("alertify.success", $"{this.DataName.ToCapital()} hozzáadva!");
+            }
         }
 
         private void Modify()
         {
-            this.BeforeEdit();
+            if (this.BeforeEdit())
+            {
+                this.m_Collection.Update(this.SelectedItem.FoldBack());
+                GanzAdminDbEngine.Instance.Transact();
 
-            this.m_Collection.Update(this.SelectedItem.FoldBack());
-            GanzAdminDbEngine.Instance.Transact();
-
-            this.JS.InvokeVoidAsync("alertify.success", $"{this.DataName.ToCapital()} módosítva!");
+                this.JS.InvokeVoidAsync("alertify.success", $"{this.DataName.ToCapital()} módosítva!");
+            }
         }
 
         private void Delete()
         {
-            this.BeforeDelete();
+            if (this.BeforeDelete())
+            {
+                this.m_Collection.Delete(this.SelectedItem.Original.Id);
+                GanzAdminDbEngine.Instance.Transact();
 
-            this.m_Collection.Delete(this.SelectedItem.Original.Id);
-            GanzAdminDbEngine.Instance.Transact();
-
-            this.JS.InvokeVoidAsync("alertify.success", $"{this.DataName.ToCapital()} törölve :(");
+                this.JS.InvokeVoidAsync("alertify.success", $"{this.DataName.ToCapital()} törölve :(");
+            }
         }
 
         protected override bool ShouldRender()
@@ -186,19 +189,19 @@ namespace GanzAdmin.DataHandling
 
         }
 
-        protected virtual void BeforeAdd()
+        protected virtual bool BeforeAdd()
         {
-
+            return true;
         }
 
-        protected virtual void BeforeEdit()
+        protected virtual bool BeforeEdit()
         {
-
+            return true;
         }
 
-        protected virtual void BeforeDelete()
+        protected virtual bool BeforeDelete()
         {
-
+            return true;
         }
 
         #endregion

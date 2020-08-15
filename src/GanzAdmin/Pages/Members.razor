@@ -139,21 +139,28 @@
     private string m_Password;
 
 
-    protected override void BeforeAdd()
+    protected override bool BeforeAdd()
     {
         this.SelectedItem.Temporal.Password = GanzUtils.Sha256(this.Password);
+        return true;
     }
 
-    protected override void BeforeEdit()
+    protected override bool BeforeEdit()
     {
         if(this.PasswordChanged)
         {
+            if(this.SelectedItem.Original.Roles.Contains(Permissions.Overlord) && !this.AuthManager.CurrentMember.Roles.Contains(Permissions.Overlord))
+            {
+                //Ha a sz editált user overlord és az editáló nem az, ne legyen jelszó átírás!
+                return true;
+            }
             this.SelectedItem.Temporal.Password = GanzUtils.Sha256(this.Password);
         }
         else
         {
             this.SelectedItem.Temporal.Password = this.SelectedItem.Original.Password;
         }
+        return true;
     }
 
     private void OnLogAttenance(Member member)
