@@ -1,7 +1,7 @@
 ﻿@using GanzAdmin.Authentication;
 
 <nav>
-    <span id='selected-items' title='Eszközök' @onclick="() => { this.ToolProvider.ShowMenu = true; }"></span>
+    <span id='selected-items' class="@ToolMenuClass" title='Eszközök' @onclick="() => { this.ToolProvider.ShowMenu = true; }"></span>
 
     <span id='menu' title='Menü'></span>
     <ul>
@@ -30,6 +30,29 @@
 
     [Inject]
     public ToolService ToolProvider { get; set; }
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+
+        this.ToolProvider.TypeChanged += this.OnTypeChanged;
+    }
+
+    private void OnTypeChanged(object sender, Type e)
+    {
+        if(e != null)
+        {
+            this.InvokeAsync(new Action(this.StateHasChanged));
+        }
+    }
+
+    public string ToolMenuClass
+    {
+        get
+        {
+            return this.ToolProvider.AvailableTools.Count > 0 ? "available" : "";
+        }
+    }
 
     protected override void OnAfterRender(bool firstRender)
     {
