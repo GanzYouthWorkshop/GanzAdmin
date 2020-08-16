@@ -143,13 +143,15 @@
         this.SelectedItem.Temporal.LastModified = DateTime.Now;
     }
 
-    protected override void BeforeAdd()
+    protected override bool BeforeAdd()
     {
         this.OnItemEdit();
+        return true;
     }
 
-    protected override void BeforeEdit()
+    protected override bool BeforeEdit()
     {
         this.OnItemEdit();
+        return true;
     }
 }

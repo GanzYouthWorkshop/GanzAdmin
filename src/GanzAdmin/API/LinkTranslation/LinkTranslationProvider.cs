@@ -22,7 +22,7 @@ namespace GanzAdmin.API.LinkTranslation
             }
             catch(Exception ex)
             {
-
+                Console.WriteLine(ex.Message);
             }
 
             return $"{{ \"success\" : 1, \"meta\": {{ \"title\" : \"{result.Title}\", \"description\" : \"{result.Description}\", \"image\" : {{ \"url\" : \"{result.ImageUrl}\"}}}}}}";

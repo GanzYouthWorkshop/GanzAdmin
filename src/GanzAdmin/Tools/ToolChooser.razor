@@ -17,18 +17,15 @@
                 }
                 else
                 {
-                    foreach (ToolBase tool in this.AvailableTools)
+                    foreach (ToolBase tool in this.ToolProvider.AvailableTools)
                     {
-                        if (tool.SupportedEntities.Contains(this.ToolProvider.CurrentType))
-                        {
-                            <a class="tool" @onclick="() => this.SelectTool(tool)">
-                                <i>@tool.Icon</i>
-                                <div>
-                                    <h3>@tool.Name</h3>
-                                    <p>@tool.Description</p>
-                                </div>
-                            </a>
-                        }
+                        <a class="tool" @onclick="() => this.SelectTool(tool)">
+                            <i>@tool.Icon</i>
+                            <div>
+                                <h3>@tool.Name</h3>
+                                <p>@tool.Description</p>
+                            </div>
+                        </a>
                     }
                 }
             </div>
@@ -43,25 +40,6 @@
 
     [Parameter]
     public bool Visible { get; set; } = false;
-
-    private List<ToolBase> AvailableTools
-    {
-        get
-        {
-            if(!this.collectingFinished)
-            {
-                IEnumerable<Type> tools = typeof(ToolBase).Assembly.GetTypes().Where(t => t.IsSubclassOf(typeof(ToolBase)));
-                foreach(Type tool in tools)
-                {
-                    this.collectedTools.Add((ToolBase)Activator.CreateInstance(tool));
-                }
-                this.collectingFinished = true;
-            }
-            return this.collectedTools;
-        }
-    }
-    private List<ToolBase> collectedTools = new List<ToolBase>();
-    private bool collectingFinished = false;
 
     public ToolBase SelectedTool { get; set; } = null;
 

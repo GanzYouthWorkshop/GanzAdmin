@@ -102,7 +102,7 @@ namespace GanzAdmin.API.NVR
                             }
                             catch(Exception ex)
                             {
-
+                                Console.WriteLine(ex.Message);
                             }
                                 
                         }

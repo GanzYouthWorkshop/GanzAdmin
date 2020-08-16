@@ -28,6 +28,19 @@
     </div>
 }
 <hr />
+<p>
+    <SimpleCheckField Inline
+                      Type="switch"
+                      Display="Hozzáadás leltárhoz"
+                      Name="add-inventory"
+                      @bind-Value="this.AddStockpileAutomatically" />
+    <ComboBox Inline
+              AuthOR="@Permissions.EditParts"
+              ItemType="@Location"
+              Items="GanzAdminDbEngine.Instance.GetCollection<Location>().FindAll()"
+              Display="Szállítás leltár"
+              @bind-Value="this.StockpileLocation" />
+</p>
 <button @onclick="() => this.GenerateSheet()">Küldés</button>
 
 @inherits ToolBase
@@ -48,6 +61,9 @@
     private List<SupplierWrapper> supplierPriority { get; set; } = new List<SupplierWrapper>();
 
     private List<OrderData> orderData { get; set; }
+
+    private bool AddStockpileAutomatically { get; set; }
+    private Location StockpileLocation { get; set; }
 
     public PrintOrderTool()
     {
@@ -82,6 +98,20 @@
             result += $"<tr><td>{order.Part.Name}</td><td>{code}</td><td>{order.Amount} {order.Part.StockUnit}</td></tr>";
         }
         result += "</table></div>";
+
+        if(this.AddStockpileAutomatically)
+        {
+            foreach (OrderData order in this.orderData)
+            {
+                order.Part.Stock.Add(new Stockpile()
+                {
+                    Location = this.StockpileLocation,
+                    Amount = order.Amount,
+                });
+                GanzAdminDbEngine.Instance.Parts.Update(order.Part);
+            }
+            GanzAdminDbEngine.Instance.Transact();
+        }
 
         GanzAdmin.Pages.Print.PrintUtils.PrintContent(this.JS, result);
     }

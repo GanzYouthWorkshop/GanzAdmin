@@ -67,10 +67,8 @@
                                 }
                                 @item.Category.Name
                             }
-                            else
-                            {
-                                <span>-</span>
-                            }
+
+                            @item.Category?.Name
                         </td>
                         <td class="top">
                             <table>
@@ -317,26 +315,30 @@
         }
     }
 
-    protected override void BeforeEdit()
+    protected override bool BeforeEdit()
     {
         if (this.SelectedItem.Original.DateSheetUrl != this.SelectedItem.Temporal.DateSheetUrl)
         {
             this.DeleteUploadedFile(this.SelectedItem.Original.DateSheetUrl);
         }
+        return true;
     }
 
-    protected void BeforeCancel()
+    protected bool BeforeCancel()
     {
         if (this.SelectedItem.Original.DateSheetUrl != this.SelectedItem.Temporal.DateSheetUrl)
         {
             this.DeleteUploadedFile(this.SelectedItem.Temporal.DateSheetUrl);
         }
+        return true;
     }
 
-    protected void BeforeDelete()
+    protected override bool BeforeDelete()
     {
         this.DeleteUploadedFile(this.SelectedItem.Temporal.DateSheetUrl);
         this.DeleteUploadedFile(this.SelectedItem.Original.DateSheetUrl);
+
+        return true;
     }
 
 }

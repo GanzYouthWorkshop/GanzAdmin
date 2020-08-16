@@ -294,6 +294,18 @@ header nav ul li a:hover
 #auto-complete-display div.location:before{ content: ''; }
 #auto-complete-display div.parameter:before{ content: ''; }
 
+#selected-items.available:after
+{
+	content: "";
+	position: absolute;
+	display: inline-block;
+	width: 10px;
+	height: 10px;
+	background-color: red;
+	top: 14px;
+	border-radius: 5px;
+}
+
 /*#endregion*/
 
 /*#region Oldalsó sáv*/
@@ -929,6 +941,12 @@ main.filebrowser a img
 {
 	margin: 0 0 1em 2em;
 	font-style: italic;
+}
+
+.userpage img
+{
+	display: block;
+	margin: 0 auto;
 }
 
 .box

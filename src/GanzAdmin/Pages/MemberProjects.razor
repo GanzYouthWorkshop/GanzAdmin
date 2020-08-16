@@ -329,12 +329,13 @@ else
         });
     }
 
-    protected override void BeforeEdit()
+    protected override bool BeforeEdit()
     {
         if (this.SelectedItem.Original.Logo != this.SelectedItem.Temporal.Logo)
         {
             this.DeleteUploadedFile(this.SelectedItem.Original.Logo);
         }
+        return true;
     }
 
     protected void BeforeCancel()
@@ -345,10 +346,12 @@ else
         }
     }
 
-    protected void BeforeDelete()
+    protected override bool BeforeDelete()
     {
         this.DeleteUploadedFile(this.SelectedItem.Temporal.Logo);
         this.DeleteUploadedFile(this.SelectedItem.Original.Logo);
+
+        return true;
     }
 
 }

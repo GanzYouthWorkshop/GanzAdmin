@@ -99,12 +99,13 @@
     protected override string BaseLink { get; set; } = "categories";
     protected override string DataName { get; set; } = "kategória";
 
-    protected override void BeforeEdit()
+    protected override bool BeforeEdit()
     {
         if (this.SelectedItem.Original.IconUrl != this.SelectedItem.Temporal.IconUrl)
         {
             this.DeleteUploadedFile(this.SelectedItem.Original.IconUrl);
         }
+        return true;
     }
 
     protected void BeforeCancel()
@@ -115,9 +116,11 @@
         }
     }
 
-    protected void BeforeDelete()
+    protected override bool BeforeDelete()
     {
         this.DeleteUploadedFile(this.SelectedItem.Temporal.IconUrl);
         this.DeleteUploadedFile(this.SelectedItem.Original.IconUrl);
+
+        return true;
     }
 }

@@ -167,12 +167,13 @@ else
         }
     }
 
-    protected override void BeforeEdit()
+    protected override bool BeforeEdit()
     {
         if (this.SelectedItem.Original.ImageUrl != this.SelectedItem.Temporal.ImageUrl)
         {
             this.DeleteUploadedFile(this.SelectedItem.Original.ImageUrl);
         }
+        return true;
     }
 
     protected void BeforeCancel()
@@ -183,9 +184,11 @@ else
         }
     }
 
-    protected override void BeforeDelete()
+    protected override bool BeforeDelete()
     {
         this.DeleteUploadedFile(this.SelectedItem.Temporal.ImageUrl);
         this.DeleteUploadedFile(this.SelectedItem.Original.ImageUrl);
+
+        return true;
     }
 }
