@@ -519,12 +519,12 @@ main table td.collapsed *
 	display: none;
 }
 
-main table td.collapsed:nth-child(n)
+#data > tbody > tr > td.collapsed:nth-child(n)
 {
-	background-color: #DDDDDD;
+	background-color: #DDDDDD !important;
 }
 
-main table tr:nth-child(2n) td
+#data > tbody > tr:nth-child(2n) td
 {
 	background-color: #F7F7F7;
 }
