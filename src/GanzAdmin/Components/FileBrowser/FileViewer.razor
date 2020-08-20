@@ -1,6 +1,7 @@
 ﻿@using GanzAdmin.Authentication.Components;
 @using System.IO;
 @using Microsoft.AspNetCore.Hosting;
+@using System.Web;
 
 @switch (this.extension)
 {
@@ -48,13 +49,16 @@
     case "xlsx":
     case "ppt":
     case "pptx":
+        <iframe src="@this.OwaUrl()" />
+        break;
+
     case "exe":
     case "zip":
     case "rar":
     case "iso":
     default:
-<span>Nincs online nézet :(</span>
-break;
+        <span>Nincs online nézet :(</span>
+        break;
 }
 
 @code
@@ -86,5 +90,12 @@ break;
         base.OnAfterRender(firstRender);
 
         this.JS.InvokeVoidAsync("hljs.highlightBlock", html);
+    }
+
+    private string OwaUrl()
+    {
+        string encoded = HttpUtility.UrlEncode(this.WebFile);
+
+        return $"https://owa-box.vips100.com/op/view.aspx?src={encoded}";
     }
 }
