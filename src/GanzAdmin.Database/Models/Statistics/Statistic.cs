@@ -7,13 +7,15 @@ namespace GanzAdmin.Database.Models
 {
     public class Statistic
     {
-        public enum StatisticTypes : string
+        public enum StatisticTypes
         {
-            Parts = nameof(Parts),
-            Stockpile = nameof(StockPile),
-            YearsSinceOpening = nameof(YearsSinceOpening),
-            MonthlyAttendance = nameof(MonthlyAttendance),
-            Projects = nameof(Projects),
+            Parts,
+            Stockpile,
+            YearsSinceOpening,
+            MonthlyAttendance,
+            Projects,
+            FinishedProjects,
+            Members,
         }
 
         [BsonId]

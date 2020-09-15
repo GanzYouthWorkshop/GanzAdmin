@@ -7,6 +7,7 @@ namespace GanzAdmin.Scheduling
 {
     public abstract class ScheduledTaskBase
     {
+        public abstract DateTime LastRun { get; set; }
         public abstract TimeSpan RunSchedule { get; set; }
 
         public abstract bool Run(DateTime datetime);
