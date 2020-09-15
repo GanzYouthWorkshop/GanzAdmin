@@ -6,21 +6,33 @@
 <p class="@(this.Inline ? "inline" : "")">
     <label for="@this.Name">@this.Display:</label>
     <AuthorizedView NeededRolesOR="@this.AuthOR" NeededRolesAND="@this.AuthAND">
-        <div class="filebox">
-            <form @ref="this.html" method="post" action="./api/upload" enctype="multipart/form-data">
-                @if(this.IsImage)
-                {
-                    <img class="upload-preview" src="@this.Value" />
-                }
-                @if(this.Value != null)
-                {
-                    <small>@(this.Value.Split('/').Last().Substring(12))</small>
-                }
-                <input type="hidden" value="@this.Value" @onchange="(e) => { this.OnValueChanged(e); }" />
-                <input class="" type="file" name="@this.Name" />
-                <strong>Húzd ide a fájlt!</strong>
-            </form>
-        </div>
+        @if (UrlOptional)
+        {
+            <SimpleCheckField Type="switch" Inline Display="Csak link" @bind-Value="this.m_IsUrl" AuthOR="@this.AuthOR" AuthAND="@this.AuthAND" Changed="this.UrlModeChanged" />
+        }
+
+        @if (this.m_IsUrl)
+        {
+            <SimpleTextField Inline Type="text" Display="Link" @bind-Value="this.Value" AuthOR="@this.AuthOR" AuthAND="@this.AuthAND" />
+        }
+        else
+        {
+            <div class="filebox">
+                <form @ref="this.html" method="post" action="./api/upload" enctype="multipart/form-data">
+                    @if (this.IsImage)
+                    {
+                        <img class="upload-preview" src="@this.Value" />
+                    }
+                    @if (this.Value != null)
+                    {
+                        <small>@(this.Value.Split('/').Last().Substring(12))</small>
+                    }
+                    <input type="hidden" value="@this.Value" @onchange="(e) => { this.OnValueChanged(e); }" />
+                    <input class="" type="file" name="@this.Name" />
+                    <strong>Húzd ide a fájlt!</strong>
+                </form>
+            </div>
+        }
     </AuthorizedView>
     <NonAuthorizedView NeededRolesOR="@this.AuthOR" NeededRolesAND="@this.AuthAND">
         @*<span>@((this.Value as IEntity).DisplayValue)</span>*@
@@ -37,6 +49,10 @@
 
     [Parameter]
     public bool Inline { get; set; }
+
+    [Parameter]
+    public bool UrlOptional { get; set; }
+    private bool m_IsUrl { get; set; }
 
     [Parameter]
     public bool MultiSelect { get; set; }
@@ -107,5 +123,12 @@
         this.StateHasChanged();
 
         return base.OnValueChanged(e);
+    }
+
+    private void UrlModeChanged(bool newValue)
+    {
+        this.m_IsUrl = newValue;
+        this.m_HasRendered = false;
+        this.StateHasChanged();
     }
 }
