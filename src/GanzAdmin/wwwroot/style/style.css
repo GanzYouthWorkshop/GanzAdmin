@@ -635,6 +635,14 @@ main table tr.alert td
 	height: 100%;
 }
 
+.popup .body .file-preview > iframe
+{
+	width: calc(100% + 2em);
+	height: calc(100% + 1em);
+	margin: -1em;
+	border: 0;
+}
+
 .popup .close
 {
 	font-family: 'FontAwesome';
