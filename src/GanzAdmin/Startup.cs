@@ -19,6 +19,7 @@ using Microsoft.JSInterop;
 using GanzAdmin.Configuration;
 using GanzAdmin.API.NVR;
 using GanzAdmin.Tools;
+using GanzAdmin.Scheduling;
 
 namespace GanzAdmin
 {
@@ -59,6 +60,9 @@ namespace GanzAdmin
             {
                 Name = "g2"
             }.Open();
+
+            Scheduler.Tasks.Add(new StatisticsScheduledTask());
+            Scheduler.Start();
 
             if (env.IsDevelopment())
             {
