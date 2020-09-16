@@ -145,6 +145,20 @@
             Display = p.Name, Url = $"./parts/{p.Id}",
             Information = $"{p.ShortDescription}, {p.SumInStock} {p.StockUnit}",
         }));
+        result.AddRange(WikiPage.Search(GanzAdminDbEngine.Instance.GetCollection<WikiPage>().FindAll(), fragments).Select(w => new SearchResult()
+        {
+            DataType = typeof(WikiPage),
+            Display = w.Name,
+            Url = $"./curriculum/{w.Id}",
+            Information = $"{w.Name}",
+        }));
+        result.AddRange(Member.Search(GanzAdminDbEngine.Instance.GetCollection<Member>().FindAll(), fragments).Select(m => new SearchResult()
+        {
+            DataType = typeof(Member),
+            Display = m.Name,
+            Url = $"./members/{m.Id}",
+            Information = $"{m.Name}, {m.Email}",
+        }));
 
         this.ItemList = result;
     }

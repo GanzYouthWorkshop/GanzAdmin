@@ -23,6 +23,8 @@ namespace GanzAdmin.DataHandling
                 {
                     case nameof(Part): result = "Alkatrész";  break;
                     case nameof(Category): result = "Kategória"; break;
+                    case nameof(WikiPage): result = "Wiki"; break;
+                    case nameof(Member): result = "Tag"; break;
                 }
 
                 return result;
