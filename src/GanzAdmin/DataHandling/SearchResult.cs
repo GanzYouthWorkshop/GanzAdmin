@@ -25,6 +25,8 @@ namespace GanzAdmin.DataHandling
                     case nameof(Category): result = "Kategória"; break;
                     case nameof(WikiPage): result = "Wiki"; break;
                     case nameof(Member): result = "Tag"; break;
+                    case nameof(Kit): result = "Kit"; break;
+                    case nameof(MemberProject): result = "Projekt"; break;
                 }
 
                 return result;
