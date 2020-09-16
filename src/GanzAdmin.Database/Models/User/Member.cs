@@ -1,8 +1,10 @@
-﻿using LiteDB;
+﻿using GanzAdmin.Utils;
+using LiteDB;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
 using System.Text;
 
 namespace GanzAdmin.Database.Models
@@ -30,6 +32,32 @@ namespace GanzAdmin.Database.Models
         public string DisplayValue
         {
             get { return this.Username; }
+        }
+
+        public static List<Member> Search(IEnumerable<Member> members, List<SearchFragment> expression)
+        {
+            List<Member> list = new List<Member>();
+            list.AddRange(members);
+            IEnumerable<Member> result = list;
+
+            foreach (SearchFragment fragment in expression)
+            {
+                string searchKey = fragment.Key.Trim().ToLower();
+                string searchVal = fragment.Value?.Trim().ToLower();
+                float searchNumeric = float.NaN;
+                float.TryParse(searchVal, out searchNumeric);
+
+                if (fragment.Type == SearchFragment.ExpressionType.Main)
+                {
+                    if (searchKey != "")
+                    {
+                        result = result.Where(t => t.Name.ToLower().Contains(searchKey) ||
+                                                (t.Email != null && t.Email.ToLower().Contains(searchKey)) ||
+                                                (t.Phone != null && t.Phone.ToLower().Contains(searchKey)));
+                    }
+                }
+            }
+            return result.ToList();
         }
     }
 }

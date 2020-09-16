@@ -1,6 +1,8 @@
-﻿using LiteDB;
+﻿using GanzAdmin.Utils;
+using LiteDB;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace GanzAdmin.Database.Models
@@ -40,6 +42,30 @@ namespace GanzAdmin.Database.Models
             {
                 return this.Name;
             }
+        }
+
+        public static List<Kit> Search(IEnumerable<Kit> kits, List<SearchFragment> expression)
+        {
+            List<Kit> list = new List<Kit>();
+            list.AddRange(kits);
+            IEnumerable<Kit> result = list;
+
+            foreach (SearchFragment fragment in expression)
+            {
+                string searchKey = fragment.Key.Trim().ToLower();
+                string searchVal = fragment.Value?.Trim().ToLower();
+                float searchNumeric = float.NaN;
+                float.TryParse(searchVal, out searchNumeric);
+
+                if (fragment.Type == SearchFragment.ExpressionType.Main)
+                {
+                    if (searchKey != "")
+                    {
+                        result = result.Where(t => t.Name.ToLower().Contains(searchKey) || t.Description.ToLower().Contains(searchKey));
+                    }
+                }
+            }
+            return result.ToList();
         }
     }
 }

@@ -1,6 +1,8 @@
-﻿using LiteDB;
+﻿using GanzAdmin.Utils;
+using LiteDB;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace GanzAdmin.Database.Models
@@ -26,6 +28,30 @@ namespace GanzAdmin.Database.Models
         public override bool Equals(object obj)
         {
             return this.IsEqual(obj);
+        }
+
+        public static List<WikiPage> Search(IEnumerable<WikiPage> wikis, List<SearchFragment> expression)
+        {
+            List<WikiPage> list = new List<WikiPage>();
+            list.AddRange(wikis);
+            IEnumerable<WikiPage> result = list;
+
+            foreach (SearchFragment fragment in expression)
+            {
+                string searchKey = fragment.Key.Trim().ToLower();
+                string searchVal = fragment.Value?.Trim().ToLower();
+                float searchNumeric = float.NaN;
+                float.TryParse(searchVal, out searchNumeric);
+
+                if (fragment.Type == SearchFragment.ExpressionType.Main)
+                {
+                    if (searchKey != "")
+                    {
+                        result = result.Where(t => t.Name.ToLower().Contains(searchKey) || t.Content.Contains(searchKey));
+                    }
+                }
+            }
+            return result.ToList();
         }
     }
 }
