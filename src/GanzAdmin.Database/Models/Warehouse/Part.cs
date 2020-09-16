@@ -14,7 +14,8 @@ namespace GanzAdmin.Database.Models
         public long Id { get; set; }
 
         public string Name { get; set; }
-        
+        public string ImagePath { get; set; }
+
         [BsonRef]
         public Category Category { get; set; }
 

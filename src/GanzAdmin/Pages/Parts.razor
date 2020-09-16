@@ -40,6 +40,7 @@
                     <tr>
                         <DataGridHeader></DataGridHeader>
                         <DataGridHeader IsPinnable IsSortable>Név</DataGridHeader>
+                        <DataGridHeader IsCollapsible>Kép</DataGridHeader>
                         <DataGridHeader IsCollapsible IsSortable>Kategória</DataGridHeader>
                         <DataGridHeader IsCollapsible>Mennyiség</DataGridHeader>
                         <DataGridHeader IsCollapsible IsSortable>Min. mennyiség</DataGridHeader>
@@ -59,6 +60,12 @@
                             <NavLink href="@($"/{this.BaseLink}/{item.Id}")">@item.Name</NavLink>
                         </td>
                         <td>
+                            @if(!string.IsNullOrEmpty(item.ImagePath))
+                            {
+                                <img style="height: 70px" src="@item.ImagePath" />
+                            }
+                        </td>
+                        <td>
                             @if (item.Category != null)
                             {
                                 if (!string.IsNullOrEmpty(item.Category.IconUrl))
@@ -74,7 +81,7 @@
                                 {
                                     <tr>
                                         <td>@stock.Location?.Name (@stock.Amount @item.StockUnit)</td>
-										<td>@stock.Comment</td>
+                                        <td>@stock.Comment</td>
                                         <td>
                                             <AuthorizedView NeededRolesOR="@Permissions.ManagePartStock"><a @onclick="() => this.OnRemoveOneFromStock(item, stock)">-1</a></AuthorizedView>
                                         </td>
@@ -85,7 +92,7 @@
                         <td class="center">@item.MinimumStock @item.StockUnit</td>
                         <td class="center">@(item.LowStock ? "🟥" : "🟩")</td>
                         <td class="center">
-                            @if(!string.IsNullOrEmpty(item.DateSheetUrl))
+                            @if (!string.IsNullOrEmpty(item.DateSheetUrl))
                             {
                                 <a href="@item.DateSheetUrl" target="_blank">Adatlap <i></i></a>
                             }
@@ -132,6 +139,10 @@
                                      Display="Név"
                                      Name="@nameof(Part.Name)"
                                      @bind-Value="this.SelectedItem.Temporal.Name" />
+                    <FileField AuthOR="@Permissions.EditParts"
+                               Display="Kép"
+                               UrlOptional
+                               @bind-Value="this.SelectedItem.Temporal.ImagePath" />
                     <ComboBox AuthOR="@Permissions.EditParts"
                               ItemType="@Category"
                               Items="@GanzAdminDbEngine.Instance.Categories.FindAll()"
@@ -178,7 +189,7 @@
                                                Name="@nameof(Stockpile.Amount)"
                                                ItemType="long"
                                                @bind-Value="@stock.Amount" />
-							<SimpleTextField Inline
+                            <SimpleTextField Inline
                                              AuthOR="@($"{Permissions.EditParts} {Permissions.ManagePartStock}")"
                                              Type="text"
                                              Display="Megj."

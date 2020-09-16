@@ -13,7 +13,7 @@
 
         @if (this.m_IsUrl)
         {
-            <SimpleTextField Inline Type="text" Display="Link" @bind-Value="this.Value" AuthOR="@this.AuthOR" AuthAND="@this.AuthAND" />
+            <SimpleTextField Inline Type="text" Display="Link" Value="@this.Value" ValueChanged="(e) => { this.OnValueChanged(new ChangeEventArgs() { Value = e }); }" AuthOR="@this.AuthOR" AuthAND="@this.AuthAND" />
         }
         else
         {
@@ -23,7 +23,7 @@
                     {
                         <img class="upload-preview" src="@this.Value" />
                     }
-                    @if (this.Value != null)
+                    @if (this.Value != null && this.Value.StartsWith('.'))
                     {
                         <small>@(this.Value.Split('/').Last().Substring(12))</small>
                     }
@@ -68,7 +68,7 @@
     {
         get
         {
-            if(this.Value != null)
+            if(this.Value != null && this.Value.StartsWith('.'))
             {
                 switch(this.Value.Split('.').Last().ToLower())
                 {
