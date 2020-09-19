@@ -65,7 +65,7 @@
                     <SimpleTextField AuthOR="@Permissions.EditMembers" Type="text" Display="Email" Name="@nameof(Member.Email)" @bind-Value="this.SelectedItem.Temporal.Email" />
 
                     <SimpleDateField AuthOR="@Permissions.EditMembers" Type="text" Display="Tagdíj befizetve" Name="@nameof(Member.PaidUntil)" @bind-Value="this.SelectedItem.Temporal.PaidUntil" />
-                    <SimpleCheckField AuthOR="@Permissions.EditMembers" Type="switch" Display="Aktív?" Name="@nameof(Member.Active)" @bind-Value="@this.SelectedItem.Temporal.Active" />
+                    <SimpleCheckField AuthOR="@Permissions.EditMembers" Type="switch" Display="Aktív?" TrueValue="Igen" FalseValue="Nem" Name="@nameof(Member.Active)" @bind-Value="@this.SelectedItem.Temporal.Active" />
 
 
                     <SimpleTextField AuthOR="@Permissions.EditMembers" Type="text" Display="Felhasználónév" Name="@nameof(Member.Username)" @bind-Value="this.SelectedItem.Temporal.Username" />

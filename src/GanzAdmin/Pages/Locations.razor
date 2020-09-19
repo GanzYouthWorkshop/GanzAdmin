@@ -57,11 +57,13 @@
                 <div class='dynamic'>
                     <SimpleTextField AuthOR="@Permissions.EditLocations" Type="text" Display="Név" Name="@nameof(Location.Name)" @bind-Value="this.SelectedItem.Temporal.Name" />
                     <ComboBox AuthOR="@Permissions.EditLocations" ItemType="@Location" Items="@this.ItemList" Owner="this.SelectedItem.Temporal" Name="@nameof(Location.ParentLocation)" Display="Hely" @bind-Value="this.SelectedItem.Temporal.ParentLocation" />
-                        <SimpleCheckField AuthOR="@Permissions.EditLocations"
-                                          Type="switch"
-                                          Display="Virtuális"
-                                          Name="virtual"
-                                          @bind-Value="this.SelectedItem.Temporal.IsVirtual" />
+                    <SimpleCheckField AuthOR="@Permissions.EditLocations"
+                                        Type="switch"
+                                        Display="Virtuális"
+                                        Name="virtual"
+                                        TrueValue="Igen"
+                                        FalseValue="Nem"
+                                        @bind-Value="this.SelectedItem.Temporal.IsVirtual" />
                 </div>
                 <AuthorizedView NeededRolesOR="@Permissions.EditLocations">
                     <button type='submit'>Küldés</button>

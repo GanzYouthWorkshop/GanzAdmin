@@ -72,7 +72,7 @@ namespace GanzAdmin.Authentication
             {
                 GanzAdminDbEngine db = GanzAdminDbEngine.Instance;
                 Member member = db.Members.FindById(this.CurrentSession.MemberId);
-                if(OrRoles == null && AndRoles == null)
+                if(string.IsNullOrEmpty(OrRoles) && string.IsNullOrEmpty(AndRoles))
                 {
                     return true;
                 }

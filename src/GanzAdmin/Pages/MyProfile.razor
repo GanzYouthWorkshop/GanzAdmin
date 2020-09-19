@@ -18,9 +18,7 @@
                 <SimpleTextField AuthOR="" Type="password" Display="Jelszó" Name="@nameof(Member.Password)" @bind-Value="this.Password1" />
                 <SimpleTextField AuthOR="" Type="password" Display="Jelszó megint" Name="@nameof(Member.Password)" @bind-Value="this.Password2" />
             </div>
-            <AuthorizedView NeededRolesOR="@Permissions.EditMembers">
-                <button type='submit'>Frissítés</button>
-            </AuthorizedView>
+            <button type='submit'>Frissítés</button>
         </EditForm>
     }
 </main>
