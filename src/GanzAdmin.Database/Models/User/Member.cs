@@ -31,7 +31,7 @@ namespace GanzAdmin.Database.Models
         [BsonIgnore]
         public string DisplayValue
         {
-            get { return this.Username; }
+            get { return this.Name; }
         }
 
         public static List<Member> Search(IEnumerable<Member> members, List<SearchFragment> expression)

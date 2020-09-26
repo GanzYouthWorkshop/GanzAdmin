@@ -29,8 +29,14 @@
                     {
                         <tr>
                             <td><NavLink href="@($"/{this.BaseLink}/{member.Id}")">@member.Name</NavLink></td>
-                            <td>@(member.Active ? "Igen" : "Nem")</td>
-                            <td>@member.PaidUntil</td>
+                            <td>@(member.Active ? "🟩 Igen" : "🟥 Nem")</td>
+                            <td>
+                                @member.PaidUntil
+                                @if(member.PaidUntil < DateTime.Now)
+                                {
+                                    <span> ❗</span>
+                                }
+                            </td>
                             <td>
                                 <AuthorizedView NeededRolesOR="@Permissions.EditParts">
                                     @if (!member.Attendances.Exists(a => a.Occasion.Date == DateTime.Today))
@@ -65,7 +71,7 @@
                     <SimpleTextField AuthOR="@Permissions.EditMembers" Type="text" Display="Email" Name="@nameof(Member.Email)" @bind-Value="this.SelectedItem.Temporal.Email" />
 
                     <SimpleDateField AuthOR="@Permissions.EditMembers" Type="text" Display="Tagdíj befizetve" Name="@nameof(Member.PaidUntil)" @bind-Value="this.SelectedItem.Temporal.PaidUntil" />
-                    <SimpleCheckField AuthOR="@Permissions.EditMembers" Type="switch" Display="Aktív?" TrueValue="Igen" FalseValue="Nem" Name="@nameof(Member.Active)" @bind-Value="@this.SelectedItem.Temporal.Active" />
+                    <SimpleCheckField AuthOR="@Permissions.EditMembers" Type="switch" Display="Aktív?" TrueValue="🟩 Igen" FalseValue="🟥 Nem" Name="@nameof(Member.Active)" @bind-Value="@this.SelectedItem.Temporal.Active" />
 
 
                     <SimpleTextField AuthOR="@Permissions.EditMembers" Type="text" Display="Felhasználónév" Name="@nameof(Member.Username)" @bind-Value="this.SelectedItem.Temporal.Username" />
@@ -82,8 +88,8 @@
                                                   Type="switch"
                                                   Display="@permission"
                                                   Name="@permission"
-												  TrueValue="Igen"
-												  FalseValue="Nem"
+                                                  TrueValue="Igen"
+                                                  FalseValue="Nem"
                                                   Value="@temp"
                                                   ValueChanged="@(e => this.EditPermission(permission, e))" />
                             }

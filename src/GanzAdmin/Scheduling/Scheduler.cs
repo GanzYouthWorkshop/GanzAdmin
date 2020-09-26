@@ -31,6 +31,7 @@ namespace GanzAdmin.Scheduling
                     if(task.LastRun.Add(task.RunSchedule) < now)
                     {
                         task.Run(now);
+                        task.LastRun = now;
                     }
                 }
                 Thread.Sleep(60000);
