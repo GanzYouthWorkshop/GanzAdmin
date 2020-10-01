@@ -23,14 +23,6 @@ function onBlazorRender()
 {
 	setupDataGrid();
 
-	$('form .dtp').each(function (i)
-	{
-		$(this).datetimepicker(
-		{
-				format: 'Y. m. d. H:i'
-		});
-	});	
-
 	document.querySelectorAll('code pre').forEach((block) => {
 		hljs.highlightBlock(block);
 	});}
@@ -286,4 +278,39 @@ function createUploader(form)
 		});
 
     }
+}
+
+function createDatePicker(el)
+{
+	$(el).datetimepicker(
+	{
+		onChangeDateTime: function (date, inst)
+		{
+			var d = new Date(Date.parse(date));
+			var datestring = d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate() + " " + d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds();
+
+			el.value = datestring;
+
+
+			if ("createEvent" in document)
+			{
+				//Ez itt valamiért nem mindig működik...
+				var evt = document.createEvent("HTMLEvents");
+				evt.initEvent("change", false, true);
+				el.dispatchEvent(evt);
+			}
+			else
+			{
+				el.fireEvent("onchange");
+			}
+		},
+
+		format: 'Y. m. d. H:i'
+	});
+}
+
+function getValue(input)
+{
+	console.log(input);
+	return input.innertHtml;
 }
