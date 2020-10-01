@@ -47,7 +47,10 @@ namespace GanzAdmin.Database.Models
                 {
                     if (searchKey != "")
                     {
-                        result = result.Where(t => t.Name.ToLower().Contains(searchKey) || t.Content.Contains(searchKey));
+                        result = result.Where(t =>
+                            (t.Name != null && t.Name.ToLower().Contains(searchKey)) ||
+                            (t.Content != null && t.Content.Contains(searchKey))
+                            );
                     }
                 }
             }

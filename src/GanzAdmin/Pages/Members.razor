@@ -32,7 +32,7 @@
                             <td>@(member.Active ? "🟩 Igen" : "🟥 Nem")</td>
                             <td>
                                 @member.PaidUntil
-                                @if(member.PaidUntil < DateTime.Now)
+                                @if(member.Active && member.PaidUntil < DateTime.Now)
                                 {
                                     <span> ❗</span>
                                 }

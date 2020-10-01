@@ -51,9 +51,11 @@ namespace GanzAdmin.Database.Models
                 {
                     if (searchKey != "")
                     {
-                        result = result.Where(t => t.Name.ToLower().Contains(searchKey) ||
-                                                (t.Email != null && t.Email.ToLower().Contains(searchKey)) ||
-                                                (t.Phone != null && t.Phone.ToLower().Contains(searchKey)));
+                        result = result.Where(t =>
+                            (t.Name != null && t.Name.ToLower().Contains(searchKey)) ||
+                            (t.Email != null && t.Email.ToLower().Contains(searchKey)) ||
+                            (t.Phone != null && t.Phone.ToLower().Contains(searchKey))
+                            );
                     }
                 }
             }

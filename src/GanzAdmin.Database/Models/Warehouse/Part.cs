@@ -78,7 +78,10 @@ namespace GanzAdmin.Database.Models
                     case SearchFragment.ExpressionType.Main:
                         if (searchKey != "")
                         {
-                            result = result.Where(t => t.Name.ToLower().Contains(searchKey));
+                            result = result.Where(t =>
+                                (t.Name != null && t.Name.ToLower().Contains(searchKey)) ||
+                                (t.ShortDescription != null && t.ShortDescription.ToLower().Contains(searchKey))
+                                );
                         }
                         break;
 
