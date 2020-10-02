@@ -151,11 +151,10 @@
     {
         get
         {
-            //bool b1 = !this.CurrentUser.Attendances.Exists(a => a.Occasion.Date == DateTime.Today);
-            //bool b2 = new WebClient().DownloadString("http://icanhazip.com") == this.Http.HttpContext.Connection.RemoteIpAddress.ToString();
+            bool b1 = !this.CurrentUser.Attendances.Exists(a => a.Occasion.Date == DateTime.Today);
+            bool b2 = this.Http.HttpContext.Connection.RemoteIpAddress.ToString() == GanzAdmin.Configuration.GanzAdminConfiguration.Instance.MyIP;
 
-            //return b1 && b2;
-            return true;
+            return b1 && b2;
         }
     }
 

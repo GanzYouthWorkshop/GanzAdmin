@@ -13,6 +13,7 @@ namespace GanzAdmin.Configuration
         public static GanzAdminConfiguration Instance { get; set; }
 
         public string DatabaseConnectionString { get; set; } = @"Filename=_Data\ganzadmin.db; Mode=Shared";
+        public string MyIP { get; set; } = "87.97.60.25";
 
         public string SharedFileFolder { get; set; } = "";
         public string SecretFileFolder { get; set; } = "";
