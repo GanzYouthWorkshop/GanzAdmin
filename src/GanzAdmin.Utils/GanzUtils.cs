@@ -10,11 +10,14 @@ namespace GanzAdmin.Utils
     {
         public static string Sha256(string text)
         {
-            string result;
+            string result = null;
 
-            using (SHA256 mySHA256 = SHA256.Create())
+            if (text != null)
             {
-                result = BitConverter.ToString(mySHA256.ComputeHash(Encoding.UTF8.GetBytes(text)));
+                using (SHA256 mySHA256 = SHA256.Create())
+                {
+                    result = BitConverter.ToString(mySHA256.ComputeHash(Encoding.UTF8.GetBytes(text)));
+                }
             }
 
             return result;

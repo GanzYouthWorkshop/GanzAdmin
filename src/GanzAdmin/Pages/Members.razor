@@ -149,7 +149,11 @@
                 //Ha a sz editált user overlord és az editáló nem az, ne legyen jelszó átírás!
                 return true;
             }
-            this.SelectedItem.Temporal.Password = GanzUtils.Sha256(this.Password);
+
+            if (this.Password != null)
+            {
+                this.SelectedItem.Temporal.Password = GanzUtils.Sha256(this.Password);
+            }
         }
         else
         {
