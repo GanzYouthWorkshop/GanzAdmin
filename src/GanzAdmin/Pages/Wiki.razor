@@ -24,31 +24,69 @@
     {
         @if (this.Edit == "edit" || this.NavMan.Uri.EndsWith("add"))
         {
-            <EditForm method="post" EditContext="new EditContext(true)" OnSubmit="OnDefaultAddEditSubmit">
-                <div class='dynamic'>
-                    <SimpleTextField AuthOR="@Permissions.EditCourse" Type="text" Display="Név" Name="@nameof(Category.Name)" @bind-Value="this.SelectedItem.Temporal.Name" />
-                    <ComboBox AuthOR="@Permissions.EditCourse" ItemType="@WikiPage" Items="@this.ItemList" Owner="this.SelectedItem.Temporal" Name="@nameof(WikiPage.ParentPage)" Display="Hely" @bind-Value="this.SelectedItem.Temporal.ParentPage" />
-                    <WysiwygEditor @bind-Value="@this.SelectedItem.Temporal.Content"></WysiwygEditor>
+    <EditForm method="post" EditContext="new EditContext(true)" OnSubmit="OnDefaultAddEditSubmit">
+        <div class='dynamic'>
+            <SimpleTextField AuthOR="@Permissions.EditCourse" Type="text" Display="Név" Name="@nameof(Category.Name)" @bind-Value="this.SelectedItem.Temporal.Name" />
+            <ComboBox AuthOR="@Permissions.EditCourse" ItemType="@WikiPage" Items="@this.ItemList" Owner="this.SelectedItem.Temporal" Name="@nameof(WikiPage.ParentPage)" Display="Hely" @bind-Value="this.SelectedItem.Temporal.ParentPage" />
+            <SimpleCheckField AuthOR="@Permissions.EditCourse"
+                              Type="switch"
+                              Display="Interaktív?"
+                              Name="@nameof(WikiPage.IsCoded)"
+                              PreventRenderOnChange="false"
+                              @bind-Value="this.SelectedItem.Temporal.IsCoded"/>
+            @if (this.SelectedItem.Temporal.IsCoded)
+            {
+                string[] frags = this.SelectedItem.Temporal.Content?.Split(CODE_SEPARATOR);
+                string html = frags?.Length > 0 ? frags[0] : null;
+                string css = frags?.Length > 1 ? frags[1] : null;
+                string js = frags?.Length > 2 ? frags[2] : null;
+
+                <div class="triple-editor">
+                    <section>
+                        <h2>HTML</h2>
+                        <CodeEditor @ref="this.htmlEditor" Language="htmlmixed" Value="@html"></CodeEditor>
+                    </section>
+                    <section>
+                        <h2>CSS</h2>
+                        <CodeEditor @ref="this.cssEditor" Language="css" Value="@css"></CodeEditor>
+                    </section>
+                    <section>
+                        <h2>JS</h2>
+                        <CodeEditor @ref="this.jsEditor" Language="javascript" Value="@js"></CodeEditor>
+                    </section>
                 </div>
-                <AuthorizedView NeededRolesOR="@Permissions.EditLocations">
-                    <button type='submit'>Küldés</button>
-                </AuthorizedView>
-                @if (this.PopupDisplay != "add")
-                {
-                    <AuthorizedView NeededRolesOR="@Permissions.DeleteLocations">
-                        <input type='button' class="delete" value="Törlés" @onclick="OnDefaultDeleteSubmit" />
-                    </AuthorizedView>
-                }
-            </EditForm>
+            }
+            else
+            {
+                <WysiwygEditor @bind-Value="@this.SelectedItem.Temporal.Content"></WysiwygEditor>
+            }
+        </div>
+        <AuthorizedView NeededRolesOR="@Permissions.EditLocations">
+            <button type='submit'>Küldés</button>
+        </AuthorizedView>
+        @if (this.PopupDisplay != "add")
+        {
+            <AuthorizedView NeededRolesOR="@Permissions.DeleteLocations">
+                <input type='button' class="delete" value="Törlés" @onclick="OnDefaultDeleteSubmit" />
+            </AuthorizedView>
+        }
+    </EditForm>
         }
         else
         {
             <h2>@this.SelectedItem.Original.Name</h2>
-            <small>Utoljára módosítva: @this.SelectedItem.Original.LastModified</small>
+            <p><small>Utoljára módosítva: @this.SelectedItem.Original.LastModified</small></p>
             <AuthorizedView NeededRolesOR="@Permissions.EditCourse">
                 <NavLink class="button" href="@($"/{this.BaseLink}/{this.SelectedItem.Original.Id}/edit")">Szerkesztés</NavLink>
             </AuthorizedView>
-            <WysiwygViewer Source="@this.SelectedItem.Original.Content"></WysiwygViewer>
+            @if (!this.SelectedItem.Original.IsCoded)
+            {
+                <WysiwygViewer Source="@this.SelectedItem.Original.Content"></WysiwygViewer>
+            }
+            else
+            {
+                <iframe class="scripted-page" src="@this.GetHtmlFromValue()" onload="setScriptedPageHeight(this)"></iframe>
+            }
         }
     }
     else
@@ -63,19 +101,57 @@
 
 @code
 {
+    public const string CODE_SEPARATOR = "\n{{}}\n";
     protected override string BaseLink { get; set; } = "curriculum";
     protected override string DataName { get; set; } = "lap";
 
     [Parameter]
     public string Edit { get; set; }
 
-    protected override void BeforeAdd()
+    private CodeEditor htmlEditor;
+    private CodeEditor jsEditor;
+    private CodeEditor cssEditor;
+
+    protected string GetHtmlFromValue()
     {
+        string[] frags = this.SelectedItem.Temporal.Content.Split(CODE_SEPARATOR);
+
+        string html = "";
+        if (frags.Length > 2)
+        {
+            html = $"<html><head><meta charset='utf-8'><style>{frags[1]}</style></head><body>{frags[0]} <script src='https://code.jquery.com/jquery-3.5.1.slim.min.js'></script><script>{frags[2]}</script></body></html>";
+        }
+        else
+        {
+            html = $"<html><head><meta charset='utf-8'></head><body>{frags[0]}</body></html>";
+        }
+
+        return GanzUtils.CreateDataUrl(html, "text/html");
+    }
+
+    protected string GetCodeValue()
+    {
+        return this.htmlEditor.Value + CODE_SEPARATOR + this.cssEditor.Value + CODE_SEPARATOR + this.jsEditor.Value;
+    }
+
+    private void OnItemEdit()
+    {
+        if (this.SelectedItem.Temporal.IsCoded)
+        {
+            this.SelectedItem.Temporal.Content = this.GetCodeValue();
+        }
         this.SelectedItem.Temporal.LastModified = DateTime.Now;
     }
 
-    protected override void BeforeEdit()
+    protected override bool BeforeAdd()
     {
-        this.SelectedItem.Temporal.LastModified = DateTime.Now;
+        this.OnItemEdit();
+        return true;
+    }
+
+    protected override bool BeforeEdit()
+    {
+        this.OnItemEdit();
+        return true;
     }
 }

@@ -1,8 +1,9 @@
 ﻿@using GanzAdmin.Authentication.Components;
 @using System.IO;
 @using Microsoft.AspNetCore.Hosting;
+@using System.Web;
 
-@switch(this.WebFile.Split('/', '\\').Last().Split('.').Last().ToLower())
+@switch (this.extension)
 {
     case "bmp":
     case "png":
@@ -22,15 +23,35 @@
     case "txt":
     case "ini":
     case "md":
-        <div>@File.ReadAllText(this.FileName)</div>
+        <div><pre>@File.ReadAllText(this.LocalFile)</pre></div>
         break;
-
+    case "cs":
+    case "cpp":
+    case "c":
+    case "h":
+    case "hpp":
+    case "ino":
+        string highlight = "cpp";
+        switch (this.extension)
+        {
+            case "ino": highlight = "arduino"; break;
+            case "cs": highlight = "csharp"; break;
+            case "cpp":
+            case "c":
+            case "h":
+            case "hpp": highlight = "cpp"; break;
+        }
+        <div><pre @ref="this.html" class="@highlight"><code>@File.ReadAllText(this.LocalFile)</code></pre></div>
+        break;
     case "doc":
     case "docx":
     case "xls":
     case "xlsx":
     case "ppt":
     case "pptx":
+        <iframe src="@this.OwaUrl()" />
+        break;
+
     case "exe":
     case "zip":
     case "rar":
@@ -45,11 +66,36 @@
     [Inject]
     private IWebHostEnvironment m_Hosting { get; set; }
 
-    [Parameter]
-    public string FileName { get; set; }
+    [Inject]
+    private IJSRuntime JS { get; set; }
 
-    public string WebFile
+    [Parameter]
+    public string LocalFile { get; set; }
+
+    [Parameter]
+    public string WebFile { get; set; }
+
+    private string extension
     {
-        get { return this.FileName.Substring(this.m_Hosting.WebRootPath.Length).Replace('\\', '/'); }
+        get
+        {
+            return this.WebFile.Split('/', '\\').Last().Split('.').Last().ToLower();
+        }
+    }
+
+    private ElementReference html;
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        base.OnAfterRender(firstRender);
+
+        this.JS.InvokeVoidAsync("hljs.highlightBlock", html);
+    }
+
+    private string OwaUrl()
+    {
+        string encoded = HttpUtility.UrlEncode("http://ganzadmin.ga/" + this.WebFile.Replace('\\', '/'));
+
+        return $"https://owa-box.vips100.com/op/view.aspx?src={encoded}";
     }
 }

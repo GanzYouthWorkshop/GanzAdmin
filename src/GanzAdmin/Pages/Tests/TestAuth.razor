@@ -26,18 +26,23 @@
 
         <WysiwygEditor Value="teszt"></WysiwygEditor>
 
+        <CodeEditor></CodeEditor>
+
         @*<TagsEditor AuthOR="" Items="this.Users" @bind-Value="vla"></TagsEditor>*@
 
         <ul class="tags-editor">
             <li class="addedTag">Web Deisgn<span onclick="$(this).parent().remove();" class="tagRemove">x</span><input type="hidden" name="tags[]" value="Web Deisgn"></li>
             <li class="addedTag">Web Develop<span onclick="$(this).parent().remove();" class="tagRemove">x</span><input type="hidden" name="tags[]" value="Web Develop"></li>
             <li class="addedTag">SEO<span onclick="$(this).parent().remove();" class="tagRemove">x</span><input type="hidden" name="tags[]" value="SEO"></li>
-            
+
             <li class="tagAdd taglist">
                 <input type="text" id="search-field">
             </li>
         </ul>
 
+        <FileField Display="Betölthető:"></FileField>
+
+        <FileField Display="Létező kép:" Value="./content/uploads/200706_0304_Untitled.png"></FileField>
     </main>
 
 

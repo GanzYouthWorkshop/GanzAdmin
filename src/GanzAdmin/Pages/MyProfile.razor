@@ -1,0 +1,102 @@
+﻿@page "/my-profile"
+
+
+<main class='@($"full " + (this.SelectedItem == null ? "loading" : ""))'>
+    @if (this.SelectedItem != null)
+    {
+        <EditForm method="post" EditContext="new EditContext(true)" OnValidSubmit="OnSubmit">
+            <div class='dynamic'>
+                <h2>Profilom</h2>
+
+                <h3>Alapadatok</h3>
+                <SimpleTextField AuthOR="" Type="text" Display="Név" Name="@nameof(Member.Name)" @bind-Value="this.SelectedItem.Temporal.Name" />
+                <SimpleTextField AuthOR="" Type="text" Display="Cím" Name="@nameof(Member.Address)" @bind-Value="this.SelectedItem.Temporal.Address" />
+                <SimpleTextField AuthOR="" Type="text" Display="Telefon" Name="@nameof(Member.Phone)" @bind-Value="this.SelectedItem.Temporal.Phone" />
+                <SimpleTextField AuthOR="" Type="text" Display="Email" Name="@nameof(Member.Email)" @bind-Value="this.SelectedItem.Temporal.Email" />
+
+                <h3>Jelszó módosítása</h3>
+                <SimpleTextField AuthOR="" Type="password" Display="Jelszó" Name="@nameof(Member.Password)" @bind-Value="this.Password1" />
+                <SimpleTextField AuthOR="" Type="password" Display="Jelszó megint" Name="@nameof(Member.Password)" @bind-Value="this.Password2" />
+            </div>
+            <button type='submit'>Frissítés</button>
+        </EditForm>
+    }
+</main>
+
+
+@code
+{
+    [Inject]
+    protected GanzAuthProvider AuthManager { get; set; }
+
+    [Inject]
+    protected IJSRuntime JS { get; set; }
+
+
+    private TemporalObject<Member> SelectedItem { get; set; }
+    private bool DialogLoading { get; set; } = false;
+
+    private string Password1
+    {
+        get { return this.m_Password1;  }
+        set { this.m_Password1 = value;  this.PasswordChanged = true; }
+    }
+    private string m_Password1;
+
+    private string Password2
+    {
+        get { return this.m_Password2; }
+        set { this.m_Password2 = value; this.PasswordChanged = true; }
+    }
+    private string m_Password2;
+
+    private bool PasswordChanged { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Task.Run(() =>
+        {
+            if(this.AuthManager.CurrentMember != null)
+            {
+                this.SelectedItem = new TemporalObject<Member>(this.AuthManager.CurrentMember);
+
+
+            }
+        });
+    }
+
+    protected void OnSubmit()
+    {
+        this.DialogLoading = true;
+
+        Task.Run(() =>
+        {
+            if(PasswordChanged)
+            {
+                if(this.Password1 == this.Password2)
+                {
+                    this.SelectedItem.Temporal.Password = GanzUtils.Sha256(this.Password1);
+
+                }
+                else
+                {
+                    this.JS.InvokeVoidAsync("alertify.error", $"A két megadott jelszó nem egyezik!");
+                    return;
+                }
+            }
+            else
+            {
+                this.SelectedItem.Temporal.Password = this.SelectedItem.Original.Password;
+            }
+
+
+            GanzAdminDbEngine.Instance.GetCollection<Member>().Update(this.SelectedItem.FoldBack());
+            GanzAdminDbEngine.Instance.Transact();
+
+            this.JS.InvokeVoidAsync("alertify.success", $"Profil frissítve!");
+
+
+            this.DialogLoading = false;
+        });
+    }
+}

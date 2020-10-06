@@ -1,22 +1,20 @@
 ﻿@using GanzAdmin.Authentication;
 
 <nav>
-    <span id='selected-items' title='Eszközök'></span>
+    <span id='selected-items' class="@ToolMenuClass" title='Eszközök' @onclick="() => { this.ToolProvider.ShowMenu = true; }"></span>
 
     <span id='menu' title='Menü'></span>
     <ul>
+        <li><a href='/my-profile'>Saját adatok</a></li>
         <li><NavLink href="/members">Tagok</NavLink></li>
-
-        <li><a href='getparts'>Alkatrészek</a></li>
-        <li><a href='getcategories'>Kategóriák</a></li>
-        <li><a href='getlocations'>Helyek</a></li>
-        <ul id='login-menu'>
-            <li><a href='showlogin'>Bejelentkezés</a></li>
-        </ul>
-        <li><a href='getusers'>Admin panel (dev)</a></li>
+        <li><a href='/parts'>Alkatrészek</a></li>
+        <li><a href='/categories'>Kategóriák</a></li>
+        <li><a href='/locations'>Helyek</a></li>
+        <li><a href='/suppliers'>Beszállítók</a></li>
         <li><NavLink href="/help">Súgó</NavLink></li>
+
         <li><a href="" @onclick="@OnLogOut" @onclick:preventDefault>Kilépés</a></li>
-</ul>
+    </ul>
 </nav>
 
 @code
@@ -29,6 +27,41 @@
 
     [Inject]
     protected IJSRuntime JS { get; set; }
+
+    [Inject]
+    public ToolService ToolProvider { get; set; }
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+
+        this.ToolProvider.TypeChanged += this.OnTypeChanged;
+    }
+
+    private void OnTypeChanged(object sender, Type e)
+    {
+        if(e != null)
+        {
+            this.InvokeAsync(new Action(this.StateHasChanged));
+        }
+    }
+
+    public string ToolMenuClass
+    {
+        get
+        {
+            return this.ToolProvider.AvailableTools.Count > 0 ? "available" : "";
+        }
+    }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+        {
+            this.JS.InvokeVoidAsync("onMenuReady");
+        }
+    }
+
 
     private void OnLogOut()
     {

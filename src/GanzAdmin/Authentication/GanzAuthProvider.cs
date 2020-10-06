@@ -51,13 +51,16 @@ namespace GanzAdmin.Authentication
             this.m_Http = httpProxy;
             this.m_Javascript = jsRuntime;
 
-            IRequestCookieCollection cookies = this.m_Http.HttpContext.Request.Cookies;
-
-            if (cookies.ContainsKey(AUTH_COOKIE))
+            if(this.m_Http.HttpContext != null)
             {
-                var cookie = cookies[AUTH_COOKIE];
+                IRequestCookieCollection cookies = this.m_Http.HttpContext.Request.Cookies;
 
-                this.CurrentSession = this.m_SessionManager.CheckTokenValidity(cookie);
+                if (cookies.ContainsKey(AUTH_COOKIE))
+                {
+                    var cookie = cookies[AUTH_COOKIE];
+
+                    this.CurrentSession = this.m_SessionManager.CheckTokenValidity(cookie);
+                }
             }
         }
 
@@ -69,15 +72,15 @@ namespace GanzAdmin.Authentication
             {
                 GanzAdminDbEngine db = GanzAdminDbEngine.Instance;
                 Member member = db.Members.FindById(this.CurrentSession.MemberId);
-                if(OrRoles == null && AndRoles == null)
+                if(string.IsNullOrEmpty(OrRoles) && string.IsNullOrEmpty(AndRoles))
                 {
                     return true;
                 }
-                else if (OrRoles != null && (member.Roles.ContainsAny(OrRoles.Split(',').ToList()) || member.Roles.Contains(Permissions.Overlord)))
+                else if (OrRoles != null && (member.Roles.ContainsAny(OrRoles.Split(' ').ToList()) || member.Roles.Contains(Permissions.Overlord)))
                 {
                     return true;
                 }
-                else if (AndRoles != null && (member.Roles.ContainsAny(AndRoles.Split(',').ToList()) || member.Roles.Contains(Permissions.Overlord)))
+                else if (AndRoles != null && (member.Roles.ContainsAll(AndRoles.Split(' ').ToList()) || member.Roles.Contains(Permissions.Overlord)))
                 {
                     return true;
                 }

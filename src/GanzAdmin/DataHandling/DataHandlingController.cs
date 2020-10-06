@@ -12,6 +12,9 @@ using System.Threading.Tasks;
 using GanzAdmin.Database.Models;
 using GanzAdmin.Authentication;
 using Microsoft.AspNetCore.Http;
+using GanzAdmin.Tools;
+using Microsoft.AspNetCore.Hosting;
+using System.IO;
 
 namespace GanzAdmin.DataHandling
 {
@@ -28,6 +31,12 @@ namespace GanzAdmin.DataHandling
 
         [Inject]
         protected IHttpContextAccessor Http { get; set; }
+
+        [Inject]
+        protected IWebHostEnvironment WebHost { get; set; }
+
+        [Inject]
+        protected ToolService ToolProvider { get; set; }
 
         protected abstract string BaseLink { get; set; }
         protected abstract string DataName { get; set; }
@@ -53,7 +62,8 @@ namespace GanzAdmin.DataHandling
         {
             await Task.Run(() =>
             {
-                this.ItemList = this.m_Collection.FindAll().ToList();
+                this.ItemList = this.m_Collection.FindAll().OrderBy(t => t.DisplayValue).ToList();
+                this.ToolProvider.Reset(typeof(T));
 
                 this.Init();
             });
@@ -117,37 +127,40 @@ namespace GanzAdmin.DataHandling
 
         private void Add()
         {
-            this.BeforeAdd();
+            if (this.BeforeAdd())
+            {
+                this.m_Collection.Insert(this.SelectedItem.FoldBack());
+                GanzAdminDbEngine.Instance.Transact();
 
-            this.m_Collection.Insert(this.SelectedItem.FoldBack());
-            GanzAdminDbEngine.Instance.Transact();
-
-            this.JS.InvokeVoidAsync("alertify.success", $"{this.DataName.ToCapital()} hozzáadva!");
+                this.JS.InvokeVoidAsync("alertify.success", $"{this.DataName.ToCapital()} hozzáadva!");
+            }
         }
 
         private void Modify()
         {
-            this.BeforeEdit();
+            if (this.BeforeEdit())
+            {
+                this.m_Collection.Update(this.SelectedItem.FoldBack());
+                GanzAdminDbEngine.Instance.Transact();
 
-            this.m_Collection.Update(this.SelectedItem.FoldBack());
-            GanzAdminDbEngine.Instance.Transact();
-
-            this.JS.InvokeVoidAsync("alertify.success", $"{this.DataName.ToCapital()} módosítva!");
+                this.JS.InvokeVoidAsync("alertify.success", $"{this.DataName.ToCapital()} módosítva!");
+            }
         }
 
         private void Delete()
         {
-            this.BeforeDelete();
+            if (this.BeforeDelete())
+            {
+                this.m_Collection.Delete(this.SelectedItem.Original.Id);
+                GanzAdminDbEngine.Instance.Transact();
 
-            this.m_Collection.Delete(this.SelectedItem.Original.Id);
-            GanzAdminDbEngine.Instance.Transact();
-
-            this.JS.InvokeVoidAsync("alertify.success", $"{this.DataName.ToCapital()} törölve :(");
+                this.JS.InvokeVoidAsync("alertify.success", $"{this.DataName.ToCapital()} törölve :(");
+            }
         }
 
         protected override bool ShouldRender()
         {
-            bool result = !Environment.StackTrace.Contains("OnValueChanged");
+            bool result = !Environment.StackTrace.Contains("OnValueChangedOnly");
             return result;
         }
         #endregion
@@ -176,21 +189,39 @@ namespace GanzAdmin.DataHandling
 
         }
 
-        protected virtual void BeforeAdd()
+        protected virtual bool BeforeAdd()
         {
-
+            return true;
         }
 
-        protected virtual void BeforeEdit()
+        protected virtual bool BeforeEdit()
         {
-
+            return true;
         }
 
-        protected virtual void BeforeDelete()
+        protected virtual bool BeforeDelete()
         {
-
+            return true;
         }
 
+        #endregion
+
+        #region Segédmetódusok
+        protected void DeleteUploadedFile(string contentPath)
+        {
+            try
+            {
+                string fullPath = GanzUtils.ProperPathCombine('\\', this.WebHost.WebRootPath, contentPath);
+                if (File.Exists(fullPath))
+                {
+                    File.Delete(fullPath);
+                }
+            }
+            catch(Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine(ex.Message);
+            }
+        }
         #endregion
     }
 }

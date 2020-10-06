@@ -1,0 +1,179 @@
+﻿@page "/search/{SearchExpression}"
+
+<aside class='@(this.ItemList == null ? "loading" : "")'>
+    <a hreg="~/search/(Hiányos)">Hiányos alkatrészek</a>
+</aside>
+
+<main class='@(this.ItemList == null ? "loading" : "")'>
+    @if (this.ItemList != null)
+    {
+        <div id='table-wrapper'>
+            <table id='data' class="display nowrap">
+                <thead>
+                    <tr>
+                        <DataGridHeader IsPinnable IsSortable>Találat</DataGridHeader>
+                        <DataGridHeader IsSortable>Típus</DataGridHeader>
+                        <DataGridHeader IsSortable>Információ</DataGridHeader>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @foreach (SearchResult item in this.ItemList)
+                    {
+                        <tr>
+                            <td><NavLink href="@item.Url" target="_blank">@item.Display <i></i></NavLink></td>
+                            <td>@item.TypeDisplay</td>
+                            <td>@item.Information.</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</main>
+
+@code
+{
+    [Parameter]
+    public string SearchExpression { get; set; }
+
+    protected List<SearchResult> ItemList { get; set; }
+
+    //protected override async Task OnInitializedAsync()
+    //{
+    //    await Task.Run(() =>
+    //    {
+    //    });
+    //}
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await Task.Run(() =>
+        {
+            this.DoSearch();
+        });
+    }
+
+    private List<SearchFragment> ParseExpression()
+    {
+        List<SearchFragment> result = new List<SearchFragment>();
+
+        //Name (param1;param2=2;pramB<4)
+        if (this.SearchExpression.Contains('(') && this.SearchExpression.Contains(')'))
+        {
+            result.Add(new SearchFragment
+            {
+                Key = this.SearchExpression.Substring(0, this.SearchExpression.IndexOf('(')).Trim(),
+                Type = SearchFragment.ExpressionType.Main,
+                Value = null
+            });
+
+            int start = this.SearchExpression.IndexOf('(') + 1;
+            int length = this.SearchExpression.IndexOf(')') - start;
+            string[] attribute = this.SearchExpression.Substring(start, length).Split(';');
+
+            foreach (string attr in attribute)
+            {
+                string[] temp;
+                char splitter = '\0';
+                SearchFragment.ExpressionType type = SearchFragment.ExpressionType.Attribute;
+
+                if (attr.Contains(':'))
+                {
+                    splitter = ':';
+                }
+                else if (attr.Contains('='))
+                {
+                    splitter = '=';
+                    type = SearchFragment.ExpressionType.EqualTo;
+                }
+                else if (attr.Contains('<'))
+                {
+                    splitter = '<';
+                    type = SearchFragment.ExpressionType.LessThan;
+                }
+                else if (attr.Contains('>'))
+                {
+                    splitter = '>';
+                    type = SearchFragment.ExpressionType.GreaterThan;
+                }
+
+                if (splitter != '\0')
+                {
+                    temp = attr.Split(splitter);
+                    result.Add(new SearchFragment
+                    {
+                        Key = temp[0],
+                        Value = temp[1],
+                        Type = type
+                    });
+                }
+                else
+                {
+                    result.Add(new SearchFragment
+                    {
+                        Key = attr,
+                        Type = SearchFragment.ExpressionType.Attribute,
+                        Value = null
+                    });
+                }
+            }
+        }
+        else
+        {
+            result.Add(new SearchFragment
+            {
+                Key = this.SearchExpression.Trim(),
+                Type = SearchFragment.ExpressionType.Main,
+                Value = null
+            });
+        }
+
+        return result;
+    }
+
+    private void DoSearch()
+    {
+        List<SearchFragment> fragments = this.ParseExpression();
+
+        this.ItemList = null;
+
+        List<SearchResult> result = new List<SearchResult>();
+        result.AddRange(Part.Search(GanzAdminDbEngine.Instance.Parts.FindAll(), fragments).Select(p => new SearchResult()
+        {
+            DataType = typeof(Part),
+            Display = p.Name, Url = $"./parts/{p.Id}",
+            Information = $"{p.ShortDescription}, {p.SumInStock} {p.StockUnit} raktáron",
+        }));
+        result.AddRange(WikiPage.Search(GanzAdminDbEngine.Instance.GetCollection<WikiPage>().FindAll(), fragments).Select(w => new SearchResult()
+        {
+            DataType = typeof(WikiPage),
+            Display = w.Name,
+            Url = $"./curriculum/{w.Id}",
+            Information = $"{w.Name}",
+        }));
+        result.AddRange(Member.Search(GanzAdminDbEngine.Instance.GetCollection<Member>().FindAll(), fragments).Select(m => new SearchResult()
+        {
+            DataType = typeof(Member),
+            Display = m.Name,
+            Url = $"./members/{m.Id}",
+            Information = $"{m.Name}, {m.Email}",
+        }));
+        result.AddRange(Kit.Search(GanzAdminDbEngine.Instance.GetCollection<Kit>().FindAll(), fragments).Select(m => new SearchResult()
+        {
+            DataType = typeof(Kit),
+            Display = m.Name,
+            Url = $"./members/{m.Id}",
+            Information = $"{m.Name}, " + (m.IsAvailableForBuild ? "megépíthető" : "nem építhető meg"),
+        }));
+        result.AddRange(MemberProject.Search(GanzAdminDbEngine.Instance.GetCollection<MemberProject>().FindAll(), fragments).Select(m => new SearchResult()
+        {
+            DataType = typeof(MemberProject),
+            Display = m.Name,
+            Url = $"./members/{m.Id}",
+            Information = $"{m.Name}, " + (m.IsFinished ? "befejezett" : "folyamatban"),
+        }));
+
+        this.ItemList = result;
+    }
+}

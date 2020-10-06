@@ -29,6 +29,7 @@ namespace GanzAdmin.API.NVR
         {
             foreach(IpCameraChannel channel in this.Channels)
             {
+                channel.HandlerName = this.Name;
                 channel.Start();
             }
 

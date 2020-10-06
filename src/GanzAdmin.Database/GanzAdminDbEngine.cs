@@ -16,14 +16,39 @@ namespace GanzAdmin.Database
         public static GanzAdminDbEngine Instance { get; set; }
 
         public ILiteCollection<Member> Members { get { return this.m_InnerDb.GetCollection<Member>().Include(i => i.Attendances); } }
-        public ILiteCollection<Attendance> Attendances { get { return this.m_InnerDb.GetCollection<Attendance>(); } }
 
+        public ILiteCollection<Attendance> Attendances { get { return this.m_InnerDb.GetCollection<Attendance>(); } }
         public ILiteCollection<Event> Events { get { return this.m_InnerDb.GetCollection<Event>(); } }
 
         public ILiteCollection<Location> Locations { get { return this.m_InnerDb.GetCollection<Location>(); } }
         public ILiteCollection<Category> Categories { get { return this.m_InnerDb.GetCollection<Category>(); } }
         
-        public ILiteCollection<Part> Parts { get { return this.m_InnerDb.GetCollection<Part>().Include(i => i.Category).Include(BsonExpression.Create("$.Stock[*].Location")); } }
+        public ILiteCollection<Part> Parts
+        {
+            get
+            {
+                return this.m_InnerDb.GetCollection<Part>()
+                    .Include(BsonExpression.Create("$.Category"))
+                    .Include(BsonExpression.Create("$.Stock[*].Location"))
+                    .Include(BsonExpression.Create("$.SupplySources[*].Supplier"));
+            }
+        }
+
+        public ILiteCollection<MemberProject> MemberProjects
+        {
+            get { return this.m_InnerDb.GetCollection<MemberProject>().Include(i => i.Members); }
+        }
+
+        public ILiteCollection<Kit> Kits
+        {
+            get
+            {
+                return this.m_InnerDb.GetCollection<Kit>()
+                    .Include(BsonExpression.Create("$.Parts[*].Part"))
+                    .Include(BsonExpression.Create("$.Parts[*].Part.Stock[*].Location"));
+            }
+        }
+
 
         public void Dispose()
         {
@@ -75,6 +100,14 @@ namespace GanzAdmin.Database
             if(typeof(T).Equals(typeof(Part)))
             {
                 return (ILiteCollection<T>)this.Parts;
+            }
+            if (typeof(T).Equals(typeof(MemberProject)))
+            {
+                return (ILiteCollection<T>)this.MemberProjects;
+            }
+            if (typeof(T).Equals(typeof(Kit)))
+            {
+                return (ILiteCollection<T>)this.Kits;
             }
             return this.m_InnerDb.GetCollection<T>();
         }

@@ -23,19 +23,21 @@
         {
             @foreach (MemberProject item in this.ItemList)
             {
-                <section class="entry-item">
-                    <img srv="@item.Logo" />
-                    <h2>@item.Name</h2>
-                    <p>Állapot: @item.IsFinished</p>
-                    <p>
-                        Résztvevők:
-                        @foreach (Member member in item.Members)
-                        {
-                            <span>@member.Name, </span>
-                        }
-                    </p>
-                    <p><WysiwygViewer Source="@item.Description" /></p>
-                    <NavLink class="button" href="@($"/{this.BaseLink}/{item.Id}")">Részletek</NavLink>
+                <section class="entry-item project">
+                    <img src="@item.Logo" />
+                    <div>
+                        <h2>@item.Name</h2>
+                        <p>Állapot: @(item.IsFinished ? "Kész" : "Folyamatban")</p>
+                        <p>
+                            Résztvevők:
+                            @foreach (Member member in item.Members)
+                            {
+                                <span>@member.Name, </span>
+                            }
+                        </p>
+                        <p><WysiwygViewer Source="@item.Description" /></p>
+                        <NavLink class="button" href="@($"/{this.BaseLink}/{item.Id}")">Részletek</NavLink>
+                    </div>
                 </section>
             }
         }
@@ -57,7 +59,7 @@ else
                         <NavLink class="button" href="@($"/{this.BaseLink}/{this.SelectedItem.Original.Id}/log/add")">Új naplóbejegyzés</NavLink>
                     }
                     <img srv="@this.SelectedItem.Original.Logo" />
-                    <p>Állapot: @this.SelectedItem.Original.IsFinished</p>
+                    <p>Állapot: @(this.SelectedItem.Original.IsFinished ? "Kész" : "Folyamatban")</p>
                     <p>
                         Résztvevők:
                         @foreach (Member member in this.SelectedItem.Original.Members)
@@ -78,21 +80,13 @@ else
                                     <span class='circle'></span>
                                 </div>
                                 <div class='content'>
-                                    <NavLink class="button" href="@($"/{this.BaseLink}/{this.SelectedItem.Original.Id}/log/{entry.Id}")">Szerkesztés</NavLink>
+                                    @if (this.HasLocalAuthorization)
+                                    {
+                                        <NavLink class="button" href="@($"/{this.BaseLink}/{this.SelectedItem.Original.Id}/log/{entry.Id}")">Szerkesztés</NavLink>
+                                    }
                                     <WysiwygViewer Source="@entry.Content"></WysiwygViewer>
                                 </div>
                             </li>
-
-
-
-                            @*<section class="entry-item">
-                                <h4>@entry.StartTime</h4>
-                                @if (HasLocalAuthorization)
-                                {
-                                    <NavLink class="button" href="@($"/{this.BaseLink}/{this.SelectedItem.Original.Id}/log/{entry.Id}")">Szerkesztés</NavLink>
-                                }
-                                <WysiwygViewer Source="@entry.Content"></WysiwygViewer>
-                            </section>*@
                         }
                     </ul>
                 </section>
@@ -106,21 +100,11 @@ else
                 {
                     <EditForm EditContext="new EditContext(true)"  OnSubmit="OnDefaultAddEditSubmit">
                         <h2>"@this.SelectedItem.Original.Name" szerkesztése</h2>
+
                         <SimpleTextField @bind-Value="this.SelectedItem.Temporal.Name" Name="name" Display="Projektnév" Type="text"></SimpleTextField>
-
-                        @*TODO fel kéne tudni tölteni a képet*@
-                        <img src="@this.SelectedItem.Original.Logo" />
-
+                        <FileField Display="Projekt logó" @bind-Value="@this.SelectedItem.Temporal.Logo" />
                         <SimpleCheckField Type="switch" Display="Befejezett" Name="finished" @bind-Value="@this.SelectedItem.Temporal.IsFinished" />
-
-                        @*TODO: Kelleni fog egy tag-szerkesztő felület is!*@
-                        <p>
-                            Résztvevők: TODO
-                        </p>
-
                         <TagsEditor AuthOR="" ItemType="Member"  Items="this.AllMembers" @bind-Value="@this.SelectedItem.Temporal.Members"></TagsEditor>
-
-
                         <WysiwygEditor @bind-Value="this.SelectedItem.Temporal.Description"></WysiwygEditor>
 
                         <button type='submit'>Küldés</button>
@@ -178,11 +162,6 @@ else
     protected override string DataName { get; set; } = "projekt";
 
     private TemporalObject<LogEntry> SelectedLogEntry { get; set; }
-
-    public MemberProjects()
-    {
-        this.m_Collection = GanzAdminDbEngine.Instance.GetCollection<MemberProject>().Include(i => i.Members);
-    }
 
     public List<Member> AllMembers
     {
@@ -349,4 +328,30 @@ else
             this.NavMan.NavigateTo($"/{BaseLink}/{PopupDisplay}");
         });
     }
+
+    protected override bool BeforeEdit()
+    {
+        if (this.SelectedItem.Original.Logo != this.SelectedItem.Temporal.Logo)
+        {
+            this.DeleteUploadedFile(this.SelectedItem.Original.Logo);
+        }
+        return true;
+    }
+
+    protected void BeforeCancel()
+    {
+        if (this.SelectedItem.Original.Logo != this.SelectedItem.Temporal.Logo)
+        {
+            this.DeleteUploadedFile(this.SelectedItem.Temporal.Logo);
+        }
+    }
+
+    protected override bool BeforeDelete()
+    {
+        this.DeleteUploadedFile(this.SelectedItem.Temporal.Logo);
+        this.DeleteUploadedFile(this.SelectedItem.Original.Logo);
+
+        return true;
+    }
+
 }

@@ -11,7 +11,7 @@
                        Filter="@((e, r) => (e as Category).ParentCategory == null && r == null || (e as Category).ParentCategory?.Id == r?.Id)"
                        UrlTemplate="@((e) => $"/{this.BaseLink}/{e.Id}")" />
         }
-        <AuthorizedView NeededRolesOR="@Permissions.EditLocations">
+        <AuthorizedView NeededRolesOR="@Permissions.EditCategories">
             <NavLink class="addlink" href="@($"/{this.BaseLink}/add")">Új @this.DataName</NavLink>
         </AuthorizedView>
     </aside>
@@ -20,15 +20,6 @@
     @if (this.ItemList != null)
     {
         <div id='table-wrapper'>
-            <table id='table-header'>
-                <thead>
-                    <tr>
-                        <DataGridHeader IsPinnable IsSortable>Név</DataGridHeader>
-                        <DataGridHeader IsCollapsible IsSortable>Kategória</DataGridHeader>
-                    </tr>
-                </thead>
-            </table>
-
             <table id='data' class="display nowrap">
                 <thead>
                     <tr>
@@ -58,14 +49,14 @@
         <div class='body'>
             <div class='header'>
                 <h2>@this.PopupTitle</h2>
-                <a class='button' href="@($"/{this.BaseLink}")"></a>
+                <a class='button' href="@($"/{this.BaseLink}")" @onclick="BeforeCancel"></a>
             </div>
 
             <EditForm method="post" EditContext="new EditContext(true)" OnSubmit="OnDefaultAddEditSubmit">
                 <div class='dynamic'>
-                    <SimpleTextField AuthOR="@Permissions.EditLocations" Type="text" Display="Név" Name="@nameof(Category.Name)" @bind-Value="this.SelectedItem.Temporal.Name" />
-                    <ComboBox AuthOR="@Permissions.EditLocations" ItemType="@Category" Items="@this.ItemList" Owner="this.SelectedItem.Temporal" Name="@nameof(Category.ParentCategory)" Display="Kategória" @bind-Value="this.SelectedItem.Temporal.ParentCategory" />
-
+                    <SimpleTextField AuthOR="@Permissions.EditCategories" Type="text" Display="Név" Name="@nameof(Category.Name)" @bind-Value="this.SelectedItem.Temporal.Name" />
+                    <ComboBox AuthOR="@Permissions.EditCategories" ItemType="@Category" Items="@this.ItemList" Owner="this.SelectedItem.Temporal" Name="@nameof(Category.ParentCategory)" Display="Kategória" @bind-Value="this.SelectedItem.Temporal.ParentCategory" />
+                    <FileField AuthOR="@Permissions.EditCategories" Display="Ikon" @bind-Value="@this.SelectedItem.Temporal.IconUrl" />
 
                     <h3>Alapértelmezett paraméterek</h3>
                     @foreach (PartParameter parameter in this.SelectedItem.Temporal.DefaultParameters)
@@ -73,14 +64,18 @@
                         PartParameter temp = parameter;
                         <p>
                             <ParameterField Inline ItemType="@PartParameter" AuthOR="@Permissions.EditParts" IsDefaultEditor="true" @bind-Value="temp"></ParameterField>
-                            <a @onclick="() => this.SelectedItem.Temporal.DefaultParameters.Remove(temp)">X</a>
+                            <AuthorizedView NeededRolesOR="@Permissions.EditParts">
+                                <a @onclick="() => this.SelectedItem.Temporal.DefaultParameters.Remove(temp)"><i></i></a>
+                            </AuthorizedView>
                         </p>
                     }
-                    <a @onclick="() => this.SelectedItem.Temporal.DefaultParameters.Add(new PartParameter())">Paraméter hozzáadása</a>
+                    <AuthorizedView NeededRolesOR="@Permissions.EditParts">
+                        <a @onclick="() => this.SelectedItem.Temporal.DefaultParameters.Add(new PartParameter())">Paraméter hozzáadása</a>
+                    </AuthorizedView>
                 </div>
 
 
-                <AuthorizedView NeededRolesOR="@Permissions.EditLocations">
+                <AuthorizedView NeededRolesOR="@Permissions.EditCategories">
                     <button type='submit'>Küldés</button>
                 </AuthorizedView>
                 @if (this.PopupDisplay != "add")
@@ -103,4 +98,29 @@
 {
     protected override string BaseLink { get; set; } = "categories";
     protected override string DataName { get; set; } = "kategória";
+
+    protected override bool BeforeEdit()
+    {
+        if (this.SelectedItem.Original.IconUrl != this.SelectedItem.Temporal.IconUrl)
+        {
+            this.DeleteUploadedFile(this.SelectedItem.Original.IconUrl);
+        }
+        return true;
+    }
+
+    protected void BeforeCancel()
+    {
+        if (this.SelectedItem.Original.IconUrl != this.SelectedItem.Temporal.IconUrl)
+        {
+            this.DeleteUploadedFile(this.SelectedItem.Temporal.IconUrl);
+        }
+    }
+
+    protected override bool BeforeDelete()
+    {
+        this.DeleteUploadedFile(this.SelectedItem.Temporal.IconUrl);
+        this.DeleteUploadedFile(this.SelectedItem.Original.IconUrl);
+
+        return true;
+    }
 }

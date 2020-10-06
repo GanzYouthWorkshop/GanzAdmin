@@ -10,8 +10,8 @@
                 GanzAdmin
             </NavLink>
         </h1>
-        <form>
-            <input type='text' name='search-string' id='search-string' placeholder='Alkatrészkeresés' autocomplete="off">
+        <form @onsubmit="OnSearch">
+            <input type='text' name='search-string' id='search-string' placeholder='Keresés' autocomplete="off" @onchange="(e) => { this.Search = e.Value.ToString(); }">
             <input type='submit' name='search' id='search' value=''>
 
             <div id='auto-complete'>
@@ -35,6 +35,8 @@
     </header>
 
     @Body
+
+    <ToolChooser></ToolChooser>
 </AuthorizedView>
 <NonAuthorizedView>
     <LoginView />
@@ -44,6 +46,11 @@
 {
     [Inject]
     protected IJSRuntime JsRuntime { get; set; }
+
+    [Inject]
+    protected NavigationManager NavMan { get; set; }
+
+    private string Search;
 
     protected override void OnAfterRender(bool firstRender)
     {
@@ -55,5 +62,10 @@
         {
             JsRuntime.InvokeVoidAsync("onBlazorRender");
         }
+    }
+
+    protected void OnSearch()
+    {
+        this.NavMan.NavigateTo($"search/{this.Search}");
     }
 }

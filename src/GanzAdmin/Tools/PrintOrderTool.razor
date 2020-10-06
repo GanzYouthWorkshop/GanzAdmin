@@ -1,0 +1,118 @@
+﻿<h3>Beszállítói prioritás beállítása</h3>
+@for(int i = 0; i < this.supplierPriority.Count; i++)
+{
+    SupplierWrapper supp = this.supplierPriority[i];
+    var t = GanzAdminDbEngine.Instance.GetCollection<Supplier>().FindAll().ToList();
+    <div>
+        <ComboBox Inline
+                  AuthOR="@Permissions.EditParts"
+                  ItemType="@Supplier"
+                  Items="GanzAdminDbEngine.Instance.GetCollection<Supplier>().FindAll()"
+                  Display="Beszállító"
+                  @bind-Value="supp.Supplier" />
+
+        <a @onclick="() => this.supplierPriority.Remove(this.supplierPriority[i])"><i></i></a>
+    </div>
+}
+<a @onclick="() => this.supplierPriority.Add(new SupplierWrapper())">Új prioritás</a>
+<hr />
+
+<h3>Rendelendő mennyiségek</h3>
+@foreach (OrderData order in this.orderData)
+{
+    <div>
+        <SimpleNumberField Type="text"
+                            Display="@($"{order.Part.Name} ({order.Part.StockUnit})")"
+                            Name="@order.Part.Name"
+                            @bind-Value="order.Amount" />
+    </div>
+}
+<hr />
+<p>
+    <SimpleCheckField Inline
+                      Type="switch"
+                      Display="Hozzáadás leltárhoz"
+                      Name="add-inventory"
+                      @bind-Value="this.AddStockpileAutomatically" />
+    <ComboBox Inline
+              AuthOR="@Permissions.EditParts"
+              ItemType="@Location"
+              Items="GanzAdminDbEngine.Instance.GetCollection<Location>().FindAll()"
+              Display="Szállítás leltár"
+              @bind-Value="this.StockpileLocation" />
+</p>
+<button @onclick="() => this.GenerateSheet()">Küldés</button>
+
+@inherits ToolBase
+
+@code
+{
+    private class OrderData
+    {
+        public Part Part { get; set; }
+        public int Amount { get; set; }
+    }
+
+    private class SupplierWrapper
+    {
+        public Supplier Supplier { get; set; } = new Supplier();
+    }
+
+    private List<SupplierWrapper> supplierPriority { get; set; } = new List<SupplierWrapper>();
+
+    private List<OrderData> orderData { get; set; }
+
+    private bool AddStockpileAutomatically { get; set; }
+    private Location StockpileLocation { get; set; }
+
+    public PrintOrderTool()
+    {
+        this.Icon = "";
+        this.Name = "Nyomtatható rendelés";
+        this.Description = "Összegyűjti az összes kijelölt alkatrészt és a beállított prioritások alapján rendelőlapokat hoz létre.";
+        this.SupportedEntities = new List<Type> { typeof(Part) };
+    }
+
+    protected override void OnInitialized()
+    {
+        this.Entities = this.ToolProvider.CheckedItems;
+        this.orderData = this.Entities.FromEntities<Part>().Select(p => new OrderData { Part = p, Amount = p.MinimumStock }).ToList();
+    }
+
+    private void GenerateSheet()
+    {
+        string header = "<table class='header'><tr><td><img src='./img/logo/basic.png'></td><td>Ganz Ifjúsági Műhely Egyesület<br>+36 1 607 6551</td></tr></table>";
+        string result = $"<div id='order-sheet'>{header}<table><tr><th>Megnevezés</th><th>Termékkód</th><th>Mennyiség</th></tr>";
+        foreach(OrderData order in this.orderData)
+        {
+            string code = "";
+            foreach(SupplierWrapper supplier in this.supplierPriority)
+            {
+                SupplySource temp = order.Part.SupplySources.FirstOrDefault(ss => ss.Supplier.Equals(supplier.Supplier));
+                if (temp != null)
+                {
+                    code = temp.SupplierItemId;
+                    break;
+                }
+            }
+            result += $"<tr><td>{order.Part.Name}</td><td>{code}</td><td>{order.Amount} {order.Part.StockUnit}</td></tr>";
+        }
+        result += "</table></div>";
+
+        if(this.AddStockpileAutomatically)
+        {
+            foreach (OrderData order in this.orderData)
+            {
+                order.Part.Stock.Add(new Stockpile()
+                {
+                    Location = this.StockpileLocation,
+                    Amount = order.Amount,
+                });
+                GanzAdminDbEngine.Instance.Parts.Update(order.Part);
+            }
+            GanzAdminDbEngine.Instance.Transact();
+        }
+
+        GanzAdmin.Pages.Print.PrintUtils.PrintContent(this.JS, result);
+    }
+}

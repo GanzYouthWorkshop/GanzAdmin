@@ -15,6 +15,10 @@
                     <i></i>
                     <p>Tananyagtár</p>
                 </NavLink>
+                <NavLink href="/kits">
+                    <i></i>
+                    <p>Kitek</p>
+                </NavLink>
                 <NavLink href="/member-projects">
                     <i></i>
                     <p>Projektek</p>
@@ -53,6 +57,12 @@
                         <p>Kategóriák</p>
                     </NavLink>
                 </AuthorizedView>
+                <AuthorizedView NeededRolesOR="@Permissions.ListSuppliers">
+                    <NavLink href="/suppliers">
+                        <i></i>
+                        <p>Beszállítók</p>
+                    </NavLink>
+                </AuthorizedView>
                 <AuthorizedView NeededRolesOR="@Permissions.ListParts">
                     <NavLink href="/parts">
                         <i></i>
@@ -76,16 +86,33 @@
                         <p>Közös fájlok</p>
                     </NavLink>
                 </AuthorizedView>
+                <AuthorizedView NeededRolesOR="@Permissions.AccessSecretFileStorage">
+                    <NavLink href="/files/secret">
+                        <i></i>
+                        <p>Titkos fájlok (BIZALMAS!)</p>
+                    </NavLink>
+                </AuthorizedView>
             </section>
 
             <section class="entry-item">
                 <h2>Felügyelet</h2>
-                <AuthorizedView NeededRolesOR="@Permissions.AccessOwnFileStorage">
+                <AuthorizedView NeededRolesOR="@Permissions.AccessSeurityCameras">
                     <NavLink href="/security-cameras">
                         <i></i>
                         <p>Kamerák</p>
                     </NavLink>
                 </AuthorizedView>
+                <AuthorizedView NeededRolesOR="@Permissions.AccessOwnFileStorage">
+                    <NavLink href="/network">
+                        <i></i>
+                        <p>Hálózat</p>
+                    </NavLink>
+                </AuthorizedView>
+
+                <NavLink href="/statistics">
+                    <i></i>
+                    <p>Statisztika</p>
+                </NavLink>
             </section>
 
             <section class="entry-item">
@@ -125,7 +152,7 @@
         get
         {
             bool b1 = !this.CurrentUser.Attendances.Exists(a => a.Occasion.Date == DateTime.Today);
-            bool b2 = new WebClient().DownloadString("http://icanhazip.com") == this.Http.HttpContext.Connection.RemoteIpAddress.ToString();
+            bool b2 = this.Http.HttpContext.Connection.RemoteIpAddress.ToString() == GanzAdmin.Configuration.GanzAdminConfiguration.Instance.MyIP;
 
             return b1 && b2;
         }

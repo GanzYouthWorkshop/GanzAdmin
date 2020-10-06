@@ -6,6 +6,8 @@ namespace GanzAdmin.Database.Models
 {
     public class Permissions
     {
+        public const string _Placeholder = null;
+
         public const string ListMembers = nameof(ListMembers);
         public const string EditMembers = nameof(EditMembers);
         public const string DeleteMembers = nameof(DeleteMembers);
@@ -21,11 +23,21 @@ namespace GanzAdmin.Database.Models
         public const string ListParts = nameof(ListParts);
         public const string EditParts = nameof(EditParts);
         public const string DeleteParts = nameof(DeleteParts);
+        public const string ManagePartParameters = nameof(ManagePartParameters);
+        public const string ManagePartStock = nameof(ManagePartStock);
 
+        public const string ListSuppliers = nameof(ListSuppliers);
+        public const string EditSuppliers = nameof(EditSuppliers);
+        public const string DeleteSuppliers = nameof(DeleteSuppliers);
 
         public const string AddProject = nameof(AddProject);
         public const string EditAnyProject = nameof(EditAnyProject);
         public const string DeleteProject = nameof(DeleteProject);
+
+        public const string AddKit = nameof(AddKit);
+        public const string EditKit = nameof(EditKit);
+        public const string DeleteKit = nameof(DeleteKit);
+
 
         public const string AddCourse = nameof(AddCourse);
         public const string EditCourse = nameof(EditCourse);
@@ -33,6 +45,10 @@ namespace GanzAdmin.Database.Models
 
         public const string AccessOwnFileStorage = nameof(AccessOwnFileStorage);
         public const string AccessSharedFileStorage = nameof(AccessSharedFileStorage);
+        public const string AccessSecretFileStorage = nameof(AccessSecretFileStorage);
+
+        public const string AccessSeurityCameras = nameof(AccessSeurityCameras);
+        public const string AccessNetworkDiagnostics = nameof(AccessNetworkDiagnostics);
 
         public const string Overlord = nameof(Overlord);
 
@@ -54,10 +70,21 @@ namespace GanzAdmin.Database.Models
             ListParts,
             EditParts,
             DeleteParts,
+            ManagePartParameters,
+            ManagePartStock,
+            _Placeholder,
+
+            ListSuppliers,
+            EditSuppliers,
+            DeleteSuppliers,
 
             AddProject,
             EditAnyProject,
             DeleteProject,
+
+            AddKit,
+            EditKit,
+            DeleteKit,
 
             AddCourse,
             EditCourse,
@@ -65,6 +92,11 @@ namespace GanzAdmin.Database.Models
 
             AccessOwnFileStorage,
             AccessSharedFileStorage,
+            AccessSecretFileStorage,
+
+            AccessSeurityCameras,
+            AccessNetworkDiagnostics,
+            _Placeholder,
 
             Overlord,
         };

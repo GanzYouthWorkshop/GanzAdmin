@@ -26,6 +26,9 @@ namespace GanzAdmin.Components.Edit
         public string Display { get; set; }
 
         [Parameter]
+        public bool PreventRenderOnChange { get; set; } = true;
+
+        [Parameter]
         public T Value
         {
             get { return this.m_Value; }
@@ -39,14 +42,39 @@ namespace GanzAdmin.Components.Edit
         [Parameter]
         public EventCallback<T> Changed { get; set; }
 
+        //Namost ez itt ronda. De elmondom miért!
+        //Ha egy érték változik az egész szülő-komponsens újrarajzolódik és ez a legtöbb esetben baromság. De azért néha szükség lehet rá.
+        //Mivel más lehetőség nincs a jelzésre, ezért a Stack trace-ben megnézünk egy értéket és ha bennevan, akkor nem nemm frissítani (pl. OnValueChanged)
+        //De ha nha szükség van rá ezért más értéknek kell a stack trace-ben lennie mint amúgy ezért kétféle metódus ugyanazt csinálja de - ugye milyen cseles? - más a nevük
+        //és így meg lehet őket különböztetni :D.
+        #region ValueChanged kezelés
         protected virtual Task OnValueChanged(ChangeEventArgs e)
         {
             this.m_Value = (T)e.Value;
 
             this.Changed.InvokeAsync(this.m_Value);
-            return this.ValueChanged.InvokeAsync(this.m_Value);
-            
+
+            if(this.PreventRenderOnChange)
+            {
+                return this.OnValueChangedOnly();
+            }
+            else
+            {
+                return this.OnValueChangedWithRender();
+            }
         }
+
+        protected Task OnValueChangedOnly()
+        {
+            return this.ValueChanged.InvokeAsync(this.m_Value);
+        }
+
+        protected Task OnValueChangedWithRender()
+        {
+            return this.ValueChanged.InvokeAsync(this.m_Value);
+        }
+        #endregion
+
 
         protected override void OnAfterRender(bool firstRender)
         {

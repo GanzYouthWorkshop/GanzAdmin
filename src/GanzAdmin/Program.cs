@@ -22,7 +22,7 @@ namespace GanzAdmin
         {
             return Host.CreateDefaultBuilder(args).ConfigureWebHostDefaults(webBuilder =>
             {
-                webBuilder.UseStartup<Startup>();
+                webBuilder.UseKestrel().UseStartup<Startup>();
             });
         }
     }

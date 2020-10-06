@@ -1,0 +1,194 @@
+﻿@page "/kits"
+@page "/kits/{PopupDisplay}"
+@page "/kits/{PopupDisplay}/{PopupDisplay2}"
+
+@using  GanzAdmin.Components.Edit;
+
+@inherits DataHandlingController<Kit>
+
+
+@if (this.SelectedItem == null)
+{
+    <!--#region Listázás-->
+    <aside class='@(this.ItemList == null ? "loading" : "")'>
+        <AuthorizedView NeededRolesOR="@Permissions.AddKit">
+            <NavLink class="addlink" href="@($"/{this.BaseLink}/add")">Új @this.DataName</NavLink>
+        </AuthorizedView>
+    </aside>
+
+    <main class='@(this.ItemList == null ? "simple-ui loading" : "simple-ui")'>
+        @if (this.ItemList != null)
+        {
+            <h2>Ganz Kitek</h2>
+            @foreach (Kit item in this.ItemList)
+            {
+                <section class="entry-item project">
+                    <img src="@item.ImageUrl" />
+                    <div>
+                        <h2>@item.Name</h2>
+                        <p>Elkészíthető: @(item.IsAvailableForBuild ? "Igen!" : "Sajnos nem :(")</p>
+                        <p><WysiwygViewer Source="@item.Description" /></p>
+                        <NavLink class="button" href="@($"/{this.BaseLink}/{item.Id}")">Részletek</NavLink>
+                    </div>
+                </section>
+            }
+        }
+    </main>
+    <!--#endregion-->
+}
+else
+{
+    <main class='full'>
+        @switch (this.Display)
+        {
+            case DisplayType.Show:
+                <!--#region Részletek-->
+                <section>
+                    <h2>@this.SelectedItem.Original.Name</h2>
+                    <AuthorizedView NeededRolesOR="@Permissions.EditKit">
+                        <NavLink class="button" href="@($"/{this.BaseLink}/{this.SelectedItem.Original.Id}/edit")">Szerkesztés</NavLink>
+                    </AuthorizedView>
+                    <img srv="@this.SelectedItem.Original.ImageUrl" />
+                    <WysiwygViewer Source="@this.SelectedItem.Original.Description"></WysiwygViewer>
+                    
+                    <h3>Szükséges alkatrészek</h3>
+                    <ul>
+                    @foreach (KitPart part in this.SelectedItem.Temporal.Parts)
+                    {
+                        <li>@part.Amount @part.Part.StockUnit @part.Part.Name</li>
+                    }
+                    </ul>
+
+                </section>
+                <!--#endregion-->
+                break;
+
+            case DisplayType.Add:
+            case DisplayType.Edit:
+                <!--#region Hozzáadás/Szerkesztés-->
+                <AuthorizedView NeededRolesOR="@Permissions.EditKit">
+                    <EditForm EditContext="new EditContext(true)" OnSubmit="OnDefaultAddEditSubmit">
+                        <h2>"@this.SelectedItem.Original.Name" szerkesztése</h2>
+
+                        <h3>Alapadatok</h3>
+                        <SimpleTextField @bind-Value="this.SelectedItem.Temporal.Name" Name="name" Display="Kit neve" Type="text"></SimpleTextField>
+                        <FileField Display="Kit logó" @bind-Value="@this.SelectedItem.Temporal.ImageUrl" />
+                        <WysiwygEditor @bind-Value="this.SelectedItem.Temporal.Description"></WysiwygEditor>
+
+                        <h3>Szükséges alkatrészek</h3>
+                        @foreach (KitPart part in this.SelectedItem.Temporal.Parts)
+                        {
+                            KitPart temp = part;
+                            <div>
+                                <ComboBox Inline
+                                          AuthOR="@($"{Permissions.EditKit}")"
+                                          ItemType="@Part"
+                                          Items="@GanzAdminDbEngine.Instance.Parts.FindAll().OrderBy(p => p.Name)"
+                                          Name="@nameof(Part)"
+                                          Display="Alkatrész"
+                                          @bind-Value="part.Part" />
+                                <SimpleNumberField Inline
+                                                   AuthOR="@($"{Permissions.EditKit}")"
+                                                   Type="text"
+                                                   Display="Mennyiség"
+                                                   Name="@nameof(KitPart.Amount)"
+                                                   ItemType="int"
+                                                   @bind-Value="part.Amount" />
+                                <AuthorizedView NeededRolesOR="@($"{Permissions.EditKit}")">
+                                    <a @onclick="() => this.SelectedItem.Temporal.Parts.Remove(temp)"><i></i></a>
+                                </AuthorizedView>
+                            </div>
+                        }
+                        <AuthorizedView NeededRolesOR="@($"{Permissions.EditKit}")">
+                            <p><a @onclick="() => this.SelectedItem.Temporal.Parts.Add(new KitPart())">Új alkatrész</a></p>
+                        </AuthorizedView>
+
+
+                        <button type='submit'>Küldés</button>
+                        @if (this.Display == DisplayType.Edit)
+                        {
+                            <AuthorizedView NeededRolesOR="@Permissions.DeleteKit">
+                                <input type='button' class="delete" value="Törlés" @onclick="OnDefaultDeleteSubmit" />
+                            </AuthorizedView>
+                        }
+                    </EditForm>
+                </AuthorizedView>
+                <!--#endregion-->
+                break;
+        }
+    </main>
+}
+
+@code
+{
+    protected override string BaseLink { get; set; } = "kits";
+    protected override string DataName { get; set; } = "kit";
+
+    private enum DisplayType
+    {
+        Show,
+        Add,
+        Edit,
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+
+        await Task.Run(() =>
+        {
+            this.ToolProvider.CheckedItems.Clear();
+            if(this.SelectedItem != null)
+            {
+                this.ToolProvider.CheckedItems.Add(this.SelectedItem.Original);
+            }
+        });
+    }
+
+    [Parameter]
+    public string PopupDisplay2 { get; set; }
+
+    private DisplayType Display
+    {
+        get
+        {
+            if (this.NavMan.Uri.EndsWith("edit"))
+            {
+                return DisplayType.Edit;
+            }
+            else if (this.NavMan.Uri.EndsWith("add"))
+            {
+                return DisplayType.Add;
+            }
+            else
+            {
+                return DisplayType.Show;
+            }
+        }
+    }
+
+    protected override bool BeforeEdit()
+    {
+        if (this.SelectedItem.Original.ImageUrl != this.SelectedItem.Temporal.ImageUrl)
+        {
+            this.DeleteUploadedFile(this.SelectedItem.Original.ImageUrl);
+        }
+        return true;
+    }
+
+    protected void BeforeCancel()
+    {
+        if (this.SelectedItem.Original.ImageUrl != this.SelectedItem.Temporal.ImageUrl)
+        {
+            this.DeleteUploadedFile(this.SelectedItem.Temporal.ImageUrl);
+        }
+    }
+
+    protected override bool BeforeDelete()
+    {
+        this.DeleteUploadedFile(this.SelectedItem.Temporal.ImageUrl);
+        this.DeleteUploadedFile(this.SelectedItem.Original.ImageUrl);
+
+        return true;
+    }
+}

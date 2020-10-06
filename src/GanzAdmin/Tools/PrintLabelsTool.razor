@@ -1,0 +1,64 @@
+﻿@using GanzAdmin.Pages.Print;
+
+@inherits ToolBase
+
+<p>
+    <label for="labeltype">Címke típus:</label>
+
+    <select name="labeltype" @bind="this.LabelType">
+        <option selected value="1">Szortiment szekrény</option>
+        <option value="2">Önzáró zacskó</option>
+    </select>
+</p>
+<button @onclick="() => this.GenerateLabels()">Küldés</button>
+
+
+@code
+{
+    public int LabelType { get; set; }
+
+    public PrintLabelsTool()
+    {
+        this.Icon = "";
+        this.Name = "Címke nyomtatás";
+        this.Description = "Katalogizáló címkéket nyomtat a kiválasztott alkatrészeket.";
+        this.SupportedEntities = new List<Type> { typeof(Part) };
+    }
+
+    protected override Task OnInitializedAsync()
+    {
+        this.Entities = this.ToolProvider.CheckedItems;
+
+        return base.OnInitializedAsync();
+    }
+
+    private void GenerateLabels()
+    {
+        string result = "";
+        foreach(Part part in this.Entities.FromEntities<Part>())
+        {
+            switch(this.LabelType)
+            {
+                case 1: result += this.GenerateSmallLabel(part); break;
+                case 2: result += this.GenerateBigLabel(part); break;
+            }
+        }
+
+
+        PrintUtils.PrintContent(this.JS, result);
+    }
+
+    private string GenerateSmallLabel(Part part)
+    {
+        return $"<div class='small label'><img class='icon' src='{part.Category.IconUrl}' /><div>{part.Name}<small>{part.ShortDescription}</small></div></div>";
+    }
+
+    private string GenerateBigLabel(Part part)
+    {
+        string qr1 = "http://api.qrserver.com/v1/create-qr-code/?color=000000&bgcolor=FFFFFF&data=ABCD&qzone=1&margin=0&size=425x425&ecc=L";
+        string qr2 = "http://api.qrserver.com/v1/create-qr-code/?color=000000&bgcolor=FFFFFF&data=ABCD&qzone=1&margin=0&size=425x425&ecc=L";
+        return $"<div class='big label'><span><h1>{part.Name}</h1>{part.ShortDescription}</span><div class='qr'><img src='{qr1}' />GanzAdmin</div><div class='qr'><img src='{qr2}' />Datasheet</div></div>";
+    }
+
+
+}

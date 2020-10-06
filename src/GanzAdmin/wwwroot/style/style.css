@@ -22,6 +22,11 @@ i
 	text-align: right;
 }
 
+.top
+{
+    vertical-align: top;
+}
+
 .loading
 {
 	background-image: url(../img/loading.gif);
@@ -64,6 +69,42 @@ input[type=submit]:hover, input[type=button]:hover, button:hover, a.button:hover
 	background-color: #00897b;
 }
 
+label
+{
+	display: inline-block;
+	width: 150px;
+	text-align: left;
+}
+
+input[type=text], input[type=password], textarea, select
+{
+	font-family: 'Segoe UI';
+	border: 3px solid #999999;
+	padding: 0.2em;
+	width: 20em;
+}
+
+input[type=text]:focus, input[type=password]:focus, textarea:focus
+{
+	border: 3px solid #00897b;
+}
+
+input.short
+{
+	width: 4em;
+}
+
+input.delete
+{
+	float: right;
+	background-color: #c41111;
+}
+
+input.delete:hover
+{
+	background-color: #f40000;
+}
+
 
 /*#endregion*/
 
@@ -75,6 +116,19 @@ input[type=submit]:hover, input[type=button]:hover, button:hover, a.button:hover
 	border: 1px solid #CCCCCC;
 	border-radius: 2px;
 }
+
+.img-icon-8
+{
+	width: 8px;
+	height: 8px;
+}
+
+.img-icon-16
+{
+	width: 16px;
+	height: 16px;
+}
+
 /*#endregion*/
 
 /*#region Fejléc, keresőterület, felső menü*/
@@ -240,6 +294,18 @@ header nav ul li a:hover
 #auto-complete-display div.location:before{ content: ''; }
 #auto-complete-display div.parameter:before{ content: ''; }
 
+#selected-items.available:after
+{
+	content: "";
+	position: absolute;
+	display: inline-block;
+	width: 10px;
+	height: 10px;
+	background-color: red;
+	top: 14px;
+	border-radius: 5px;
+}
+
 /*#endregion*/
 
 /*#region Oldalsó sáv*/
@@ -341,6 +407,7 @@ main h1, h2
 
 #table-header
 {
+	display: none;
 	position: relative;
 	z-index: 3;
 }
@@ -373,8 +440,15 @@ main table th.collapsed i.sort
 main table
 {
 	width: 100%;
-	border-collapse: collapse;
-	table-layout: fixed;
+	border-collapse: separate;
+	border-spacing: 0;
+}
+
+#data thead
+{
+	position: sticky;
+	top: 0;
+	z-index: 1;
 }
 
 main table th
@@ -393,14 +467,10 @@ main table th.sorting-asc, main table th.sorting-desc
 	background-color: #0097a7;
 }
 
-#data
+#table-wrapper > table td >table
 {
-	margin-top: -37px;
-}
-
-#data thead tr:first-child
-{
-	visibility: hidden;
+	margin: -3px -10px;
+	width: calc(100% + 20px);
 }
 
 main table td
@@ -437,6 +507,13 @@ main table td.pinnable a
 	border-bottom: 1px solid #DFDFDF;
 }
 
+main table td.pinned, main table th.pinned
+{
+	position: sticky;
+	left: 0;
+	border-right: 3px solid #c41111;
+}
+
 main table td.pinnable.pinned a
 {
 	border-right: 2px solid #0097a7;
@@ -454,12 +531,17 @@ main table td.collapsed, main table th.collapsed span
 	font-size: 0;
 }
 
-main table td.collapsed:nth-child(n)
+main table td.collapsed *
 {
-	background-color: #DDDDDD;
+	display: none;
 }
 
-main table tr:nth-child(2n) td
+#data > tbody > tr > td.collapsed:nth-child(n)
+{
+	background-color: #DDDDDD !important;
+}
+
+#data > tbody > tr:nth-child(2n) td
 {
 	background-color: #F7F7F7;
 }
@@ -546,11 +628,19 @@ main table tr.alert td
 	height: calc(100% - 2em)
 }
 
-.popup .body .file-preview *
+.popup .body .file-preview > *
 {
 	display: block;
 	width: 100%;
 	height: 100%;
+}
+
+.popup .body .file-preview > iframe
+{
+	width: calc(100% + 2em);
+	height: calc(100% + 1em);
+	margin: -1em;
+	border: 0;
 }
 
 .popup .close
@@ -562,42 +652,6 @@ main table tr.alert td
 	cursor: pointer;
 	padding: 2px;
 	color: #343434;
-}
-
-.popup label, #login label
-{
-	display: inline-block;
-	width: 150px;
-	text-align: left;
-}
-
-.popup input[type=text], .popup input[type=password], .popup textarea, .popup select
-{
-	font-family: 'Segoe UI';
-	border: 3px solid #999999;
-	padding: 0.2em;
-	width: 20em;
-}
-
-.popup input[type=text]:focus, .popup input[type=password]:focus, .popup textarea:focus
-{
-	border: 3px solid #00897b;
-}
-
-.popup input.short
-{
-	width: 4em;
-}
-
-.popup input.delete
-{
-	float: right;
-	background-color: #c41111;
-}
-
-.popup input.delete:hover
-{
-	background-color: #f40000;
 }
 
 .popup #params i
@@ -896,6 +950,32 @@ main.filebrowser a img
 	margin: 0 0 1em 2em;
 	font-style: italic;
 }
+
+.userpage img
+{
+	display: block;
+	margin: 0 auto;
+}
+
+.box
+{
+	padding: 0.3em 1em;
+	border-radius: 3px;
+	margin-bottom: 1em;
+}
+
+.warning.box
+{
+	color: #222222;
+	background-color: #fedf18;
+}
+
+.info.box
+{
+	color: #FFFFFF;
+	background-color: #00897b;
+}
+
 /*#endregion*/
 
 /*#region security camera*/
@@ -905,7 +985,13 @@ video
 }
 /*#endregion*/
 
-
+iframe.scripted-page
+{
+	border: 0;
+	width: 100%;
+	margin: 0;
+	height: 100%;
+}
 
 /*TODO: Átnézni!*/
 /*#region Egyéb, ezeket át kell nézni és besorolni valahova!*/
@@ -953,10 +1039,19 @@ video
 	background-color: #00897b !important;
 }
 
+/*#region Tripla editor wikihez (egyelőre csak oda*/
 
+.triple-editor
+{
+	display: grid;
+	grid-template-columns: [c1] 33% [c2] 33% [c3] 33%;
+}
 
-
-
+.triple-editor .CodeMirror
+{
+	height: 500px;
+}
+/*#endregion*/
 
 main .breadcrumb a
 {
@@ -966,7 +1061,7 @@ main .breadcrumb a
 	text-align: left;
 	margin: 0;
 	border: 0;
-	padding: 0 0.5em;
+	padding: 0.5em;
 }
 
 
@@ -978,9 +1073,9 @@ main .breadcrumb a
 
 .simple-ui section img
 {
-	float: left;
-	width: 250px;
-	height: 250px;
+	width: 200px;
+	height: 200px;
+	margin: 1em;
 }
 
 #editorjs
@@ -989,3 +1084,93 @@ main .breadcrumb a
 	border: 2px solid #00897b;
 }
 /*#endregion*/
+
+
+.tool {
+	display: grid;
+	grid-template-columns: [c1]64px [c2] auto;
+}
+
+.tool:hover {
+    background-color: #b2dfdb;
+}
+
+.tool i {
+    font-size: 40px;
+	margin: 0.5em auto;
+}
+
+.tool h3 {
+    text-transform: uppercase;
+}
+
+
+/*#region Feltöltés (csak form, a fájlböngészőé máshol van)*/
+div.filebox
+{
+	width: 200px;
+	height: 64px;
+	border: 3px dashed #CCCCCC;
+	text-align: center;
+	display: inline-block;
+}
+
+div.filebox form
+{
+	padding: 1em 0.3em;
+}
+
+div.filebox input
+{
+	display: none;
+}
+
+div.filebox.is-dragover
+{
+	border: 3px dashed #00897b;
+}
+
+.filebox.is-uploading
+{
+	background-image: url(./img/loading.gif);
+	background-repeat: no-repeat;
+	background-position: center;
+}
+
+.filebox.is-uploading form
+{
+	display: none;
+}
+
+.filebox.is-success
+{
+	background-color: forestgreen;
+	color: #FFFFFF;
+}
+
+.filebox img.upload-preview
+{
+	width: 32px;
+	height: 32px;
+	float: left;
+}
+
+div.filebox small
+{
+	display:block;
+}
+/*#endregion*/
+
+.entry-item.project
+{
+	padding: 1em;
+	display: grid;
+	grid-template-columns: 250px auto;
+}
+
+
+.permissoins-container
+{
+	display: grid;
+	grid-template-columns: auto auto auto;
+}

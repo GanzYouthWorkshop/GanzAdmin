@@ -1,0 +1,17 @@
+﻿@using  GanzAdmin.Authentication.Components;
+
+@namespace GanzAdmin.Shared
+@inherits LayoutComponentBase
+
+
+<AuthorizedView>
+    <div id="print-area">
+        @Body
+    </div>
+</AuthorizedView>
+<NonAuthorizedView>
+</NonAuthorizedView>
+
+@code
+{
+}

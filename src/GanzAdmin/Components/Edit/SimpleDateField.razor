@@ -5,7 +5,7 @@
 <p>
     <label for="@this.Name">@this.Display:</label>
     <AuthorizedView NeededRolesOR="@this.AuthOR" NeededRolesAND="@this.AuthAND">
-        <input type="text" value="@this.Value" name="@this.Name" class="dtp" @onchange="OnValueChanged" />
+        <input type="text" value="@this.Value" name="@this.Name" class="dtp" @onchange="OnValueChanged" @ref="this.m_Dom" />
     </AuthorizedView>
     <NonAuthorizedView NeededRolesOR="@this.AuthOR" NeededRolesAND="@this.AuthAND">
         <span>@this.Value</span>
@@ -14,10 +14,30 @@
 
 @code
 {
+    [Inject]
+    private IJSRuntime Js { get; set; }
+
+    private ElementReference m_Dom;
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        base.OnAfterRender(firstRender);
+
+        if(firstRender)
+        {
+            this.Js.InvokeVoidAsync("createDatePicker", this.m_Dom);
+        }
+    }
+
     protected override Task OnValueChanged(ChangeEventArgs e)
     {
-        this.Value = DateTime.Parse(e.Value.ToString());
+        if (e.Value != null)
+        {
+            Console.WriteLine(e.Value.ToString());
 
-        return this.ValueChanged.InvokeAsync(this.Value);
+            this.Value = DateTime.Parse(e.Value.ToString());
+            return this.ValueChanged.InvokeAsync(this.Value);
+        }
+        return Task.CompletedTask;
     }
 }

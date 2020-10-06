@@ -13,8 +13,8 @@ namespace GanzAdmin.Database.Models
         [BsonRef]
         public Location Location { get; set; }
 
-        public long PartId { get; set; }
         public long Amount { get; set; }
+        public string Comment { get; set; }
 
         [BsonIgnore]
         public string DisplayValue

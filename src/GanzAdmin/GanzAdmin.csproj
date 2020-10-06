@@ -6,13 +6,13 @@
 
   <ItemGroup>
     <Compile Remove="Components\Tags\**" />
-    <Compile Remove="NewFolder\**" />
+    <Compile Remove="_Data\**" />
     <Content Remove="Components\Tags\**" />
-    <Content Remove="NewFolder\**" />
+    <Content Remove="_Data\**" />
     <EmbeddedResource Remove="Components\Tags\**" />
-    <EmbeddedResource Remove="NewFolder\**" />
+    <EmbeddedResource Remove="_Data\**" />
     <None Remove="Components\Tags\**" />
-    <None Remove="NewFolder\**" />
+    <None Remove="_Data\**" />
   </ItemGroup>
 
   <ItemGroup>
@@ -39,6 +39,8 @@
   <ItemGroup>
     <Folder Include="API\NVR\Externals\" />
     <Folder Include="wwwroot\img\files\" />
+    <Folder Include="wwwroot\img\parts\" />
+    <Folder Include="wwwroot\js\codemirror\" />
   </ItemGroup>
 
 </Project>

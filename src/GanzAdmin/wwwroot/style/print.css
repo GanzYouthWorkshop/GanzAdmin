@@ -1,0 +1,177 @@
+﻿@media print
+{
+	body
+	{
+		background: #FFFFFF;
+		margin: 0 !important;
+	}
+
+	#print-area
+	{
+		margin: 0 !important;
+		width: 100% !important;
+		background-color: #FFFFFF;
+		padding: 0 !important;
+		box-shadow: none !important;
+	}
+}
+
+@page
+{
+	size: A4;
+	margin: 15mm;
+}
+
+body
+{
+	font-family: 'Segoe UI';
+	background: #EEEEEE;
+	font-family: 'Segoe UI';
+}
+
+#print-area
+{
+	margin: 3em auto;
+	width: 18cm;
+	background-color: #FFFFFF;
+	padding: 1.5cm;
+	box-shadow: #CCCCDD 7px 7px 0px;
+}
+
+/*#region Címkék*/
+.label
+{
+	border: 1px solid black;
+	overflow: hidden;
+	display: inline-block;
+}
+
+.label.small
+{
+	
+	width: 4cm;
+	height: 1.5cm;
+	
+	font-weight: bold;
+	
+	background-repeat: no-repeat;
+	background-image: url(../img/symbol/chip.gif);
+	background-position: 3px 6px;	
+}
+
+.label.small img
+{
+	width: 1.5cm;
+	height: 1.5cm;
+	float: left;
+}
+
+.label.small div
+{
+	text-align: center;
+	overflow:hidden;
+}
+
+.label.small div small
+{
+	display: block;
+	font-size: 0.8em;
+	font-weight: normal;
+}
+
+.label.big
+{
+	border: none;
+	width: 7.4cm;
+	height: 11.5cm;
+}
+
+.label.big:nth-child(4n+1)
+{
+	border-right: 1px solid #000000;
+	border-bottom: 1px solid #000000;
+	padding: 0 15mm 15mm 0;
+}
+
+.label.big:nth-child(4n+2)
+{
+	border-left: 1px solid #000000;
+	border-bottom: 1px solid #000000;
+	padding: 0 0 15mm 15mm;
+
+}
+
+.label.big:nth-child(4n+3)
+{
+	border-right: 1px solid #000000;
+	border-top: 1px solid #000000;
+	padding: 15mm 15mm 0 0;
+
+}
+
+
+.label.big:nth-child(4n)
+{
+	border-right: 1px solid #000000;
+	border-bottom: 1px solid #000000;
+	padding: 0 15mm 15mm 0;
+}
+
+.label.big h1
+{
+	margin-left: 0;
+}
+
+.label.big span
+{
+	float: right;
+	writing-mode: sideways-lr;
+	text-orientation: upright;
+	width: 3cm;
+	height: 8cm;
+}
+
+.qr
+{
+	width: 30mm;
+	height: 35mm;
+	padding: 5mm 5mm 2mm 5mm;
+	background-color: #000000;
+	color: #FFFFFF;
+	text-align: center;
+	text-transform: uppercase;
+	margin-bottom: 5mm;
+	float: left;
+}
+
+.qr img
+{
+	width: 3cm;
+	height: 3cm;
+	display: block;
+}
+
+/*#endregion*/
+
+/*#region Rendelőlap*/
+#order-sheet .header
+{
+	margin-bottom: 2em;
+}
+
+#order-sheet .header td
+{
+	border: 0;
+}
+
+#order-sheet .header img
+{
+	height: 100px;
+}
+
+#order-sheet table
+{
+	width: 100%;
+	text-align: left;
+}
+/*#endregion*/
