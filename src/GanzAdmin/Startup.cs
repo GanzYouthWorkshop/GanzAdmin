@@ -56,7 +56,7 @@ namespace GanzAdmin
             GanzAdminDbEngine.Instance = new GanzAdminDbEngine(GanzAdminConfiguration.Instance.DatabaseConnectionString);
             GanzAdminDbEngine.Instance.EnsureCreated();
 
-            new IpCamaraSystem(4)
+            new IpCameraSystem(4)
             {
                 Name = "g2"
             }.Open();
