@@ -6,13 +6,13 @@ using System.Threading.Tasks;
 
 namespace GanzAdmin.API.NVR
 {
-    public class IpCamaraSystem
+    public class IpCameraSystem
     {
         public string Name { get; set; }
         public string Url { get; set; } = "rtsp://192.168.100.254:554/user=admin&password=&channel={0}&stream=1.sdp";
         public List<IpCameraChannel> Channels { get; set; } = new List<IpCameraChannel>();
 
-        public IpCamaraSystem(int channels)
+        public IpCameraSystem(int channels)
         {
             for(int i = 0; i < channels; i++)
             {

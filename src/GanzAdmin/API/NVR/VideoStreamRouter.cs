@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using GanzAdmin.Configuration;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,7 +15,7 @@ namespace GanzAdmin.API.NVR
         public ContentResult CustomRouting(string filename)
         {
             string mime = filename.Contains("m3u8") ? "application/x-mpegURL" : "video/mp2t";
-            string content = System.IO.File.ReadAllText($"wwwroot\\content\\nvr\\{filename}");
+            string content = System.IO.File.ReadAllText($"{GanzAdminConfiguration.Instance.NvrFolder}\\{filename}");
             return Content(content, mime, Encoding.UTF8);
         }
     }

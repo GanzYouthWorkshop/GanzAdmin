@@ -1,4 +1,5 @@
-﻿using System;
+﻿using GanzAdmin.Configuration;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -59,7 +60,7 @@ namespace GanzAdmin.API.NVR
                              @$"-segment_list {streamDirectory}{streamFile}",
                              "-segment_list_type m3u8",
                              "-segment_list_entry_prefix /content/nvr/",
-                             @$".\wwwroot\content\nvr\{this.HandlerName}_{this.ChannelId}_%d.ts",
+                             @$"{GanzAdminConfiguration.Instance.NvrFolder}\{this.HandlerName}_{this.ChannelId}_%d.ts", //todo work on ramdisk
                         }),
                         CreateNoWindow = false,
                     }
