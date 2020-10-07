@@ -56,13 +56,10 @@ namespace GanzAdmin
             GanzAdminDbEngine.Instance = new GanzAdminDbEngine(GanzAdminConfiguration.Instance.DatabaseConnectionString);
             GanzAdminDbEngine.Instance.EnsureCreated();
 
-            new IpCameraSystem(4)
-            {
-                Name = "g2"
-            }.Open();
-
             Scheduler.Tasks.Add(new StatisticsScheduledTask());
             Scheduler.Start();
+
+            CameraHandler.Start();
 
             if (env.IsDevelopment())
             {

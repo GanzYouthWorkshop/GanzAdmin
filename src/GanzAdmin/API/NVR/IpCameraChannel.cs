@@ -60,7 +60,7 @@ namespace GanzAdmin.API.NVR
                              @$"-segment_list {streamDirectory}{streamFile}",
                              "-segment_list_type m3u8",
                              "-segment_list_entry_prefix /content/nvr/",
-                             @$"{GanzAdminConfiguration.Instance.NvrFolder}\{this.HandlerName}_{this.ChannelId}_%d.ts", //todo work on ramdisk
+                             @$"{GanzAdminConfiguration.Instance.NvrFolder}\{this.HandlerName}_{this.ChannelId}_%d.ts",
                         }),
                         CreateNoWindow = false,
                     }
