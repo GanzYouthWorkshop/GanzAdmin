@@ -31,7 +31,7 @@ namespace GanzAdmin.API.NVR
         {
             if (!this.Runnning)
             {
-                string streamDirectory = $@".\wwwroot\content\nvr\";
+                string streamDirectory = GanzAdminConfiguration.Instance.NvrFolder;
                 string streamFile = $"{this.HandlerName}_{this.ChannelId}.m3u8";
 
                 this.m_FfmpegProcess = new Process
@@ -57,10 +57,10 @@ namespace GanzAdmin.API.NVR
                              "-segment_time 1",
                              "-segment_list_size 3",
                              "-segment_format mpegts",
-                             @$"-segment_list {streamDirectory}{streamFile}",
+                             @$"-segment_list {streamDirectory}\{streamFile}",
                              "-segment_list_type m3u8",
                              "-segment_list_entry_prefix /content/nvr/",
-                             @$"{GanzAdminConfiguration.Instance.NvrFolder}\{this.HandlerName}_{this.ChannelId}_%d.ts",
+                             @$"{streamDirectory}\{this.HandlerName}_{this.ChannelId}_%d.ts",
                         }),
                         CreateNoWindow = false,
                     }
@@ -76,9 +76,9 @@ namespace GanzAdmin.API.NVR
         {
             while(this.Runnning)
             {
-                string streamFile = $@".\wwwroot\content\nvr\{this.HandlerName}_{this.ChannelId}.m3u8";
+                string streamFile = $@"{GanzAdminConfiguration.Instance.NvrFolder}\{this.HandlerName}_{this.ChannelId}.m3u8";
 
-                string[] files = Directory.GetFiles(@".\wwwroot\content\nvr\").Where(s => s.Contains($"{this.HandlerName}_{this.ChannelId}")).ToArray();
+                string[] files = Directory.GetFiles(GanzAdminConfiguration.Instance.NvrFolder).Where(s => s.Contains($"{this.HandlerName}_{this.ChannelId}")).ToArray();
 
                 DateTime deletionThreshold = DateTime.Now.AddMinutes(-5);
 
