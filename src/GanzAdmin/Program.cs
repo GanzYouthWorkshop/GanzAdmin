@@ -20,10 +20,18 @@ namespace GanzAdmin
 
         public static IHostBuilder CreateHostBuilder(string[] args)
         {
-            return Host.CreateDefaultBuilder(args).ConfigureWebHostDefaults(webBuilder =>
-            {
-                webBuilder.UseKestrel().UseStartup<Startup>();
-            });
+            return Host.CreateDefaultBuilder(args).
+                ConfigureLogging(logging =>
+                {
+                    logging.ClearProviders();
+                    logging.AddConsole();
+                    logging.AddEventSourceLogger();
+                    logging.AddEventLog();
+                })
+                .ConfigureWebHostDefaults(webBuilder =>
+                {
+                    webBuilder.UseKestrel().UseStartup<Startup>();
+                });
         }
     }
 }

@@ -2,29 +2,51 @@
 
 @using System.Net;
 @using Microsoft.AspNetCore.Http;
+@using GanzAdmin.API.NVR;
 
-    <main class="full dashboard">
-        <AuthorizedView NeededRolesOR="@Permissions.EditLocations">
-            <div class="grid">
-                <section class="entry-item">
-                    <h2>G2 - KAM2</h2>
-                    <video id="video-player-2" />
-                </section>
-                <section class="entry-item">
-                    <h2>G2 - KAM1</h2>
-                    <video id="video-player-1" />
-                </section>
-                <section class="entry-item">
-                    <h2>G2 - KAM4</h2>
-                    <video id="video-player-4" />
-                </section>
-                <section class="entry-item">
-                    <h2>G2 - KAM3</h2>
-                    <video id="video-player-3" />
-                </section>
-            </div>
-        </AuthorizedView>
-    </main>
+<main class="full dashboard">
+    <AuthorizedView NeededRolesOR="@Permissions.EditLocations">
+        <div class="grid">
+            <section style="grid-column: 1 / 3;" class="entry-item">
+                <div class="grid">
+                    <div>
+                        <h2>G1 - PTZ KAM</h2>
+                        <video id="video-player-2" />
+                    </div>
+                    <div>
+                        <div style="height: 100%;" class="grid x3x3">
+                            <span />
+                            <button @onclick="() => CameraHandler.Instance.G1MobileCamera.Ptz(0, 1, 0)">▲</button>
+                            <span />
+                            <button @onclick="() => CameraHandler.Instance.G1MobileCamera.Ptz(-1, 0, 0)">◄</button>
+                            <span />
+                            <button @onclick="() => CameraHandler.Instance.G1MobileCamera.Ptz(1, 0, 0)">►</button>
+                            <span />
+                            <button @onclick="() => CameraHandler.Instance.G1MobileCamera.Ptz(0, -1, 0)">▼</button>
+                            <span />
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section class="entry-item">
+                <h2>G2 - KAM2</h2>
+                <video id="video-player-2" />
+            </section>
+            <section class="entry-item">
+                <h2>G2 - KAM1</h2>
+                <video id="video-player-1" />
+            </section>
+            <section class="entry-item">
+                <h2>G2 - KAM4</h2>
+                <video id="video-player-4" />
+            </section>
+            <section class="entry-item">
+                <h2>G2 - KAM3</h2>
+                <video id="video-player-3" />
+            </section>
+        </div>
+    </AuthorizedView>
+</main>
 
 @code
 {

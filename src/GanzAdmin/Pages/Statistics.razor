@@ -5,6 +5,14 @@
 
 WIP!
 
-@code {
+@code
+{      
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
 
+        IEnumerable<Statistic> list = GanzAdminDbEngine.Instance.GetCollection<Statistic>().FindAll();
+
+        var parts = list.Where(stat => stat.Name == nameof(Statistic.StatisticTypes.Parts));
+    }
 }

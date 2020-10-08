@@ -18,5 +18,7 @@ namespace GanzAdmin.Configuration
         public string SharedFileFolder { get; set; } = "";
         public string SecretFileFolder { get; set; } = "";
         public string OwnFleFolder { get; set; } = "";
+
+        public string NvrFolder { get; set; } = @"X:\";
     }
 }

@@ -43,4 +43,10 @@
     <Folder Include="wwwroot\js\codemirror\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="API\NVR\Externals\ffmpeg.exe">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>
