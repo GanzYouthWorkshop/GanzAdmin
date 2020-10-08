@@ -63,7 +63,14 @@ namespace GanzAdmin.API.NVR
             request.Content.Headers.Clear();
             request.Content.Headers.Add("Content-Type", "application/soap+xml;charset=UTF-8;action=\"http://www.onvif.org/ver20/ptz/wsdl/ContinuousMove\"");
 
-            var response = await HttpClient.SendAsync(request);
+            try
+            {
+                HttpClient.SendAsync(request);
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex);
+            }
         }
     }
 }

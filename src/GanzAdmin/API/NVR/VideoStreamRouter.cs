@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.IO;
 
 namespace GanzAdmin.API.NVR
 {
@@ -15,7 +16,15 @@ namespace GanzAdmin.API.NVR
         public ContentResult CustomRouting(string filename)
         {
             string mime = filename.Contains("m3u8") ? "application/x-mpegURL" : "video/mp2t";
-            string content = System.IO.File.ReadAllText($"{GanzAdminConfiguration.Instance.NvrFolder}\\{filename}");
+            string content = string.Empty;
+            try
+            {
+                System.IO.File.ReadAllText($"{GanzAdminConfiguration.Instance.NvrFolder}\\{filename}");
+            }
+            catch(Exception)
+            {
+
+            }
             return Content(content, mime, Encoding.UTF8);
         }
     }

@@ -1019,6 +1019,13 @@ iframe.scripted-page
 	grid-template-columns: [c1] 50% [c2] 50%;
 }
 
+.grid.x3x3
+{
+	display: grid;
+	grid-template-columns: [c1] 33% [c2] 33% [c3] 33%;
+	grid-template-row: [r1] 33% [r2] 33% [r3] 33%;
+}
+
 .grid section
 {
 	margin: 1em;
