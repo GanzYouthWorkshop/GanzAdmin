@@ -985,6 +985,44 @@ video
 }
 /*#endregion*/
 
+/*#region Wiki*/
+
+main.wiki-container
+{
+	background-color: #F7F3F3;
+}
+
+main.wiki-container article
+{
+	margin: 1em;
+	padding: 1em;
+	background-color: #FFFFFF;
+	border-radius: 13px;
+	background-image: url(../img/wiki-bg.png);
+	background-repeat: no-repeat;
+}
+
+main.wiki-container article h1
+{
+	font-family: 'Bahnschrift';
+	font-weight: 900;
+	text-transform: uppercase;
+	font-size: 4em;
+	color: #424242;
+}
+
+main.wiki-container article .content
+{
+	display: grid;
+	grid-template-columns:  [c1] 80% [c2] 20%;
+}
+
+.wiki-top-offset
+{
+	position: relative;
+	top: -100px;
+}
+
 iframe.scripted-page
 {
 	border: 0;
@@ -992,6 +1030,8 @@ iframe.scripted-page
 	margin: 0;
 	height: 100%;
 }
+
+/*#endregion*/
 
 /*TODO: Átnézni!*/
 /*#region Egyéb, ezeket át kell nézni és besorolni valahova!*/
@@ -1085,7 +1125,7 @@ main .breadcrumb a
 }
 /*#endregion*/
 
-
+/*#region Toolok */
 .tool {
 	display: grid;
 	grid-template-columns: [c1]64px [c2] auto;
@@ -1103,7 +1143,7 @@ main .breadcrumb a
 .tool h3 {
     text-transform: uppercase;
 }
-
+/*#endregion*/
 
 /*#region Feltöltés (csak form, a fájlböngészőé máshol van)*/
 div.filebox

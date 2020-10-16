@@ -1,0 +1,48 @@
+﻿@using  System.Text.Json;
+
+@{
+    int prevLevel = 0;
+    string markup = "";
+}
+@foreach (JsonElement element in this.JsonSource.RootElement.GetProperty("blocks").EnumerateArray())
+{
+    JsonElement data = element.GetProperty("data");
+    switch (element.GetProperty("type").GetString())
+    {
+        case "header":
+            int level = int.Parse(data.GetProperty("level").ToString());
+            if (level > prevLevel)
+            {
+                markup += "<ul>";
+            }
+            else if (level < prevLevel)
+            {
+                markup += "</ul>";
+            }
+            string text = data.GetProperty("text").GetString();
+            markup += $"<li><a href='./#{text.Replace(" ", "-")}'>{text}</a></li>";
+            {
+                prevLevel = level;
+            }
+            break;
+    }
+}
+@((MarkupString)$"{markup}</ul>")
+
+@code
+{
+    [Parameter]
+    public string Source { get; set; }
+
+    public JsonDocument JsonSource
+    {
+        get
+        {
+            if (this.Source == null)
+            {
+                this.Source = "{\"blocks\": []}";
+            }
+            return JsonDocument.Parse(this.Source, new JsonDocumentOptions { AllowTrailingCommas = true });
+        }
+    }
+}

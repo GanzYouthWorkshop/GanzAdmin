@@ -13,6 +13,7 @@ namespace GanzAdmin.Database.Models
         public long Id { get; set; }
 
         public string Name { get; set; }
+        public string LogoPath { get; set; }
         public bool IsCoded { get; set; }
         public DateTime LastModified { get; set; }
         public WikiPage ParentPage { get; set; }

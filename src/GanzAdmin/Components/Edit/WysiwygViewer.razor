@@ -11,7 +11,8 @@
 
         case "header":
             string level = data.GetProperty("level").ToString();
-            @((MarkupString)$"<h{level}>{data.GetProperty("text").GetString()}</h{level}>")
+            string text = data.GetProperty("text").GetString();
+            @((MarkupString)$"<h{level} id='{text.Replace(" ", "-")}'>{text}</h{level}>")
             break;
 
         case "delimiter":
@@ -35,7 +36,7 @@
         case "warning":
             string htmlClass = "";
             string title = data.GetProperty("title").GetString();
-            if(title.ToLower().Contains("figyelem"))
+            if (title.ToLower().Contains("figyelem"))
             {
                 htmlClass = "warning";
             }
@@ -97,7 +98,7 @@
         case "image":
             <img src="@(data.GetProperty("file").GetProperty("url").GetString())">
             string caption = data.GetProperty("caption").GetString();
-            if(caption != null)
+            if (caption != null)
             {
                 <p>@caption</p>
             }

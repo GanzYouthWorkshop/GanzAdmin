@@ -4,7 +4,7 @@
 
 @inherits DataHandlingController<WikiPage>
 
-<aside class='@(this.ItemList == null ? "loading" : "")'>
+@*<aside class='@(this.ItemList == null ? "loading" : "")'>
     @if (this.ItemList != null)
     {
         <TreeLevel
@@ -17,86 +17,100 @@
     <AuthorizedView NeededRolesOR="@Permissions.EditLocations">
         <NavLink class="addlink" href="@($"/{this.BaseLink}/add")">Új @this.DataName</NavLink>
     </AuthorizedView>
-</aside>
+</aside>*@
 
-<main class='half userpage'>
+<main class='full wiki-container'>
     @if (this.SelectedItem != null)
     {
         @if (this.Edit == "edit" || this.NavMan.Uri.EndsWith("add"))
         {
-    <EditForm method="post" EditContext="new EditContext(true)" OnSubmit="OnDefaultAddEditSubmit">
-        <div class='dynamic'>
-            <SimpleTextField AuthOR="@Permissions.EditCourse" Type="text" Display="Név" Name="@nameof(Category.Name)" @bind-Value="this.SelectedItem.Temporal.Name" />
-            <ComboBox AuthOR="@Permissions.EditCourse" ItemType="@WikiPage" Items="@this.ItemList" Owner="this.SelectedItem.Temporal" Name="@nameof(WikiPage.ParentPage)" Display="Hely" @bind-Value="this.SelectedItem.Temporal.ParentPage" />
-            <SimpleCheckField AuthOR="@Permissions.EditCourse"
-                              Type="switch"
-                              Display="Interaktív?"
-                              Name="@nameof(WikiPage.IsCoded)"
-                              PreventRenderOnChange="false"
-                              @bind-Value="this.SelectedItem.Temporal.IsCoded"/>
-            @if (this.SelectedItem.Temporal.IsCoded)
-            {
-                string[] frags = this.SelectedItem.Temporal.Content?.Split(CODE_SEPARATOR);
-                string html = frags?.Length > 0 ? frags[0] : null;
-                string css = frags?.Length > 1 ? frags[1] : null;
-                string js = frags?.Length > 2 ? frags[2] : null;
+            <EditForm method="post" EditContext="new EditContext(true)" OnSubmit="OnDefaultAddEditSubmit">
+                <div class='dynamic'>
+                    <SimpleTextField AuthOR="@Permissions.EditCourse" Type="text" Display="Név" Name="@nameof(Category.Name)" @bind-Value="this.SelectedItem.Temporal.Name" />
+                    <ComboBox AuthOR="@Permissions.EditCourse" ItemType="@WikiPage" Items="@this.ItemList" Owner="this.SelectedItem.Temporal" Name="@nameof(WikiPage.ParentPage)" Display="Hely" @bind-Value="this.SelectedItem.Temporal.ParentPage" />
+                    <SimpleCheckField AuthOR="@Permissions.EditCourse"
+                                        Type="switch"
+                                        Display="Interaktív?"
+                                        Name="@nameof(WikiPage.IsCoded)"
+                                        PreventRenderOnChange="false"
+                                        @bind-Value="this.SelectedItem.Temporal.IsCoded" />
+                    @if (this.SelectedItem.Temporal.IsCoded)
+                    {
+                        string[] frags = this.SelectedItem.Temporal.Content?.Split(CODE_SEPARATOR);
+                        string html = frags?.Length > 0 ? frags[0] : null;
+                        string css = frags?.Length > 1 ? frags[1] : null;
+                        string js = frags?.Length > 2 ? frags[2] : null;
 
-                <div class="triple-editor">
-                    <section>
-                        <h2>HTML</h2>
-                        <CodeEditor @ref="this.htmlEditor" Language="htmlmixed" Value="@html"></CodeEditor>
-                    </section>
-                    <section>
-                        <h2>CSS</h2>
-                        <CodeEditor @ref="this.cssEditor" Language="css" Value="@css"></CodeEditor>
-                    </section>
-                    <section>
-                        <h2>JS</h2>
-                        <CodeEditor @ref="this.jsEditor" Language="javascript" Value="@js"></CodeEditor>
-                    </section>
+                        <div class="triple-editor">
+                            <section>
+                                <h2>HTML</h2>
+                                <CodeEditor @ref="this.htmlEditor" Language="htmlmixed" Value="@html"></CodeEditor>
+                            </section>
+                            <section>
+                                <h2>CSS</h2>
+                                <CodeEditor @ref="this.cssEditor" Language="css" Value="@css"></CodeEditor>
+                            </section>
+                            <section>
+                                <h2>JS</h2>
+                                <CodeEditor @ref="this.jsEditor" Language="javascript" Value="@js"></CodeEditor>
+                            </section>
+                        </div>
+                    }
+                    else
+                    {
+                        <FileField Display="Oldal logó" @bind-Value="@this.SelectedItem.Temporal.LogoPath" />
+                        <WysiwygEditor @bind-Value="@this.SelectedItem.Temporal.Content"></WysiwygEditor>
+                    }
                 </div>
-            }
-            else
-            {
-                <WysiwygEditor @bind-Value="@this.SelectedItem.Temporal.Content"></WysiwygEditor>
-            }
-        </div>
-        <AuthorizedView NeededRolesOR="@Permissions.EditLocations">
-            <button type='submit'>Küldés</button>
-        </AuthorizedView>
-        @if (this.PopupDisplay != "add")
-        {
-            <AuthorizedView NeededRolesOR="@Permissions.DeleteLocations">
-                <input type='button' class="delete" value="Törlés" @onclick="OnDefaultDeleteSubmit" />
-            </AuthorizedView>
-        }
-    </EditForm>
+                <AuthorizedView NeededRolesOR="@Permissions.EditLocations">
+                    <button type='submit'>Küldés</button>
+                </AuthorizedView>
+                @if (this.PopupDisplay != "add")
+                {
+                    <AuthorizedView NeededRolesOR="@Permissions.DeleteLocations">
+                        <input type='button' class="delete" value="Törlés" @onclick="OnDefaultDeleteSubmit" />
+                    </AuthorizedView>
+                }
+            </EditForm>
         }
         else
         {
-            <h2>@this.SelectedItem.Original.Name</h2>
-            <p><small>Utoljára módosítva: @this.SelectedItem.Original.LastModified</small></p>
-            <AuthorizedView NeededRolesOR="@Permissions.EditCourse">
-                <NavLink class="button" href="@($"/{this.BaseLink}/{this.SelectedItem.Original.Id}/edit")">Szerkesztés</NavLink>
-            </AuthorizedView>
-            @if (!this.SelectedItem.Original.IsCoded)
-            {
-                <WysiwygViewer Source="@this.SelectedItem.Original.Content"></WysiwygViewer>
-            }
-            else
-            {
-                <iframe class="scripted-page" src="@this.GetHtmlFromValue()" onload="setScriptedPageHeight(this)"></iframe>
-            }
+            <article>
+                <div class="@(string.IsNullOrEmpty(this.SelectedItem.Temporal.LogoPath) ? "" : "wiki-top-offset")">
+                    @if (!string.IsNullOrEmpty(this.SelectedItem.Temporal.LogoPath))
+                    {
+                        <img src="@this.SelectedItem.Temporal.LogoPath" />
+                    }
+                    <h1>@this.SelectedItem.Original.Name</h1>
+                    <p><small>Utoljára módosítva: @this.SelectedItem.Original.LastModified</small></p>
+                    <AuthorizedView NeededRolesOR="@Permissions.EditCourse">
+                        <NavLink class="button" href="@($"/{this.BaseLink}/{this.SelectedItem.Original.Id}/edit")">Szerkesztés</NavLink>
+                    </AuthorizedView>
+                    @if (!this.SelectedItem.Original.IsCoded)
+                    {
+                        <div class="content">
+                            <div>
+                                <WysiwygViewer Source="@this.SelectedItem.Original.Content"></WysiwygViewer>
+                            </div>
+                            <div>
+                                <h2>Tartalom</h2>
+                                <WysiwygTableOfContents Source="@this.SelectedItem.Original.Content" />
+                            </div>
+                        </div>                      
+                    }
+                    else
+                    {
+                        <iframe class="scripted-page" src="@this.GetHtmlFromValue()" onload="setScriptedPageHeight(this)"></iframe>
+                    }
+                </div>
+            </article>
         }
     }
-    else
+    @*else
     {
         <h2>Tananyagtár</h2>
         <p>Üdv a Ganz Tananyagtárban! Használt az oldalsó menüt a navigálásra, vagy a fenti keresőt!</p>
-    }
-    @if (this.ItemList != null)
-    {
-    }
+    }*@
 </main>
 
 @code
@@ -111,6 +125,20 @@
     private CodeEditor htmlEditor;
     private CodeEditor jsEditor;
     private CodeEditor cssEditor;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+        if (this.SelectedItem == null)
+        {
+            long id = long.Parse(GlobalSetting.GetSetting(nameof(GlobalSetting.PresetSettings.DefaultWikiPage)));
+
+            WikiPage item = this.ItemList.FirstOrDefault(i => i.Id == id);
+            this.SelectedItem = new TemporalObject<WikiPage>(item);
+            this.StateHasChanged();
+        }
+    }
 
     protected string GetHtmlFromValue()
     {

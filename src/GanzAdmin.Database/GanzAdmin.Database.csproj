@@ -12,4 +12,8 @@
     <ProjectReference Include="..\GanzAdmin.Utils\GanzAdmin.Utils.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Models\Statistics\" />
+  </ItemGroup>
+
 </Project>
