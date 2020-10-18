@@ -132,7 +132,8 @@ input.delete:hover
 /*#endregion*/
 
 /*#region Fejléc, keresőterület, felső menü*/
-header {
+header
+{
 	position: absolute;
 	top: 0;
 	height: 60px;
@@ -306,6 +307,24 @@ header nav ul li a:hover
 	border-radius: 5px;
 }
 
+#loading-overlay
+{
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	z-index: 9999;
+	background-color: rgba(34, 34, 34, 0.5);
+	background-image: url(../img/loading.gif);
+	background-repeat: no-repeat;
+	background-position: center center;
+}
+
+.load-blur
+{
+	filter: blur(10px);
+}
 /*#endregion*/
 
 /*#region Oldalsó sáv*/

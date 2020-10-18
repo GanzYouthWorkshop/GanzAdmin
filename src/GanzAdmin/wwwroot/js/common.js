@@ -4,7 +4,7 @@
 
 	alertify.init();
 
-	alertify.alert("A GanzAdmin még erősen fejlesztés alatt áll! Hogy pontosan mik a tervek és most éppen hogy áll a projekt, a Súgóban tudod megnézni!");
+	$('#loading-overlay').hide();
 }
 
 function onMenuReady()
