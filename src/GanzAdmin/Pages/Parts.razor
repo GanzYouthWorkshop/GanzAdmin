@@ -3,301 +3,302 @@
 
 @inherits DataHandlingController<Part>
 
-<aside class='@(this.ItemList == null ? "loading" : "")'>
-    @if (this.ItemList != null)
-    {
-        @*<TreeLevel Items="@(this.ItemList.ToEntities<Part>())" 
-                   Root="@null" 
-                   Filter="@((e, r) => (e as Part).Category == null && r == null || (e as Part).Category?.Id == r?.Id)" />*@
-    }
-    <AuthorizedView NeededRolesOR="@Permissions.EditParts">
-        <NavLink class="addlink" href="@($"/{this.BaseLink}/add")">Új @this.DataName</NavLink>
-    </AuthorizedView>
-</aside>
+<AuthorizedView NeededRolesOR="@Permissions.ListParts">
+    <aside class='@(this.ItemList == null ? "loading" : "")'>
+        @if (this.ItemList != null)
+        {
+            @*<TreeLevel Items="@(this.ItemList.ToEntities<Part>())"
+                Root="@null"
+                Filter="@((e, r) => (e as Part).Category == null && r == null || (e as Part).Category?.Id == r?.Id)" />*@
+        }
+        <AuthorizedView NeededRolesOR="@Permissions.EditParts">
+            <NavLink class="addlink" href="@($"/{this.BaseLink}/add")">Új @this.DataName</NavLink>
+        </AuthorizedView>
+    </aside>
 
-<main class='@(this.ItemList == null ? "loading" : "")'>
-    @if (this.ItemList != null)
-    {
-        <div id='table-wrapper'>
-            @*<table id='table-header'>
-                <thead>
-                    <tr>
-                        <DataGridHeader></DataGridHeader>
-                        <DataGridHeader IsPinnable IsSortable>Név</DataGridHeader>
-                        <DataGridHeader IsCollapsible IsSortable>Kategória</DataGridHeader>
-                        <DataGridHeader IsCollapsible>Mennyiség</DataGridHeader>
-                        <DataGridHeader IsCollapsible IsSortable>Minimum raktári mennyiség</DataGridHeader>
-                        <DataGridHeader IsCollapsible IsSortable>Hiányos?</DataGridHeader>
-                        <DataGridHeader IsCollapsible IsSortable>Adatlap</DataGridHeader>
-                        <DataGridHeader IsCollapsible IsSortable>Termékkódok</DataGridHeader>
-                        <DataGridHeader IsCollapsible IsSortable>Leírás</DataGridHeader>
-                    </tr>
-                </thead>
-            </table>*@
+    <main class='@(this.ItemList == null ? "loading" : "")'>
+        @if (this.ItemList != null)
+        {
+            <div id='table-wrapper'>
+                @*<table id='table-header'>
+                        <thead>
+                            <tr>
+                                <DataGridHeader></DataGridHeader>
+                                <DataGridHeader IsPinnable IsSortable>Név</DataGridHeader>
+                                <DataGridHeader IsCollapsible IsSortable>Kategória</DataGridHeader>
+                                <DataGridHeader IsCollapsible>Mennyiség</DataGridHeader>
+                                <DataGridHeader IsCollapsible IsSortable>Minimum raktári mennyiség</DataGridHeader>
+                                <DataGridHeader IsCollapsible IsSortable>Hiányos?</DataGridHeader>
+                                <DataGridHeader IsCollapsible IsSortable>Adatlap</DataGridHeader>
+                                <DataGridHeader IsCollapsible IsSortable>Termékkódok</DataGridHeader>
+                                <DataGridHeader IsCollapsible IsSortable>Leírás</DataGridHeader>
+                            </tr>
+                        </thead>
+                    </table>*@
 
-            <table id='data' class="display nowrap">
-                <thead>
-                    <tr>
-                        <DataGridHeader></DataGridHeader>
-                        <DataGridHeader IsPinnable IsSortable>Név</DataGridHeader>
-                        <DataGridHeader IsCollapsible>Kép</DataGridHeader>
-                        <DataGridHeader IsCollapsible IsSortable>Kategória</DataGridHeader>
-                        <DataGridHeader IsCollapsible>Mennyiség</DataGridHeader>
-                        <DataGridHeader IsCollapsible IsSortable>Min. mennyiség</DataGridHeader>
-                        <DataGridHeader IsCollapsible IsSortable>Hiányos?</DataGridHeader>
-                        <DataGridHeader IsCollapsible IsSortable>Adatlap</DataGridHeader>
-                        <DataGridHeader IsCollapsible IsSortable>Termékkódok</DataGridHeader>
-                        <DataGridHeader IsCollapsible IsSortable>Leírás</DataGridHeader>
-                    </tr>
-                </thead>
+                <table id='data' class="display nowrap">
+                    <thead>
+                        <tr>
+                            <DataGridHeader></DataGridHeader>
+                            <DataGridHeader IsPinnable IsSortable>Név</DataGridHeader>
+                            <DataGridHeader IsCollapsible>Kép</DataGridHeader>
+                            <DataGridHeader IsCollapsible IsSortable>Kategória</DataGridHeader>
+                            <DataGridHeader IsCollapsible>Mennyiség</DataGridHeader>
+                            <DataGridHeader IsCollapsible IsSortable>Min. mennyiség</DataGridHeader>
+                            <DataGridHeader IsCollapsible IsSortable>Hiányos?</DataGridHeader>
+                            <DataGridHeader IsCollapsible IsSortable>Adatlap</DataGridHeader>
+                            <DataGridHeader IsCollapsible IsSortable>Termékkódok</DataGridHeader>
+                            <DataGridHeader IsCollapsible IsSortable>Leírás</DataGridHeader>
+                        </tr>
+                    </thead>
 
-                <tbody>
-                    @foreach (Part item in this.ItemList)
-                    {
-                    <tr>
-                        <td><input type="checkbox" @onchange="(e) => this.ToolProvider.AddRemove(item)" /></td>
-                        <td>
-                            <NavLink href="@($"/{this.BaseLink}/{item.Id}")">@item.Name</NavLink>
-                        </td>
-                        <td>
-                            @if(!string.IsNullOrEmpty(item.ImagePath))
-                            {
-                                <img style="height: 70px" src="@item.ImagePath" />
-                            }
-                        </td>
-                        <td>
-                            @if (item.Category != null)
-                            {
-                                if (!string.IsNullOrEmpty(item.Category.IconUrl))
-                                {
-                                    <img class="img-icon-16" src="@item.Category.IconUrl" />
-                                }
-                                @item.Category.Name
-                            }
-                        </td>
-                        <td class="top">
-                            <table>
-                                @foreach (Stockpile stock in item.Stock)
-                                {
-                                    <tr>
-                                        <td>@stock.Location?.Name (@stock.Amount @item.StockUnit)</td>
-                                        <td>@stock.Comment</td>
-                                        <td>
-                                            <AuthorizedView NeededRolesOR="@Permissions.ManagePartStock"><a @onclick="() => this.OnRemoveOneFromStock(item, stock)">-1</a></AuthorizedView>
-                                        </td>
-                                    </tr>
-                                }
-                            </table>
-                        </td>
-                        <td class="center">@item.MinimumStock @item.StockUnit</td>
-                        <td class="center">@(item.LowStock ? "🟥" : "🟩")</td>
-                        <td class="center">
-                            @if (!string.IsNullOrEmpty(item.DateSheetUrl))
-                            {
-                                <a href="@item.DateSheetUrl" target="_blank">Adatlap <i></i></a>
-                            }
-                        </td>
-                        <td class="top">
-                            <table>
-                                @foreach (SupplySource supply in item.SupplySources)
-                                {
-                                    if (supply.Supplier != null)
+                    <tbody>
+                        @foreach (Part item in this.ItemList)
+                        {
+                            <tr>
+                                <td><input type="checkbox" @onchange="(e) => this.ToolProvider.AddRemove(item)" /></td>
+                                <td>
+                                    <NavLink href="@($"/{this.BaseLink}/{item.Id}")">@item.Name</NavLink>
+                                </td>
+                                <td>
+                                    @if (!string.IsNullOrEmpty(item.ImagePath))
                                     {
-                                        <tr>
-                                            <td>@supply.Supplier.Name</td>
-                                            <td><a href="@(supply.Supplier.ItemLinkTemplate?.Replace("####", supply.SupplierItemId))" target="_blank">@supply.SupplierItemId <i></i></a></td>
-                                        </tr>
+                                        <img style="height: 70px" src="@item.ImagePath" />
                                     }
-                                }
-                            </table>
-                        </td>
-                        <td>@item.ShortDescription</td>
-                    </tr>
-                    }
-                </tbody>
-            </table>
-        </div>
-    }
-</main>
-
-@if (this.SelectedItem != null)
-{
-    var defaults = new List<PartParameter>();
-
-    <section class='popup' id='content'>
-        <div class='shadow'></div>
-        <div class='body'>
-            <div class='header'>
-                <h2>@this.PopupTitle</h2>
-                <a class='button' href="@($"/{this.BaseLink}")"></a>
+                                </td>
+                                <td>
+                                    @if (item.Category != null)
+                                    {
+                                        if (!string.IsNullOrEmpty(item.Category.IconUrl))
+                                        {
+                                            <img class="img-icon-16" src="@item.Category.IconUrl" />
+                                        }
+                                        @item.Category.Name
+                                    }
+                                </td>
+                                <td class="top">
+                                    <table>
+                                        @foreach (Stockpile stock in item.Stock)
+                                        {
+                                            <tr>
+                                                <td>@stock.Location?.Name (@stock.Amount @item.StockUnit)</td>
+                                                <td>@stock.Comment</td>
+                                                <td>
+                                                    <AuthorizedView NeededRolesOR="@Permissions.ManagePartStock"><a @onclick="() => this.OnRemoveOneFromStock(item, stock)">-1</a></AuthorizedView>
+                                                </td>
+                                            </tr>
+                                        }
+                                    </table>
+                                </td>
+                                <td class="center">@item.MinimumStock @item.StockUnit</td>
+                                <td class="center">@(item.LowStock ? "🟥" : "🟩")</td>
+                                <td class="center">
+                                    @if (!string.IsNullOrEmpty(item.DateSheetUrl))
+                                    {
+                                        <a href="@item.DateSheetUrl" target="_blank">Adatlap <i></i></a>
+                                    }
+                                </td>
+                                <td class="top">
+                                    <table>
+                                        @foreach (SupplySource supply in item.SupplySources)
+                                        {
+                                            if (supply.Supplier != null)
+                                            {
+                                                <tr>
+                                                    <td>@supply.Supplier.Name</td>
+                                                    <td><a href="@(supply.Supplier.ItemLinkTemplate?.Replace("####", supply.SupplierItemId))" target="_blank">@supply.SupplierItemId <i></i></a></td>
+                                                </tr>
+                                            }
+                                        }
+                                    </table>
+                                </td>
+                                <td>@item.ShortDescription</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
             </div>
+        }
+    </main>
 
-            <EditForm method="post" EditContext="new EditContext(true)" OnSubmit="OnDefaultAddEditSubmit">
-                <div class='dynamic'>
-                    <SimpleTextField AuthOR="@Permissions.EditParts"
-                                     Type="text"
-                                     Display="Név"
-                                     Name="@nameof(Part.Name)"
-                                     @bind-Value="this.SelectedItem.Temporal.Name" />
-                    <FileField AuthOR="@Permissions.EditParts"
-                               Display="Kép"
-                               UrlOptional
-                               @bind-Value="this.SelectedItem.Temporal.ImagePath" />
-                    <ComboBox AuthOR="@Permissions.EditParts"
-                              ItemType="@Category"
-                              Items="@GanzAdminDbEngine.Instance.Categories.FindAll()"
-                              Name="@nameof(Part.Category)"
-                              Display="Kategória"
-                              PreventRenderOnChange="false"
-                              @bind-Value="this.SelectedItem.Temporal.Category"
-                              Changed="CategoryChanged" />
-                    <SimpleNumberField AuthOR="@Permissions.EditParts"
-                                       Type="text"
-                                       Display="Min. készlet"
-                                       Name="@nameof(Part.MinimumStock)"
-                                       @bind-Value="this.SelectedItem.Temporal.MinimumStock" />
-                    <SimpleTextField AuthOR="@Permissions.EditParts"
-                                     Type="text"
-                                     Display="Raktári készlet egység"
-                                     Name="@nameof(Part.StockUnit)"
-                                     @bind-Value="this.SelectedItem.Temporal.StockUnit" />
-                    <SimpleTextField AuthOR="@Permissions.EditParts"
-                                     Type="text"
-                                     Display="Rövid leírás"
-                                     Name="@nameof(Part.Name)"
-                                     @bind-Value="this.SelectedItem.Temporal.ShortDescription" />
-                    <FileField AuthOR="@Permissions.EditParts"
-                               Display="Adatlap"
-                               UrlOptional
-                               @bind-Value="this.SelectedItem.Temporal.DateSheetUrl" />
+    @if (this.SelectedItem != null)
+    {
+        var defaults = new List<PartParameter>();
 
-                    <h3>Raktérkészlet</h3>
-                    @foreach (Stockpile stock in this.SelectedItem.Temporal.Stock)
-                    {
-                        <div>
-                            <ComboBox Inline
-                                      AuthOR="@($"{Permissions.EditParts} {Permissions.ManagePartStock}")"
-                                      ItemType="@Location"
-                                      Items="@GanzAdminDbEngine.Instance.Locations.FindAll().Where(l => !l.IsVirtual)"
-                                      Name="@nameof(Part.Category)"
-                                      Display="Hely"
-                                      @bind-Value="stock.Location" />
-                            <SimpleNumberField Inline
-                                               AuthOR="@($"{Permissions.EditParts} {Permissions.ManagePartStock}")"
-                                               Type="text"
-                                               Display="Mennyiség"
-                                               Name="@nameof(Stockpile.Amount)"
-                                               ItemType="long"
-                                               @bind-Value="@stock.Amount" />
-                            <SimpleTextField Inline
-                                             AuthOR="@($"{Permissions.EditParts} {Permissions.ManagePartStock}")"
-                                             Type="text"
-                                             Display="Megj."
-                                             Name="@nameof(Stockpile.Comment)"
-                                             @bind-Value="@stock.Comment" />
-                            <AuthorizedView NeededRolesOR="@($"{Permissions.EditParts} {Permissions.ManagePartStock}")">
-                                <a @onclick="() => this.SelectedItem.Temporal.Stock.Remove(stock)"><i></i></a>
-                            </AuthorizedView>
-                        </div>
-                    }
-                    <AuthorizedView NeededRolesOR="@($"{Permissions.EditParts} {Permissions.ManagePartStock}")">
-                        <a @onclick="() => this.SelectedItem.Temporal.Stock.Add(new Stockpile())">Új leltári tétel</a>
-                    </AuthorizedView>
-
-                    <h3>Kategória paraméterek</h3>
-                    @if (this.SelectedItem.Temporal.Category != null)
-                    {
-                        @foreach (PartParameter parameter in this.SelectedItem.Temporal.Category.DefaultParameters)
-                        {
-                            PartParameter temp = parameter;
-                            PartParameter search = this.SelectedItem.Temporal.Parameters.FirstOrDefault(p => p.Name == temp.Name);
-                            if (search == null)
-                            {
-                                search = new PartParameter()
-                                {
-                                    Name = temp.Name,
-                                    Unit = temp.Unit,
-                                    DefaultValue = temp.Value,
-                                };
-                                this.SelectedItem.Temporal.Parameters.Add(search);
-
-                            }
-                            defaults.Add(search);
-
-                            <ParameterField ItemType="@PartParameter" AuthOR="@Permissions.ManagePartParameters" IsDefaultEditor="false" @bind-Value="search"></ParameterField>
-                        }
-                    }
-
-                    <h3>Opcionális paraméterek</h3>
-                    @foreach (PartParameter parameter in this.SelectedItem.Temporal.Parameters)
-                    {
-                        if (!defaults.Contains(parameter))
-                        {
-                            PartParameter temp = parameter;
-                            <p>
-                                <ParameterField Inline
-                                                ItemType="@PartParameter"
-                                                AuthOR="@($"{Permissions.EditParts} {Permissions.ManagePartParameters}")"
-                                                IsDefaultEditor="true"
-                                                @bind-Value="temp" />
-                                <AuthorizedView NeededRolesOR="@($"{Permissions.EditParts} {Permissions.ManagePartParameters}")">
-                                    <a @onclick="() => this.SelectedItem.Temporal.Parameters.Remove(temp)"><i></i></a>
-                                </AuthorizedView>
-                            </p>
-                        }
-                    }
-                    <AuthorizedView NeededRolesOR="@($"{Permissions.EditParts} {Permissions.ManagePartParameters}")">
-                        <a @onclick="() => this.SelectedItem.Temporal.Parameters.Add(new PartParameter())">Új paraméter</a>
-                    </AuthorizedView>
-
-                    <h3>Beszerezhetőségek</h3>
-                    @foreach (SupplySource supply in this.SelectedItem.Temporal.SupplySources)
-                    {
-                        SupplySource temp = supply;
-                        <div>
-                            <ComboBox Inline
-                                      AuthOR="@($"{Permissions.EditParts} {Permissions.ManagePartStock}")"
-                                      ItemType="@Supplier"
-                                      Items="GanzAdminDbEngine.Instance.GetCollection<Supplier>().FindAll()"
-                                      Name="@nameof(Part.SupplySources)"
-                                      Display="Beszállító"
-                                      @bind-Value="temp.Supplier" />
-
-                            <SimpleTextField Inline
-                                             AuthOR="@($"{Permissions.EditParts} {Permissions.ManagePartStock}")"
-                                             Type="text"
-                                             Display="Beszállítói termékkód"
-                                             Name="@nameof(SupplySource.SupplierItemId)"
-                                             @bind-Value="temp.SupplierItemId" />
-                            <AuthorizedView NeededRolesOR="@($"{Permissions.EditParts} {Permissions.ManagePartStock}")">
-                                <a @onclick="() => this.SelectedItem.Temporal.SupplySources.Remove(supply)"><i></i></a>
-                            </AuthorizedView>
-                        </div>
-                    }
-                    <AuthorizedView NeededRolesOR="@($"{Permissions.EditParts} {Permissions.ManagePartStock}")">
-                        <a @onclick="() => this.SelectedItem.Temporal.SupplySources.Add(new SupplySource())">Új forrás</a>
-                    </AuthorizedView>
-                    <hr />
+        <section class='popup' id='content'>
+            <div class='shadow'></div>
+            <div class='body'>
+                <div class='header'>
+                    <h2>@this.PopupTitle</h2>
+                    <a class='button' href="@($"/{this.BaseLink}")"></a>
                 </div>
 
-                <AuthorizedView NeededRolesOR="@($"{Permissions.EditParts} {Permissions.ManagePartStock} {Permissions.ManagePartParameters}")">
-                    <button type='submit'>Küldés</button>
-                </AuthorizedView>
-                @if (this.PopupDisplay != "add")
-                {
-                    <AuthorizedView NeededRolesOR="@Permissions.DeleteParts">
-                        <input type='button' class="delete" value="Törlés" @onclick="OnDefaultDeleteSubmit" />
-                    </AuthorizedView>
-                }
-            </EditForm>
-        </div>
-        @if (this.DialogLoading)
-        {
-            <div class='loading'> </div>
-        }
-    </section>
-}
+                <EditForm method="post" EditContext="new EditContext(true)" OnSubmit="OnDefaultAddEditSubmit">
+                    <div class='dynamic'>
+                        <SimpleTextField AuthOR="@Permissions.EditParts"
+                                         Type="text"
+                                         Display="Név"
+                                         Name="@nameof(Part.Name)"
+                                         @bind-Value="this.SelectedItem.Temporal.Name" />
+                        <FileField AuthOR="@Permissions.EditParts"
+                                   Display="Kép"
+                                   UrlOptional
+                                   @bind-Value="this.SelectedItem.Temporal.ImagePath" />
+                        <ComboBox AuthOR="@Permissions.EditParts"
+                                  ItemType="@Category"
+                                  Items="@GanzAdminDbEngine.Instance.Categories.FindAll()"
+                                  Name="@nameof(Part.Category)"
+                                  Display="Kategória"
+                                  PreventRenderOnChange="false"
+                                  @bind-Value="this.SelectedItem.Temporal.Category"
+                                  Changed="CategoryChanged" />
+                        <SimpleNumberField AuthOR="@Permissions.EditParts"
+                                           Type="text"
+                                           Display="Min. készlet"
+                                           Name="@nameof(Part.MinimumStock)"
+                                           @bind-Value="this.SelectedItem.Temporal.MinimumStock" />
+                        <SimpleTextField AuthOR="@Permissions.EditParts"
+                                         Type="text"
+                                         Display="Raktári készlet egység"
+                                         Name="@nameof(Part.StockUnit)"
+                                         @bind-Value="this.SelectedItem.Temporal.StockUnit" />
+                        <SimpleTextField AuthOR="@Permissions.EditParts"
+                                         Type="text"
+                                         Display="Rövid leírás"
+                                         Name="@nameof(Part.Name)"
+                                         @bind-Value="this.SelectedItem.Temporal.ShortDescription" />
+                        <FileField AuthOR="@Permissions.EditParts"
+                                   Display="Adatlap"
+                                   UrlOptional
+                                   @bind-Value="this.SelectedItem.Temporal.DateSheetUrl" />
 
+                        <h3>Raktérkészlet</h3>
+                        @foreach (Stockpile stock in this.SelectedItem.Temporal.Stock)
+                        {
+                            <div>
+                                <ComboBox Inline
+                                          AuthOR="@($"{Permissions.EditParts} {Permissions.ManagePartStock}")"
+                                          ItemType="@Location"
+                                          Items="@GanzAdminDbEngine.Instance.Locations.FindAll().Where(l => !l.IsVirtual)"
+                                          Name="@nameof(Part.Category)"
+                                          Display="Hely"
+                                          @bind-Value="stock.Location" />
+                                <SimpleNumberField Inline
+                                                   AuthOR="@($"{Permissions.EditParts} {Permissions.ManagePartStock}")"
+                                                   Type="text"
+                                                   Display="Mennyiség"
+                                                   Name="@nameof(Stockpile.Amount)"
+                                                   ItemType="long"
+                                                   @bind-Value="@stock.Amount" />
+                                <SimpleTextField Inline
+                                                 AuthOR="@($"{Permissions.EditParts} {Permissions.ManagePartStock}")"
+                                                 Type="text"
+                                                 Display="Megj."
+                                                 Name="@nameof(Stockpile.Comment)"
+                                                 @bind-Value="@stock.Comment" />
+                                <AuthorizedView NeededRolesOR="@($"{Permissions.EditParts} {Permissions.ManagePartStock}")">
+                                    <a @onclick="() => this.SelectedItem.Temporal.Stock.Remove(stock)"><i></i></a>
+                                </AuthorizedView>
+                            </div>
+                        }
+                        <AuthorizedView NeededRolesOR="@($"{Permissions.EditParts} {Permissions.ManagePartStock}")">
+                            <a @onclick="() => this.SelectedItem.Temporal.Stock.Add(new Stockpile())">Új leltári tétel</a>
+                        </AuthorizedView>
+
+                        <h3>Kategória paraméterek</h3>
+                        @if (this.SelectedItem.Temporal.Category != null)
+                        {
+                            @foreach (PartParameter parameter in this.SelectedItem.Temporal.Category.DefaultParameters)
+                            {
+                                PartParameter temp = parameter;
+                                PartParameter search = this.SelectedItem.Temporal.Parameters.FirstOrDefault(p => p.Name == temp.Name);
+                                if (search == null)
+                                {
+                                    search = new PartParameter()
+                                    {
+                                        Name = temp.Name,
+                                        Unit = temp.Unit,
+                                        DefaultValue = temp.Value,
+                                    };
+                                    this.SelectedItem.Temporal.Parameters.Add(search);
+
+                                }
+                                defaults.Add(search);
+
+                                <ParameterField ItemType="@PartParameter" AuthOR="@Permissions.ManagePartParameters" IsDefaultEditor="false" @bind-Value="search"></ParameterField>
+                            }
+                        }
+
+                        <h3>Opcionális paraméterek</h3>
+                        @foreach (PartParameter parameter in this.SelectedItem.Temporal.Parameters)
+                        {
+                            if (!defaults.Contains(parameter))
+                            {
+                                PartParameter temp = parameter;
+                                <p>
+                                    <ParameterField Inline
+                                                    ItemType="@PartParameter"
+                                                    AuthOR="@($"{Permissions.EditParts} {Permissions.ManagePartParameters}")"
+                                                    IsDefaultEditor="true"
+                                                    @bind-Value="temp" />
+                                    <AuthorizedView NeededRolesOR="@($"{Permissions.EditParts} {Permissions.ManagePartParameters}")">
+                                        <a @onclick="() => this.SelectedItem.Temporal.Parameters.Remove(temp)"><i></i></a>
+                                    </AuthorizedView>
+                                </p>
+                            }
+                        }
+                        <AuthorizedView NeededRolesOR="@($"{Permissions.EditParts} {Permissions.ManagePartParameters}")">
+                            <a @onclick="() => this.SelectedItem.Temporal.Parameters.Add(new PartParameter())">Új paraméter</a>
+                        </AuthorizedView>
+
+                        <h3>Beszerezhetőségek</h3>
+                        @foreach (SupplySource supply in this.SelectedItem.Temporal.SupplySources)
+                        {
+                            SupplySource temp = supply;
+                            <div>
+                                <ComboBox Inline
+                                          AuthOR="@($"{Permissions.EditParts} {Permissions.ManagePartStock}")"
+                                          ItemType="@Supplier"
+                                          Items="GanzAdminDbEngine.Instance.GetCollection<Supplier>().FindAll()"
+                                          Name="@nameof(Part.SupplySources)"
+                                          Display="Beszállító"
+                                          @bind-Value="temp.Supplier" />
+
+                                <SimpleTextField Inline
+                                                 AuthOR="@($"{Permissions.EditParts} {Permissions.ManagePartStock}")"
+                                                 Type="text"
+                                                 Display="Beszállítói termékkód"
+                                                 Name="@nameof(SupplySource.SupplierItemId)"
+                                                 @bind-Value="temp.SupplierItemId" />
+                                <AuthorizedView NeededRolesOR="@($"{Permissions.EditParts} {Permissions.ManagePartStock}")">
+                                    <a @onclick="() => this.SelectedItem.Temporal.SupplySources.Remove(supply)"><i></i></a>
+                                </AuthorizedView>
+                            </div>
+                        }
+                        <AuthorizedView NeededRolesOR="@($"{Permissions.EditParts} {Permissions.ManagePartStock}")">
+                            <a @onclick="() => this.SelectedItem.Temporal.SupplySources.Add(new SupplySource())">Új forrás</a>
+                        </AuthorizedView>
+                        <hr />
+                    </div>
+
+                    <AuthorizedView NeededRolesOR="@($"{Permissions.EditParts} {Permissions.ManagePartStock} {Permissions.ManagePartParameters}")">
+                        <button type='submit'>Küldés</button>
+                    </AuthorizedView>
+                    @if (this.PopupDisplay != "add")
+                    {
+                        <AuthorizedView NeededRolesOR="@Permissions.DeleteParts">
+                            <input type='button' class="delete" value="Törlés" @onclick="OnDefaultDeleteSubmit" />
+                        </AuthorizedView>
+                    }
+                </EditForm>
+            </div>
+            @if (this.DialogLoading)
+            {
+                <div class='loading'> </div>
+            }
+        </section>
+    }
+</AuthorizedView>
 
 @code
 {

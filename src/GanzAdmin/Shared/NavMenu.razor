@@ -6,11 +6,11 @@
     <span id='menu' title='Menü'></span>
     <ul>
         <li><a href='/my-profile'>Saját adatok</a></li>
-        <li><NavLink href="/members">Tagok</NavLink></li>
-        <li><a href='/parts'>Alkatrészek</a></li>
-        <li><a href='/categories'>Kategóriák</a></li>
-        <li><a href='/locations'>Helyek</a></li>
-        <li><a href='/suppliers'>Beszállítók</a></li>
+        <AuthorizedView NeededRolesOR="@Permissions.ListMembers"><li><NavLink href="/members">Tagok</NavLink></li></AuthorizedView>
+        <AuthorizedView NeededRolesOR="@Permissions.ListParts"><li><a href='/parts'>Alkatrészek</a></li></AuthorizedView>
+        <AuthorizedView NeededRolesOR="@Permissions.ListCategories"><li><a href='/categories'>Kategóriák</a></li></AuthorizedView>
+        <AuthorizedView NeededRolesOR="@Permissions.ListLocations"><li><a href='/locations'>Helyek</a></li></AuthorizedView>
+        <AuthorizedView NeededRolesOR="@Permissions.ListSuppliers"><li><a href='/suppliers'>Beszállítók</a></li></AuthorizedView>
         <li><NavLink href="/help">Súgó</NavLink></li>
 
         <li><a href="" @onclick="@OnLogOut" @onclick:preventDefault>Kilépés</a></li>

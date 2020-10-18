@@ -4,120 +4,121 @@
 
 @inherits DataHandlingController<Member>
 
-<aside class='loading'>
-    <AuthorizedView NeededRolesOR="@Permissions.EditMembers">
-        <NavLink class="addlink" href="@($"/{this.BaseLink}/add")">Új @this.DataName</NavLink>
-    </AuthorizedView>
-</aside>
+<AuthorizedView NeededRolesOR="@Permissions.ListMembers">
+    <aside class='loading'>
+        <AuthorizedView NeededRolesOR="@Permissions.EditMembers">
+            <NavLink class="addlink" href="@($"/{this.BaseLink}/add")">Új @this.DataName</NavLink>
+        </AuthorizedView>
+    </aside>
 
-<main class='@(this.ItemList == null ? "loading" : "")'>
-    @if (this.ItemList != null)
-    {
-        <div id='table-wrapper'>
-            <table id='data' class="display nowrap">
-                <thead>
-                    <tr>
-                        <DataGridHeader IsPinnable IsSortable>Név</DataGridHeader>
-                        <DataGridHeader IsCollapsible IsSortable>Aktív?</DataGridHeader>
-                        <DataGridHeader IsCollapsible IsSortable>Tagdíj befizetve</DataGridHeader>
-                        <DataGridHeader IsCollapsible IsSortable>Foglalkozásra bejegyzés</DataGridHeader>
-                    </tr>
-                </thead>
-
-                <tbody>
-                    @foreach (Member member in this.ItemList)
-                    {
-                        <tr>
-                            <td><NavLink href="@($"/{this.BaseLink}/{member.Id}")">@member.Name</NavLink></td>
-                            <td>@(member.Active ? "🟩 Igen" : "🟥 Nem")</td>
-                            <td>
-                                @member.PaidUntil
-                                @if(member.Active && member.PaidUntil < DateTime.Now)
-                                {
-                                    <span> ❗</span>
-                                }
-                            </td>
-                            <td>
-                                <AuthorizedView NeededRolesOR="@Permissions.EditParts">
-                                    @if (!member.Attendances.Exists(a => a.Occasion.Date == DateTime.Today))
-                                    {
-                                        <a @onclick="() => this.OnLogAttenance(member)">Jelenléti ív kitöltés</a>
-                                    }
-                                </AuthorizedView>
-                            </td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        </div>
-    }
-</main>
-
-@if (this.SelectedItem != null)
-{
-    <section class='popup' id='content'>
-        <div class='shadow'></div>
-        <div class='body'>
-            <div class='header'>
-                <h2>@this.PopupTitle</h2>
-                <a class='button' href="@($"/{this.BaseLink}")"></a>
-            </div>
-
-            <EditForm method="post" EditContext="new EditContext(true)" OnValidSubmit="OnDefaultAddEditSubmit">
-                <div class='dynamic'>
-                    <SimpleTextField AuthOR="@Permissions.EditMembers" Type="text" Display="Név" Name="@nameof(Member.Name)" @bind-Value="this.SelectedItem.Temporal.Name" />
-                    <SimpleTextField AuthOR="@Permissions.EditMembers" Type="text" Display="Cím" Name="@nameof(Member.Address)" @bind-Value="this.SelectedItem.Temporal.Address" />
-                    <SimpleTextField AuthOR="@Permissions.EditMembers" Type="text" Display="Telefon" Name="@nameof(Member.Phone)" @bind-Value="this.SelectedItem.Temporal.Phone" />
-                    <SimpleTextField AuthOR="@Permissions.EditMembers" Type="text" Display="Email" Name="@nameof(Member.Email)" @bind-Value="this.SelectedItem.Temporal.Email" />
-
-                    <SimpleDateField AuthOR="@Permissions.EditMembers" Type="text" Display="Tagdíj befizetve" Name="@nameof(Member.PaidUntil)" @bind-Value="this.SelectedItem.Temporal.PaidUntil" />
-                    <SimpleCheckField AuthOR="@Permissions.EditMembers" Type="switch" Display="Aktív?" TrueValue="🟩 Igen" FalseValue="🟥 Nem" Name="@nameof(Member.Active)" @bind-Value="@this.SelectedItem.Temporal.Active" />
-
-
-                    <SimpleTextField AuthOR="@Permissions.EditMembers" Type="text" Display="Felhasználónév" Name="@nameof(Member.Username)" @bind-Value="this.SelectedItem.Temporal.Username" />
-                    <SimpleTextField AuthOR="@Permissions.EditMembers" Type="password" Display="Jelszó" Name="@nameof(Member.Password)" @bind-Value="this.Password" />
-
-                    <div class="permissoins-container">
-                        @foreach (string permission in Permissions.AllPermissions)
-                        {
-                            if (permission != null)
-                            {
-                                bool temp = this.SelectedItem.Temporal.Roles.Contains(permission);
-                                <SimpleCheckField AuthAND="@($"{Permissions.EditParts} {permission}")"
-                                                  Inline
-                                                  Type="switch"
-                                                  Display="@permission"
-                                                  Name="@permission"
-                                                  TrueValue="Igen"
-                                                  FalseValue="Nem"
-                                                  Value="@temp"
-                                                  ValueChanged="@(e => this.EditPermission(permission, e))" />
-                            }
-                            else
-                            {
-                                <span></span>
-                            }
-                        }
-                    </div>
-                </div>
-                <AuthorizedView NeededRolesOR="@Permissions.EditMembers">
-                    <button type='submit'>Küldés</button>
-                </AuthorizedView>
-                @if (this.PopupDisplay != "add")
-                {
-                    <AuthorizedView NeededRolesOR="@Permissions.DeleteMembers">
-                        <input type='button' class="delete" value="Törlés" @onclick="OnDefaultDeleteSubmit" />
-                    </AuthorizedView>
-                }
-            </EditForm>
-        </div>
-        @if (this.DialogLoading)
+    <main class='@(this.ItemList == null ? "loading" : "")'>
+        @if (this.ItemList != null)
         {
-            <div class='loading'></div>
-        }
-    </section>
-}
+            <div id='table-wrapper'>
+                <table id='data' class="display nowrap">
+                    <thead>
+                        <tr>
+                            <DataGridHeader IsPinnable IsSortable>Név</DataGridHeader>
+                            <DataGridHeader IsCollapsible IsSortable>Aktív?</DataGridHeader>
+                            <DataGridHeader IsCollapsible IsSortable>Tagdíj befizetve</DataGridHeader>
+                            <DataGridHeader IsCollapsible IsSortable>Foglalkozásra bejegyzés</DataGridHeader>
+                        </tr>
+                    </thead>
 
+                    <tbody>
+                        @foreach (Member member in this.ItemList)
+                        {
+                            <tr>
+                                <td><NavLink href="@($"/{this.BaseLink}/{member.Id}")">@member.Name</NavLink></td>
+                                <td>@(member.Active ? "🟩 Igen" : "🟥 Nem")</td>
+                                <td>
+                                    @member.PaidUntil
+                                    @if (member.Active && member.PaidUntil < DateTime.Now)
+                                    {
+                                        <span> ❗</span>
+                                    }
+                                </td>
+                                <td>
+                                    <AuthorizedView NeededRolesOR="@Permissions.EditParts">
+                                        @if (!member.Attendances.Exists(a => a.Occasion.Date == DateTime.Today))
+                                        {
+                                            <a @onclick="() => this.OnLogAttenance(member)">Jelenléti ív kitöltés</a>
+                                        }
+                                    </AuthorizedView>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </main>
+
+    @if (this.SelectedItem != null)
+    {
+        <section class='popup' id='content'>
+            <div class='shadow'></div>
+            <div class='body'>
+                <div class='header'>
+                    <h2>@this.PopupTitle</h2>
+                    <a class='button' href="@($"/{this.BaseLink}")"></a>
+                </div>
+
+                <EditForm method="post" EditContext="new EditContext(true)" OnValidSubmit="OnDefaultAddEditSubmit">
+                    <div class='dynamic'>
+                        <SimpleTextField AuthOR="@Permissions.EditMembers" Type="text" Display="Név" Name="@nameof(Member.Name)" @bind-Value="this.SelectedItem.Temporal.Name" />
+                        <SimpleTextField AuthOR="@Permissions.EditMembers" Type="text" Display="Cím" Name="@nameof(Member.Address)" @bind-Value="this.SelectedItem.Temporal.Address" />
+                        <SimpleTextField AuthOR="@Permissions.EditMembers" Type="text" Display="Telefon" Name="@nameof(Member.Phone)" @bind-Value="this.SelectedItem.Temporal.Phone" />
+                        <SimpleTextField AuthOR="@Permissions.EditMembers" Type="text" Display="Email" Name="@nameof(Member.Email)" @bind-Value="this.SelectedItem.Temporal.Email" />
+
+                        <SimpleDateField AuthOR="@Permissions.EditMembers" Type="text" Display="Tagdíj befizetve" Name="@nameof(Member.PaidUntil)" @bind-Value="this.SelectedItem.Temporal.PaidUntil" />
+                        <SimpleCheckField AuthOR="@Permissions.EditMembers" Type="switch" Display="Aktív?" TrueValue="🟩 Igen" FalseValue="🟥 Nem" Name="@nameof(Member.Active)" @bind-Value="@this.SelectedItem.Temporal.Active" />
+
+
+                        <SimpleTextField AuthOR="@Permissions.EditMembers" Type="text" Display="Felhasználónév" Name="@nameof(Member.Username)" @bind-Value="this.SelectedItem.Temporal.Username" />
+                        <SimpleTextField AuthOR="@Permissions.EditMembers" Type="password" Display="Jelszó" Name="@nameof(Member.Password)" @bind-Value="this.Password" />
+
+                        <div class="permissoins-container">
+                            @foreach (string permission in Permissions.AllPermissions)
+                            {
+                                if (permission != null)
+                                {
+                                    bool temp = this.SelectedItem.Temporal.Roles.Contains(permission);
+                                    <SimpleCheckField AuthAND="@($"{Permissions.EditParts} {permission}")"
+                                                      Inline
+                                                      Type="switch"
+                                                      Display="@permission"
+                                                      Name="@permission"
+                                                      TrueValue="Igen"
+                                                      FalseValue="Nem"
+                                                      Value="@temp"
+                                                      ValueChanged="@(e => this.EditPermission(permission, e))" />
+                                }
+                                else
+                                {
+                                    <span></span>
+                                }
+                            }
+                        </div>
+                    </div>
+                    <AuthorizedView NeededRolesOR="@Permissions.EditMembers">
+                        <button type='submit'>Küldés</button>
+                    </AuthorizedView>
+                    @if (this.PopupDisplay != "add")
+                    {
+                        <AuthorizedView NeededRolesOR="@Permissions.DeleteMembers">
+                            <input type='button' class="delete" value="Törlés" @onclick="OnDefaultDeleteSubmit" />
+                        </AuthorizedView>
+                    }
+                </EditForm>
+            </div>
+            @if (this.DialogLoading)
+            {
+                <div class='loading'></div>
+            }
+        </section>
+    }
+</AuthorizedView>
 
 @code
 {
