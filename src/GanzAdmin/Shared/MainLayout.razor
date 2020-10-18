@@ -3,6 +3,10 @@
 @namespace GanzAdmin.Shared
 @inherits LayoutComponentBase
 
+@if (!this.m_HasRendered)
+{
+    <div id="loading-overlay"></div>
+}
 <AuthorizedView>
     <header>
         <h1>
@@ -52,11 +56,14 @@
 
     private string Search;
 
+    private bool m_HasRendered;
+
     protected override void OnAfterRender(bool firstRender)
     {
         if (firstRender)
         {
             JsRuntime.InvokeVoidAsync("onBlazorReady");
+            this.m_HasRendered = true;
         }
         else
         {

@@ -3,102 +3,103 @@
 
 @inherits DataHandlingController<NetworkDevice>
 
-<aside class='@(this.ItemList == null ? "loading" : "")'>
-    @if (this.ItemList != null)
-    {
-        @*<TreeLevel
-                   Items="@(this.ItemList.ToEntities<NetworkDevice>())"
-                   Root="@null"
-                   Filter="@((e, r) => (e as Location).ParentLocation == null && r == null || (e as Location).ParentLocation?.Id == r?.Id)"
-                   UrlTemplate="@((e) => $"/{this.BaseLink}/{e.Id}")"/>*@
-    }
-    <AuthorizedView NeededRolesOR="@Permissions.AccessNetworkDiagnostics">
-        <NavLink class="addlink" href="@($"/{this.BaseLink}/add")">Új @this.DataName</NavLink>
-    </AuthorizedView>
-</aside>
-
-<main class='@(this.ItemList == null ? "loading" : "")'>
-    @if (this.ItemList != null)
-    {
-        <div id='table-wrapper'>
-            <table id='data' class="display nowrap">
-                <thead>
-                    <tr>
-                        <DataGridHeader IsPinnable IsSortable>Név</DataGridHeader>
-                        <DataGridHeader IsCollapsible IsSortable>Leírás</DataGridHeader>
-                        <DataGridHeader IsCollapsible IsSortable>Cím</DataGridHeader>
-                        <DataGridHeader IsCollapsible IsSortable>Elérhető?</DataGridHeader>
-                        <DataGridHeader IsCollapsible IsSortable>Tesztelés</DataGridHeader>
-                    </tr>
-                </thead>
-
-                <tbody>
-                    @foreach (NetworkDevice item in this.ItemList)
-                    {
-                    <tr>
-                        <td><NavLink href="@($"/{this.BaseLink}/{item.Id}")">@item.Name</NavLink></td>
-                        <td>@item.Description</td>
-                        <td><a href="http://@item.Address" target="_blank">@item.Address <i></i></a></td>
-                        <td class="center">
-                            @switch (item.Pinged)
-                            {
-                                case NetworkDevice.PingResult.Unknown:
-                                    <span>❔</span>
-                                    this.Ping(item);
-                                    break;
-                                case NetworkDevice.PingResult.PingInProgress:
-                                    <span>❔</span>
-                                    break;
-                                case NetworkDevice.PingResult.Found:
-                                    <span>🟩</span>
-                                    break;
-                                case NetworkDevice.PingResult.NotFound:
-                                    <span>🟥</span>
-                                    break;
-                            }
-                        </td>
-                        <td><a @onclick="() => this.ResetDevice(item)">Teszt</a></td>
-                    </tr>
-                    }
-                </tbody>
-            </table>
-        </div>
-    }
-</main>
-
-@if (this.SelectedItem != null)
-{
-    <section class='popup' id='content'>
-        <div class='shadow'></div>
-        <div class='body'>
-            <div class='header'>
-                <h2>@this.PopupTitle</h2>
-                <a class='button' href="@($"/{this.BaseLink}")"></a>
-            </div>
-
-            <EditForm method="post" EditContext="new EditContext(true)" OnSubmit="OnDefaultAddEditSubmit">
-                <div class='dynamic'>
-                    <SimpleTextField AuthOR="@Permissions.AccessNetworkDiagnostics" Type="text" Display="Név" @bind-Value="this.SelectedItem.Temporal.Name" />
-                    <SimpleTextField AuthOR="@Permissions.AccessNetworkDiagnostics" Type="text" Display="Cím" @bind-Value="this.SelectedItem.Temporal.Address" />
-                    <SimpleTextField AuthOR="@Permissions.AccessNetworkDiagnostics" Type="text" Display="Leírás" @bind-Value="this.SelectedItem.Temporal.Description" />
-                </div>
-                <AuthorizedView NeededRolesOR="@Permissions.AccessNetworkDiagnostics">
-                    <button type='submit'>Küldés</button>
-                </AuthorizedView>
-                @if (this.PopupDisplay != "add")
-                {
-                    <AuthorizedView NeededRolesOR="@Permissions.AccessNetworkDiagnostics">
-                        <input type='button' class="delete" value="Törlés" @onclick="OnDefaultDeleteSubmit" />
-                    </AuthorizedView>
-                }
-            </EditForm>
-        </div>
-        @if (this.DialogLoading)
+<AuthorizedView NeededRolesOR="@Permissions.AccessNetworkDiagnostics">
+    <aside class='@(this.ItemList == null ? "loading" : "")'>
+        @if (this.ItemList != null)
         {
-            <div class='loading'> </div>
+            @*<TreeLevel
+                Items="@(this.ItemList.ToEntities<NetworkDevice>())"
+                Root="@null"
+                Filter="@((e, r) => (e as Location).ParentLocation == null && r == null || (e as Location).ParentLocation?.Id == r?.Id)"
+                UrlTemplate="@((e) => $"/{this.BaseLink}/{e.Id}")"/>*@
         }
-    </section>
-}
+
+        <NavLink class="addlink" href="@($"/{this.BaseLink}/add")">Új @this.DataName</NavLink>
+    </aside>
+
+    <main class='@(this.ItemList == null ? "loading" : "")'>
+        @if (this.ItemList != null)
+        {
+            <div id='table-wrapper'>
+                <table id='data' class="display nowrap">
+                    <thead>
+                        <tr>
+                            <DataGridHeader IsPinnable IsSortable>Név</DataGridHeader>
+                            <DataGridHeader IsCollapsible IsSortable>Leírás</DataGridHeader>
+                            <DataGridHeader IsCollapsible IsSortable>Cím</DataGridHeader>
+                            <DataGridHeader IsCollapsible IsSortable>Elérhető?</DataGridHeader>
+                            <DataGridHeader IsCollapsible IsSortable>Tesztelés</DataGridHeader>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @foreach (NetworkDevice item in this.ItemList)
+                        {
+                            <tr>
+                                <td><NavLink href="@($"/{this.BaseLink}/{item.Id}")">@item.Name</NavLink></td>
+                                <td>@item.Description</td>
+                                <td><a href="http://@item.Address" target="_blank">@item.Address <i></i></a></td>
+                                <td class="center">
+                                    @switch (item.Pinged)
+                                    {
+                                        case NetworkDevice.PingResult.Unknown:
+                                            <span>❔</span>
+                                            this.Ping(item);
+                                            break;
+                                        case NetworkDevice.PingResult.PingInProgress:
+                                            <span>❔</span>
+                                            break;
+                                        case NetworkDevice.PingResult.Found:
+                                            <span>🟩</span>
+                                            break;
+                                        case NetworkDevice.PingResult.NotFound:
+                                            <span>🟥</span>
+                                            break;
+                                    }
+                                </td>
+                                <td><a @onclick="() => this.ResetDevice(item)">Teszt</a></td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </main>
+
+    @if (this.SelectedItem != null)
+    {
+        <section class='popup' id='content'>
+            <div class='shadow'></div>
+            <div class='body'>
+                <div class='header'>
+                    <h2>@this.PopupTitle</h2>
+                    <a class='button' href="@($"/{this.BaseLink}")"></a>
+                </div>
+
+                <EditForm method="post" EditContext="new EditContext(true)" OnSubmit="OnDefaultAddEditSubmit">
+                    <div class='dynamic'>
+                        <SimpleTextField AuthOR="@Permissions.AccessNetworkDiagnostics" Type="text" Display="Név" @bind-Value="this.SelectedItem.Temporal.Name" />
+                        <SimpleTextField AuthOR="@Permissions.AccessNetworkDiagnostics" Type="text" Display="Cím" @bind-Value="this.SelectedItem.Temporal.Address" />
+                        <SimpleTextField AuthOR="@Permissions.AccessNetworkDiagnostics" Type="text" Display="Leírás" @bind-Value="this.SelectedItem.Temporal.Description" />
+                    </div>
+                    <AuthorizedView NeededRolesOR="@Permissions.AccessNetworkDiagnostics">
+                        <button type='submit'>Küldés</button>
+                    </AuthorizedView>
+                    @if (this.PopupDisplay != "add")
+                    {
+                        <AuthorizedView NeededRolesOR="@Permissions.AccessNetworkDiagnostics">
+                            <input type='button' class="delete" value="Törlés" @onclick="OnDefaultDeleteSubmit" />
+                        </AuthorizedView>
+                    }
+                </EditForm>
+            </div>
+            @if (this.DialogLoading)
+            {
+                <div class='loading'> </div>
+            }
+        </section>
+    }
+</AuthorizedView>
 
 
 @code

@@ -7,58 +7,60 @@
 @using System.IO;
 @using Microsoft.AspNetCore.Hosting;
 
-<aside>
-    @aside
-</aside>
+<AuthorizedView NeededRolesOR="@($"{Permissions.AccessOwnFileStorage} {Permissions.AccessSecretFileStorage} {Permissions.AccessSharedFileStorage}")">
+    <aside>
+        @aside
+    </aside>
 
-<main class="filebrowser">
-    <nav class="breadcrumb">
-        <span>&gt;</span><a href="" @onclick='() => OnBreadCrumb("")' @onclick:preventDefault>Home</a><span> / </span>
-        @{
-            if (this.m_Loaded)
-            {
-                string build = "";
-                foreach (string s in WebPath.Split('\\', StringSplitOptions.RemoveEmptyEntries))
+    <main class="filebrowser">
+        <nav class="breadcrumb">
+            <span>&gt;</span><a href="" @onclick='() => OnBreadCrumb("")' @onclick:preventDefault>Home</a><span> / </span>
+            @{
+                if (this.m_Loaded)
                 {
-                    build += $"{s}\\";
-                    string tmp = build;
-                    <a href="@build" @onclick="() => OnBreadCrumb(tmp)" @onclick:preventDefault>@s</a><span> / </span>
+                    string build = "";
+                    foreach (string s in WebPath.Split('\\', StringSplitOptions.RemoveEmptyEntries))
+                    {
+                        build += $"{s}\\";
+                        string tmp = build;
+                        <a href="@build" @onclick="() => OnBreadCrumb(tmp)" @onclick:preventDefault>@s</a><span> / </span>
+                    }
                 }
             }
+        </nav>
+        @if (this.m_Loaded)
+        {
+            foreach (string file in Directory.GetDirectories(this.LocalPath))
+            {
+                <FileBox IsFolder="true" Path="@file.Split('\\', '/').Last()" Clicked="OnSelect" DoubleClicked="OnOpen" />
+            }
+
+            foreach (string file in Directory.GetFiles(this.LocalPath))
+            {
+                <FileBox IsFolder="false" Path="@file.Split('\\', '/').Last()" Clicked="OnSelect" DoubleClicked="OnOpen" />
+            }
         }
-    </nav>
-    @if (this.m_Loaded)
+    </main>
+
+    @if (this.WebSelectedFile != null)
     {
-        foreach (string file in Directory.GetDirectories(this.LocalPath))
-        {
-            <FileBox IsFolder="true" Path="@file.Split('\\', '/').Last()" Clicked="OnSelect" DoubleClicked="OnOpen" />
-        }
+        <section class='popup' id='content'>
+            <div class='shadow'></div>
 
-        foreach (string file in Directory.GetFiles(this.LocalPath))
-        {
-            <FileBox IsFolder="false" Path="@file.Split('\\', '/').Last()" Clicked="OnSelect" DoubleClicked="OnOpen" />
-        }
+            <div class='body'>
+                <div class='header'>
+                    <h2>@this.WebSelectedFile.Split("\\").Last()</h2>
+                    <a href="#" class='button' @onclick='() => this.WebSelectedFile = null' @onclick:preventDefault></a>
+                    <a href="@this.WebSelectedFile" target="_blank" download class='button'></a>
+                </div>
+
+                <div class="file-preview">
+                    <FileViewer LocalFile="@this.LocalSelectedFile" WebFile="@this.WebSelectedFile" />
+                </div>
+            </div>
+        </section>
     }
-</main>
-
-@if (this.WebSelectedFile != null)
-{
-    <section class='popup' id='content'>
-        <div class='shadow'></div>
-
-        <div class='body'>
-            <div class='header'>
-                <h2>@this.WebSelectedFile.Split("\\").Last()</h2>
-                <a href="#" class='button' @onclick='() => this.WebSelectedFile = null' @onclick:preventDefault></a>
-                <a href="@this.WebSelectedFile" target="_blank" download class='button'></a>
-            </div>
-
-            <div class="file-preview">
-                <FileViewer LocalFile="@this.LocalSelectedFile" WebFile="@this.WebSelectedFile" />
-            </div>
-        </div>
-    </section>
-}
+</AuthorizedView>
 
 @code
 {
