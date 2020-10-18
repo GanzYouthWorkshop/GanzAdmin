@@ -30,6 +30,10 @@ namespace GanzAdmin.Database.Models
         public const string EditSuppliers = nameof(EditSuppliers);
         public const string DeleteSuppliers = nameof(DeleteSuppliers);
 
+        public const string ListFrags = nameof(ListFrags);
+        public const string EditFrags = nameof(EditFrags);
+        public const string DeleteFrags = nameof(DeleteFrags);
+
         public const string AddProject = nameof(AddProject);
         public const string EditAnyProject = nameof(EditAnyProject);
         public const string DeleteProject = nameof(DeleteProject);
@@ -37,7 +41,6 @@ namespace GanzAdmin.Database.Models
         public const string AddKit = nameof(AddKit);
         public const string EditKit = nameof(EditKit);
         public const string DeleteKit = nameof(DeleteKit);
-
 
         public const string AddCourse = nameof(AddCourse);
         public const string EditCourse = nameof(EditCourse);
@@ -77,6 +80,10 @@ namespace GanzAdmin.Database.Models
             ListSuppliers,
             EditSuppliers,
             DeleteSuppliers,
+
+            ListFrags,
+            EditFrags,
+            DeleteFrags,
 
             AddProject,
             EditAnyProject,
