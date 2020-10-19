@@ -26,6 +26,10 @@
                 <td><label for="pass">Jelszó:</label></td>
                 <td><input type="password" name="pass" @bind-value="this.Pass" /></td>
             </tr>
+            <tr>
+                <td><label for="pass">Belépve maradok:</label></td>
+                <td><input type="checkbox" name="remind-me" @bind-value="this.RemindMe" /></td>
+            </tr>
         </table>
         
         <center><button type="submit">Belépés</button></center>
@@ -46,12 +50,13 @@
 
     private string User { get; set; }
     private string Pass { get; set; }
+    private bool RemindMe { get; set; }
 
     private string ErrorMessage { get; set; }
 
     private void HandleValidSubmit()
     {
-        if (this.AuthProvider.TrySignIn(this.User, this.Pass))
+        if (this.AuthProvider.TrySignIn(this.User, this.Pass, this.RemindMe))
         {
             this.NavMan.NavigateTo(this.NavMan.Uri);
             JS.InvokeVoidAsync("alertify.success", "Sikeres belépés!");
