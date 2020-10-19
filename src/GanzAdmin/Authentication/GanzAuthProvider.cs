@@ -57,7 +57,7 @@ namespace GanzAdmin.Authentication
 
                 if (cookies.ContainsKey(AUTH_COOKIE))
                 {
-                    var cookie = cookies[AUTH_COOKIE];
+                    string cookie = cookies[AUTH_COOKIE];
 
                     this.CurrentSession = this.m_SessionManager.CheckTokenValidity(cookie);
                 }
@@ -105,29 +105,29 @@ namespace GanzAdmin.Authentication
             this.m_Javascript.InvokeVoidAsync(JS_REMOVE_COOKIE, name);
         }
 
-        public bool TrySignIn(string user, string pass)
+        public bool TrySignIn(string user, string pass, bool remindMe)
         {
             bool result = false;
 
             GanzAdminDbEngine db = GanzAdminDbEngine.Instance;
-            Member member = db.Members.FindOne(m => m.Username == user);
+            Member member = db.Members.FindOne(m => m.Username.ToLowerInvariant() == user.ToLowerInvariant());
             if(member != null && member.Password == GanzUtils.Sha256(pass))
             {
-                this.SignIn(member);
+                this.SignIn(member, remindMe ? 30 : 1);
                 result = true;
             }
 
             return result;
         }
 
-        public async Task SignIn(Member member)
+        public void SignIn(Member member, int daysUntilExpiration)
         {
-            SessionManager.Session session = this.m_SessionManager.RegisterNewSession(member.Id);
+            SessionManager.Session session = this.m_SessionManager.RegisterNewSession(member.Id, daysUntilExpiration);
             this.CurrentSession = session;
-            this.MakeCookie(AUTH_COOKIE, session.SecurityToken, 3);
+            this.MakeCookie(AUTH_COOKIE, session.SecurityToken, daysUntilExpiration);
         }
 
-        public async Task SignOut()
+        public void SignOut()
         {
             this.m_SessionManager.RevokeSession(this.CurrentSession);
             this.DeleteCookie(AUTH_COOKIE);

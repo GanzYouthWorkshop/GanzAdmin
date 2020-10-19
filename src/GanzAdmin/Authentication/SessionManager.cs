@@ -30,12 +30,12 @@ namespace GanzAdmin.Authentication
             return result;
         }
 
-        public Session RegisterNewSession(long id)
+        public Session RegisterNewSession(long id, int daysToExpire)
         {
             Session result = new Session()
             {
                 MemberId = id,
-                ExirationDateUtc = DateTime.UtcNow.AddMinutes(30),
+                ExirationDateUtc = DateTime.UtcNow.AddDays(daysToExpire),
                 SecurityToken = Guid.NewGuid().ToString(),
             };
 
