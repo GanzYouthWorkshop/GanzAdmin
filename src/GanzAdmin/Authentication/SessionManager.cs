@@ -13,6 +13,7 @@ namespace GanzAdmin.Authentication
             public long MemberId { get; set; }
             public string SecurityToken { get; set; }
             public DateTime ExirationDateUtc { get; set; }
+            public bool Remind { get; set; }
         }
 
         public object m_Lock = false;
@@ -30,13 +31,14 @@ namespace GanzAdmin.Authentication
             return result;
         }
 
-        public Session RegisterNewSession(long id, int daysToExpire)
+        public Session RegisterNewSession(long id, int daysToExpire, bool remind)
         {
             Session result = new Session()
             {
                 MemberId = id,
                 ExirationDateUtc = DateTime.UtcNow.AddDays(daysToExpire),
                 SecurityToken = Guid.NewGuid().ToString(),
+                Remind = remind
             };
 
             lock (this.m_Lock)
@@ -65,6 +67,11 @@ namespace GanzAdmin.Authentication
                 Session session = this.SessionEntries.FirstOrDefault(s => s.SecurityToken == sessionToken && s.ExirationDateUtc > DateTime.UtcNow);
                 if(session != null)
                 {
+                    if(session.Remind)
+                    {
+                        session.ExirationDateUtc.AddDays(30);
+                    }
+
                     result = session;
                 }
             }
@@ -81,6 +88,11 @@ namespace GanzAdmin.Authentication
 
                 if(this.SessionEntries.Contains(session))
                 {
+                    if (session.Remind)
+                    {
+                        session.ExirationDateUtc.AddDays(30);
+                    }
+
                     result = session;
                 }
             }

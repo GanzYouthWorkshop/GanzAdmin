@@ -113,16 +113,16 @@ namespace GanzAdmin.Authentication
             Member member = db.Members.FindOne(m => m.Username.ToLowerInvariant() == user.ToLowerInvariant());
             if(member != null && member.Password == GanzUtils.Sha256(pass))
             {
-                this.SignIn(member, remindMe ? 30 : 1);
+                this.SignIn(member, remindMe ? 30 : 1, remindMe);
                 result = true;
             }
 
             return result;
         }
 
-        public void SignIn(Member member, int daysUntilExpiration)
+        public void SignIn(Member member, int daysUntilExpiration, bool remind)
         {
-            SessionManager.Session session = this.m_SessionManager.RegisterNewSession(member.Id, daysUntilExpiration);
+            SessionManager.Session session = this.m_SessionManager.RegisterNewSession(member.Id, daysUntilExpiration, remind);
             this.CurrentSession = session;
             this.MakeCookie(AUTH_COOKIE, session.SecurityToken, daysUntilExpiration);
         }
