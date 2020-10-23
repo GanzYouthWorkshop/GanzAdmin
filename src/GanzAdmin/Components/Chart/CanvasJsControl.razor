@@ -1,0 +1,24 @@
+﻿<div @ref="this.m_Dom"></div>
+
+@code
+{
+    [Inject]
+    private IJSRuntime Js { get; set; }
+
+    [Parameter]
+    public List<ChartSeries> Series { get; set; }
+
+    [Parameter]
+    public bool Animated { get; set; }
+
+    private ElementReference m_Dom;
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+        {
+            string s = System.Text.Json.JsonSerializer.Serialize<List<ChartSeries>>(this.Series);
+            this.Js.InvokeVoidAsync("createCanvasJs", this.m_Dom, this.Animated, s);
+        }
+    }
+}

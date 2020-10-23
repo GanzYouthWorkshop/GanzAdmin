@@ -287,3 +287,21 @@ function createUploader(form)
 
     }
 }
+
+function createCanvasJs(el, animated, series)
+{
+	alert("");
+	console.log(series);
+	var options =
+	{
+		exportEnabled: true,
+		animationEnabled: animated,
+		title:
+		{
+			text: "jQuery Spline Area Chart"
+		},
+		data: series
+	};
+	$(el).CanvasJSChart(options);
+
+}

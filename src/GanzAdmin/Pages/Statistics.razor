@@ -1,10 +1,42 @@
 ﻿@page "/statistics"
 
+@using GanzAdmin.Components.Chart;
 
-<h3>Statistics</h3>
+<h2>Statisztikák</h2>
 
-WIP!
+@if (this.m_Charts != null)
+{
+    @foreach (Chart chart in this.m_Charts)
+    {
+        <CanvasJsControl Animated="true" Series="chart.Series" />
+    }
+}
 
-@code {
+@code
+{
+    private class Chart
+    {
+        public string Title { get; set; }
+        public List<ChartSeries> Series { get; set; } = new List<ChartSeries>();
+    }
 
+    private List<Chart> m_Charts;
+
+    protected override Task OnInitializedAsync()
+    {
+        List<Chart> result = new List<Chart>();
+
+        IEnumerable<Statistic> parts = GanzAdminDbEngine.Instance.GetCollection<Statistic>().Find(s => s.Name == nameof(Statistic.StatisticTypes.Parts));
+        Chart c = new Chart();
+        c.Series.Add(new ChartSeries());
+        foreach(Statistic stat in parts)
+        {
+            c.Series[0].Points.Add(new ChartSeries.Point(int.Parse(stat.Value)));
+        }
+        result.Add(c);
+
+        this.m_Charts = result;
+
+        return base.OnInitializedAsync();
+    }
 }
