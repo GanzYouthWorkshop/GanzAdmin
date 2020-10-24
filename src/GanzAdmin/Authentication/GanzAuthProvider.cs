@@ -110,7 +110,7 @@ namespace GanzAdmin.Authentication
             bool result = false;
 
             GanzAdminDbEngine db = GanzAdminDbEngine.Instance;
-            Member member = db.Members.FindOne(m => m.Username.ToLowerInvariant() == user.ToLowerInvariant());
+            Member member = db.Members.FindOne(m => m.Username.ToLower() == user.ToLower());
             if(member != null && member.Password == GanzUtils.Sha256(pass))
             {
                 this.SignIn(member, remindMe ? 30 : 1, remindMe);

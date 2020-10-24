@@ -19,7 +19,9 @@ namespace GanzAdmin.API.NVR
             string content = string.Empty;
             try
             {
-                System.IO.File.ReadAllText($"{GanzAdminConfiguration.Instance.NvrFolder}\\{filename}");
+                content = System.IO.File.ReadAllText($"wwwroot\\content\\nvr\\{filename}");
+
+                //content = System.IO.File.ReadAllText($"{GanzAdminConfiguration.Instance.NvrFolder}\\{filename}");
             }
             catch(Exception)
             {

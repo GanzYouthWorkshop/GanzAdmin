@@ -34,34 +34,36 @@ namespace GanzAdmin.API.NVR
                 string streamDirectory = GanzAdminConfiguration.Instance.NvrFolder;
                 string streamFile = $"{this.HandlerName}_{this.ChannelId}.m3u8";
 
+                string[] arguments = new string[]
+                {
+                    "-fflags nobuffer",
+                    "-rtsp_transport tcp",
+
+                    $"-i {String.Format(this.HandlerUrl, this.ChannelId)}",
+
+                    "-vsync 0",
+                    "-copyts",
+                    "-vcodec copy",
+                    "-movflags frag_keyframe+empty_moov",
+                    "-an",
+                    "-hls_flags delete_segments+append_list",
+                    "-f segment",
+                    "-segment_list_flags live",
+                    "-segment_time 1",
+                    "-segment_list_size 3",
+                    "-segment_format mpegts",
+                    @$"-segment_list {streamDirectory}\{streamFile}",
+                    "-segment_list_type m3u8",
+                    "-segment_list_entry_prefix /content/nvr/",
+                    @$"{streamDirectory}\{this.HandlerName}_{this.ChannelId}_%d.ts",
+                };
+
                 this.m_FfmpegProcess = new Process
                 {
                     StartInfo = new ProcessStartInfo()
                     {
                         FileName = "ffmpeg.exe",
-                        Arguments = String.Join(' ', new string[]
-                        {
-                             "-fflags nobuffer",
-                             "-rtsp_transport tcp",
-
-                             $"-i {String.Format(this.HandlerUrl, this.ChannelId)}",
-
-                             "-vsync 0",
-                             "-copyts",
-                             "-vcodec copy",
-                             "-movflags frag_keyframe+empty_moov",
-                             "-an",
-                             "-hls_flags delete_segments+append_list",
-                             "-f segment",
-                             "-segment_list_flags live",
-                             "-segment_time 1",
-                             "-segment_list_size 3",
-                             "-segment_format mpegts",
-                             @$"-segment_list {streamDirectory}\{streamFile}",
-                             "-segment_list_type m3u8",
-                             "-segment_list_entry_prefix /content/nvr/",
-                             @$"{streamDirectory}\{this.HandlerName}_{this.ChannelId}_%d.ts",
-                        }),
+                        Arguments = String.Join(' ', arguments),
                         CreateNoWindow = false,
                     }
                 };

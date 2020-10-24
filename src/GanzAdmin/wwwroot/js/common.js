@@ -172,12 +172,13 @@ function createHlsPlayer(id, url)
 		var video = document.getElementById(id);
 		var hls = new Hls(
 		{
-			debug: false
+			debug: true
 		});
 		hls.loadSource(url);
 		hls.attachMedia(video);
 		hls.on(Hls.Events.MEDIA_ATTACHED, function ()
 		{
+			console.log("KEZDÉS");
 			video.muted = true;
 			video.play();
 		});
