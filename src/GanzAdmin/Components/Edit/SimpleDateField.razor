@@ -5,7 +5,7 @@
 <p>
     <label for="@this.Name">@this.Display:</label>
     <AuthorizedView NeededRolesOR="@this.AuthOR" NeededRolesAND="@this.AuthAND">
-        <input type="text" value="@this.Value" name="@this.Name" class="dtp" @onchange="OnValueChanged" @ref="this.m_Dom" />
+        <input type="date" value="@this.ClientValue" name="@this.Name" @onchange="OnValueChanged" />
     </AuthorizedView>
     <NonAuthorizedView NeededRolesOR="@this.AuthOR" NeededRolesAND="@this.AuthAND">
         <span>@this.Value</span>
@@ -14,30 +14,23 @@
 
 @code
 {
-    [Inject]
-    private IJSRuntime Js { get; set; }
-
-    private ElementReference m_Dom;
-
-    protected override void OnAfterRender(bool firstRender)
+    private string ClientValue
     {
-        base.OnAfterRender(firstRender);
-
-        if(firstRender)
+        get
         {
-            this.Js.InvokeVoidAsync("createDatePicker", this.m_Dom);
+            return this.Value.ToString("yyyy-MM-dd");
         }
     }
 
     protected override Task OnValueChanged(ChangeEventArgs e)
     {
-        if (e.Value != null)
+        if (string.IsNullOrEmpty((string)e.Value))
         {
-            Console.WriteLine(e.Value.ToString());
-
-            this.Value = DateTime.Parse(e.Value.ToString());
-            return this.ValueChanged.InvokeAsync(this.Value);
+            e.Value = DateTime.Today;
         }
-        return Task.CompletedTask;
+
+        this.Value = DateTime.Parse(e.Value.ToString());
+
+        return this.ValueChanged.InvokeAsync(this.Value);
     }
 }

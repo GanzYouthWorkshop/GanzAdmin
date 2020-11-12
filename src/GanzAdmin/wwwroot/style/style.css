@@ -76,7 +76,7 @@ label
 	text-align: left;
 }
 
-input[type=text], input[type=password], textarea, select
+input[type=text], input[type=password], input[type=date], textarea, select
 {
 	font-family: 'Segoe UI';
 	border: 3px solid #999999;
@@ -84,7 +84,7 @@ input[type=text], input[type=password], textarea, select
 	width: 20em;
 }
 
-input[type=text]:focus, input[type=password]:focus, textarea:focus
+input[type=text]:focus, input[type=password]:focus, input[type=date]:focus, textarea:focus
 {
 	border: 3px solid #00897b;
 }
