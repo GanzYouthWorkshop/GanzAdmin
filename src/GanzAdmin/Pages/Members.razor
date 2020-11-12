@@ -19,6 +19,7 @@
                     <thead>
                         <tr>
                             <DataGridHeader IsPinnable IsSortable>Név</DataGridHeader>
+                            <DataGridHeader IsCollapsible IsSortable>Foglalkozás</DataGridHeader>
                             <DataGridHeader IsCollapsible IsSortable>Aktív?</DataGridHeader>
                             <DataGridHeader IsCollapsible IsSortable>Tagdíj befizetve</DataGridHeader>
                             <DataGridHeader IsCollapsible IsSortable>Foglalkozásra bejegyzés</DataGridHeader>
@@ -30,6 +31,7 @@
                         {
                             <tr>
                                 <td><NavLink href="@($"/{this.BaseLink}/{member.Id}")">@member.Name</NavLink></td>
+                                <td>@(this.ActivityText(member.MainActivity))</td>
                                 <td>@(member.Active ? "🟩 Igen" : "🟥 Nem")</td>
                                 <td>
                                     @member.PaidUntil
@@ -71,6 +73,7 @@
                         <SimpleTextField AuthOR="@Permissions.EditMembers" Type="text" Display="Telefon" Name="@nameof(Member.Phone)" @bind-Value="this.SelectedItem.Temporal.Phone" />
                         <SimpleTextField AuthOR="@Permissions.EditMembers" Type="text" Display="Email" Name="@nameof(Member.Email)" @bind-Value="this.SelectedItem.Temporal.Email" />
 
+                        <ComboBox AuthOR="@Permissions.EditMembers" ItemType="Member.Activities" Items="(Member.Activities[])Enum.GetValues(typeof(Member.Activities))" Display="Foglalkozás" NoNullValue @bind-Value="@this.SelectedItem.Temporal.MainActivity" Name="@nameof(Member.MainActivity)"></ComboBox>
                         <SimpleDateField AuthOR="@Permissions.EditMembers" Type="text" Display="Tagdíj befizetve" Name="@nameof(Member.PaidUntil)" @bind-Value="this.SelectedItem.Temporal.PaidUntil" />
                         <SimpleCheckField AuthOR="@Permissions.EditMembers" Type="switch" Display="Aktív?" TrueValue="🟩 Igen" FalseValue="🟥 Nem" Name="@nameof(Member.Active)" @bind-Value="@this.SelectedItem.Temporal.Active" />
 
@@ -192,5 +195,16 @@
         {
             this.SelectedItem.Temporal.Roles.RemoveAll(i => i == permission);
         }
+    }
+
+    private string ActivityText(Member.Activities activity)
+    {
+        switch(activity)
+        {
+            case Member.Activities.Electronics: return "⚡ elektronika";
+            case Member.Activities.Modelling: return "🔨 modellezés";
+            case Member.Activities.Tutor: return "📗 oktató";
+        }
+        return null;
     }
 }

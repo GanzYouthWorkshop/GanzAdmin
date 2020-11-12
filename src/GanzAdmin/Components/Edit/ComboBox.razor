@@ -8,18 +8,40 @@
     <label for="@this.Name">@this.Display:</label>
     <AuthorizedView NeededRolesOR="@this.AuthOR" NeededRolesAND="@this.AuthAND">
         <select name="@this.Name" @onchange="OnValueChanged">
-            <option value="0">-</option>
+            @if (!this.NoNullValue)
+            {
+                <option value="0">-</option>
+            }
             @foreach (ItemType item in Items)
             {
-                if (!item.Equals(this.Owner))
+                if (!item.Equals(this.Owner) || this.NoNullValue)
                 {
-                    if (item.Equals(this.Value))
+                    string val;
+                    string display;
+
+                    if (item is IEntity)
                     {
-                        <option value="@((item as IEntity).Id)" selected>@((item as IEntity).DisplayValue)</option>
+                        val = (item as IEntity).Id.ToString();
+                        display = (item as IEntity).DisplayValue;
+                    }
+                    else if(item is Enum)
+                    {
+                        val = item.ToString();
+                        display = item.ToString();
                     }
                     else
                     {
-                        <option value="@((item as IEntity).Id)">@((item as IEntity).DisplayValue)</option>
+                        val = item.ToString();
+                        display = item.ToString();
+                    }
+
+                    if (item.Equals(this.Value))
+                    {
+                        <option value="@val" selected>@display</option>
+                    }
+                    else
+                    {
+                        <option value="@val">@display</option>
                     }
                 }
             }
@@ -41,9 +63,23 @@
     [Parameter]
     public ItemType Owner { get; set; }
 
+    [Parameter]
+    public bool NoNullValue { get; set; }
+
     protected override Task OnValueChanged(ChangeEventArgs e)
     {
-        this.Value = this.Items.FirstOrDefault(i => ((IEntity)i).Id == Convert.ToInt64(e.Value));
+        if (this.Value is IEntity)
+        {
+            this.Value = this.Items.FirstOrDefault(i => ((IEntity)i).Id == Convert.ToInt64(e.Value));
+        }
+        else if (this.Value is Enum)
+        {
+            this.Value = (ItemType)Enum.Parse(typeof(ItemType), e.Value.ToString());
+        }
+        else
+        {
+            this.Value = (ItemType)e.Value;
+        }
 
         this.Changed.InvokeAsync((ItemType)Value);
         if (this.PreventRenderOnChange)

@@ -11,12 +11,20 @@ namespace GanzAdmin.Database.Models
 {
     public class Member : IEntity
     {
+        public enum Activities
+        {
+            Modelling,
+            Electronics,
+            Tutor
+        }
+
         [BsonId]
         public long Id { get; set; }
 
         public string Username { get; set; }
         public string Password { get; set; }
         public string Name { get; set; }
+        public Activities MainActivity { get; set; }
         public string Address { get; set; }
         public string Phone { get; set; }
         public string Email { get; set; }
