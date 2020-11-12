@@ -281,37 +281,47 @@ function createUploader(form)
     }
 }
 
-function createDatePicker(el)
+function createCanvasJs(el, animated, series)
 {
-	$(el).datetimepicker(
-	{
-		onChangeDateTime: function (date, inst)
-		{
-			var d = new Date(Date.parse(date));
-			var datestring = d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate() + " " + d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds();
+	//console.log(eval(series));
+	//var options =
+	//{
+	//	exportEnabled: true,
+	//	animationEnabled: animated,
+	//	title:
+	//	{
+	//		text: "jQuery Spline Area Chart"
+	//	},
+	//	data: eval(series)
+	//};
 
-			el.value = datestring;
+	//console.log($(el));
+	//$(el).CanvasJSChart(options);
 
+	var limit = 10000;    //increase number of dataPoints by increasing the limit
+	var y = 100;
+	var data = [];
+	var dataSeries = { type: "line" };
+	var dataPoints = [];
+	for (var i = 0; i < limit; i += 1) {
+		y += Math.round(Math.random() * 10 - 5);
+		dataPoints.push({
+			x: i,
+			y: y
+		});
+	}
+	dataSeries.dataPoints = dataPoints;
+	data.push(dataSeries);
 
-			if ("createEvent" in document)
-			{
-				//Ez itt valamiért nem mindig működik...
-				var evt = document.createEvent("HTMLEvents");
-				evt.initEvent("change", false, true);
-				el.dispatchEvent(evt);
-			}
-			else
-			{
-				el.fireEvent("onchange");
-			}
+	//Better to construct options first and then pass it as a parameter
+	var options = {
+		zoomEnabled: true,
+		animationEnabled: true,
+		title: {
+			text: "Try Zooming - Panning"
 		},
+		data: data  // random data
+	};
 
-		format: 'Y. m. d. H:i'
-	});
-}
-
-function getValue(input)
-{
-	console.log(input);
-	return input.innertHtml;
+	$("#valami").CanvasJSChart(options);
 }
