@@ -78,7 +78,14 @@
         }
         else
         {
-            //this.Value = Convert.ChangeType(e.Value, typeof(ItemType));
+            try
+            {
+                this.Value = (ItemType)e.Value;
+            }
+            catch(Exception)
+            {
+
+            }
         }
 
         this.Changed.InvokeAsync((ItemType)Value);
