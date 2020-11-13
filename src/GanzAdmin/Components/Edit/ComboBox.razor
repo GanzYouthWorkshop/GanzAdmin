@@ -68,7 +68,7 @@
 
     protected override Task OnValueChanged(ChangeEventArgs e)
     {
-        if (this.Value is IEntity)
+        if (typeof(ItemType).GetInterfaces().Contains(typeof(IEntity)))
         {
             this.Value = this.Items.FirstOrDefault(i => ((IEntity)i).Id == Convert.ToInt64(e.Value));
         }
@@ -78,7 +78,14 @@
         }
         else
         {
-            this.Value = (ItemType)e.Value;
+            try
+            {
+                this.Value = (ItemType)e.Value;
+            }
+            catch(Exception)
+            {
+
+            }
         }
 
         this.Changed.InvokeAsync((ItemType)Value);

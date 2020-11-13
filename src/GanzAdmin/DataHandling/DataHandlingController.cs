@@ -132,6 +132,8 @@ namespace GanzAdmin.DataHandling
                 this.m_Collection.Insert(this.SelectedItem.FoldBack());
                 GanzAdminDbEngine.Instance.Transact();
 
+                this.ItemList.Add(this.SelectedItem.Original);
+
                 this.JS.InvokeVoidAsync("alertify.success", $"{this.DataName.ToCapital()} hozzáadva!");
             }
         }
@@ -153,6 +155,8 @@ namespace GanzAdmin.DataHandling
             {
                 this.m_Collection.Delete(this.SelectedItem.Original.Id);
                 GanzAdminDbEngine.Instance.Transact();
+
+                this.ItemList.Remove(this.SelectedItem.Original);
 
                 this.JS.InvokeVoidAsync("alertify.success", $"{this.DataName.ToCapital()} törölve :(");
             }
