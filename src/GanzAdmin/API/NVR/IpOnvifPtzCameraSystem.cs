@@ -11,8 +11,8 @@ namespace GanzAdmin.API.NVR
         private static readonly HttpClient HttpClient = new HttpClient();
 
         public string Name { get; set; }
-        public string Url { get; set; } = "rtsp://admin:ganz1984@ganz1.dyndns.net:1554/onvif{0}";
-        public string PtzUrl { get; set; } = "http://ganz1.dyndns.net:15000/onvif/ptz_service";
+        public string Url { get; set; } = "rtsp://admin:ganz1984@ganz1.ddns.net:1554/onvif{0}";
+        public string PtzUrl { get; set; } = "http://ganz1.ddns.net:15000/onvif/ptz_service";
         public List<IpCameraChannel> Channels { get; set; } = new List<IpCameraChannel>();
 
         public IpOnvifPtzCameraSystem(int channels)
@@ -23,7 +23,8 @@ namespace GanzAdmin.API.NVR
                 {
                     HandlerName = this.Name,
                     HandlerUrl = this.Url,
-                    ChannelId = i + 1
+                    ChannelId = i + 1,
+                    Protocol = "udp"
                 });
             }
         }

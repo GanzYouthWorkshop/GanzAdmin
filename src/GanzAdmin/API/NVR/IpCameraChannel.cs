@@ -22,6 +22,7 @@ namespace GanzAdmin.API.NVR
         public string HandlerName { get; set; }
         public string HandlerUrl { get; set; }
         public int ChannelId { get; set; }
+        public string Protocol { get; set; }
 
         private Process m_FfmpegProcess;
         private Thread m_FsWatcher;
@@ -37,7 +38,7 @@ namespace GanzAdmin.API.NVR
                 string[] arguments = new string[]
                 {
                     "-fflags nobuffer",
-                    "-rtsp_transport tcp",
+                    $"-rtsp_transport {this.Protocol}",
 
                     $"-i {String.Format(this.HandlerUrl, this.ChannelId)}",
 
@@ -58,12 +59,13 @@ namespace GanzAdmin.API.NVR
                     @$"{streamDirectory}\{this.HandlerName}_{this.ChannelId}_%d.ts",
                 };
 
+                string args = String.Join(' ', arguments);
                 this.m_FfmpegProcess = new Process
                 {
                     StartInfo = new ProcessStartInfo()
                     {
                         FileName = "ffmpeg.exe",
-                        Arguments = String.Join(' ', arguments),
+                        Arguments = args,
                         CreateNoWindow = false,
                     }
                 };
