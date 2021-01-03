@@ -1,0 +1,87 @@
+﻿@page "/payments"
+@page "/payments/{PopupDisplay}"
+
+@inherits DataHandlingController<Payment>
+
+<AuthorizedView NeededRolesOR="@Permissions.ListPayments">
+    <aside class='loading'>
+        <AuthorizedView NeededRolesOR="@Permissions.EditPayments">
+            <NavLink class="addlink" href="@($"/{this.BaseLink}/add")">Új @this.DataName</NavLink>
+        </AuthorizedView>
+    </aside>
+
+    <main class='@(this.ItemList == null ? "loading" : "")'>
+        @if (this.ItemList != null)
+        {
+            if(this.PopupDisplay == "yearly")
+            {
+
+            }
+            else if(this.PopupDisplay == "monthly")
+            {
+
+            }
+        }
+    </main>
+
+    @if (this.SelectedItem != null)
+    {
+        <section class='popup' id='content'>
+            <div class='shadow'></div>
+            <div class='body'>
+                <div class='header'>
+                    <h2>@this.PopupTitle</h2>
+                    <a class='button' href="@($"/{this.BaseLink}")"></a>
+                </div>
+
+                <EditForm method="post" EditContext="new EditContext(true)" OnValidSubmit="OnDefaultAddEditSubmit">
+                    <div class='dynamic'>
+                        -Tag
+                        -Időpont
+                        -Érték
+                        <ComboBox AuthOR="@Permissions.EditPayments" ItemType="Member" Items="(GanzAdminDbEngine.Instance.Members)" Display="Befizető" NoNullValue @bind-Value="@this.SelectedItem.Temporal.MemberId" Name="@nameof(Member.MainActivity)"></ComboBox>
+                        <SimpleDateField AuthOR="@Permissions.EditPayments" Type="text" Display="Időpont" Name="@nameof(Payment.Occasion)" @bind-Value="this.SelectedItem.Temporal.Occasion" />
+                        <SimpleNumberField AuthOR="@Permissions.EditPayments" Type="text" Display="Érték" Name="@nameof(Payment.Value)" @bind-Value="this.SelectedItem.Temporal.Value" />
+
+                    </div>
+
+                    <AuthorizedView NeededRolesOR="@Permissions.EditPayments">
+                        <button type='submit'>Küldés</button>
+                    </AuthorizedView>
+
+                    @if (this.PopupDisplay != "add")
+                    {
+                        <AuthorizedView NeededRolesOR="@Permissions.DeletePayments">
+                            <input type='button' class="delete" value="Törlés" @onclick="OnDefaultDeleteSubmit" />
+                        </AuthorizedView>
+                    }
+                </EditForm>
+            </div>
+            @if (this.DialogLoading)
+            {
+                <div class='loading'></div>
+            }
+        </section>
+    }
+</AuthorizedView>
+
+@code
+{
+    protected override string BaseLink { get; set; } = "payments";
+    protected override string DataName { get; set; } = "befizetés";
+
+    protected override bool BeforeAdd()
+    {
+        return true;
+    }
+
+    protected override bool BeforeEdit()
+    {
+        return true;
+    }
+
+    protected override bool BeforeDelete()
+    {
+        return true;
+    }
+}

@@ -12,6 +12,10 @@ namespace GanzAdmin.Database.Models
         public const string EditMembers = nameof(EditMembers);
         public const string DeleteMembers = nameof(DeleteMembers);
 
+        public const string ListPayments = nameof(ListPayments);
+        public const string EditPayments = nameof(EditPayments);
+        public const string DeletePayments = nameof(DeletePayments);
+
         public const string ListLocations = nameof(ListLocations);
         public const string EditLocations = nameof(EditLocations);
         public const string DeleteLocations = nameof(DeleteLocations);
@@ -58,6 +62,10 @@ namespace GanzAdmin.Database.Models
             ListMembers,
             EditMembers,
             DeleteMembers,
+
+            ListPayments,
+            EditPayments,
+            DeletePayments,
 
             ListLocations,
             EditLocations,
