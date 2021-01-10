@@ -11,17 +11,7 @@
     </aside>
 
     <main class='@(this.ItemList == null ? "loading" : "")'>
-        @if (this.ItemList != null)
-        {
-            if(this.PopupDisplay == "yearly")
-            {
-
-            }
-            else if(this.PopupDisplay == "monthly")
-            {
-
-            }
-        }
+        <CalendarControl ItemCollections="this.m_Items" />
     </main>
 
     @if (this.SelectedItem != null)
@@ -39,7 +29,7 @@
                         -Tag
                         -Időpont
                         -Érték
-                        <ComboBox AuthOR="@Permissions.EditPayments" ItemType="Member" Items="(GanzAdminDbEngine.Instance.Members)" Display="Befizető" NoNullValue @bind-Value="@this.SelectedItem.Temporal.MemberId" Name="@nameof(Member.MainActivity)"></ComboBox>
+                        <ComboBox AuthOR="@Permissions.EditPayments" ItemType="Member" Items="(GanzAdminDbEngine.Instance.Members.FindAll())" Display="Befizető" NoNullValue @bind-Value="@this.SelectedItem.Temporal.Member" Name="@nameof(Member.MainActivity)"></ComboBox>
                         <SimpleDateField AuthOR="@Permissions.EditPayments" Type="text" Display="Időpont" Name="@nameof(Payment.Occasion)" @bind-Value="this.SelectedItem.Temporal.Occasion" />
                         <SimpleNumberField AuthOR="@Permissions.EditPayments" Type="text" Display="Érték" Name="@nameof(Payment.Value)" @bind-Value="this.SelectedItem.Temporal.Value" />
 
@@ -69,6 +59,11 @@
 {
     protected override string BaseLink { get; set; } = "payments";
     protected override string DataName { get; set; } = "befizetés";
+
+    private List<CalendarItemCollection> m_Items = new List<CalendarItemCollection>()
+    {
+        new CalendarItemCollection(){ ConentType = typeof(Payment), Color = "#123456", DisplayText = (e) => { return (e as Payment).Member.ToString(); } }
+    };
 
     protected override bool BeforeAdd()
     {
