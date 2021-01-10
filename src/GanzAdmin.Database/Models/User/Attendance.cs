@@ -6,7 +6,7 @@ using System.Text;
 
 namespace GanzAdmin.Database.Models
 {
-    public class Attendance : IEntity
+    public class Attendance : IEntity, IEvent
     {
         [BsonId]
         public long Id { get; set; }

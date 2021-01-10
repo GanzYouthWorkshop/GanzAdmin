@@ -49,6 +49,15 @@ namespace GanzAdmin.Database
             }
         }
 
+        public ILiteCollection<Payment> Payments
+        {
+            get
+            {
+                return this.m_InnerDb.GetCollection<Payment>()
+                    .Include(BsonExpression.Create("$.Payment[*].Member"));
+            }
+        }
+
 
         public void Dispose()
         {
@@ -108,6 +117,10 @@ namespace GanzAdmin.Database
             if (typeof(T).Equals(typeof(Kit)))
             {
                 return (ILiteCollection<T>)this.Kits;
+            }
+            if (typeof(T).Equals(typeof(Payment)))
+            {
+                return (ILiteCollection<T>)this.Payments;
             }
             return this.m_InnerDb.GetCollection<T>();
         }
