@@ -1,0 +1,115 @@
+﻿@if (this.ItemCollections != null && this.m_Days != null)
+{
+    <table class="calendar">
+        <tr>
+            <th>Hétfő</th>
+            <th>Kedd</th>
+            <th>Szerda</th>
+            <th>Csütörtök</th>
+            <th>Péntek</th>
+            <th>Szombat</th>
+            <th>Vasárnap</th>
+        </tr>
+
+        @for (int i = 0; i < this.m_Days.Count; i++)
+        {
+            @if (i % 7 == 0)
+            {
+                @:<tr>
+                }
+
+            @if (this.m_Days[i] == null)
+            {
+                <td class="inactive"></td>
+            }
+            else
+            {
+                  <td class="@(this.m_Days[i] == DateTime.Today ? "today" : "")">
+                      <span>@(this.m_Days[i].Value.ToString("MM.dd"))</span>
+                      @if (this.m_Days[i].Value.DayOfWeek == DayOfWeek.Saturday)
+                      {
+                          <span class="tag workshop">Elektronika</span>
+                      }
+                      else if (this.m_Days[i].Value.DayOfWeek == DayOfWeek.Monday || this.m_Days[i].Value.DayOfWeek == DayOfWeek.Wednesday || this.m_Days[i].Value.DayOfWeek == DayOfWeek.Friday)
+                      {
+                          <span class="tag workshop">Modellezés</span>
+                      }
+
+                      @if(this.m_Days[i] != null)
+                      {
+                          foreach (CalendarItemCollection collection in this.ItemCollections)
+                          {
+                              if (this.m_Days[i] != null && this.m_Days[i].Value != null)
+                              {
+                                  IEnumerable<CalendarItem> items = collection.CollectedItems.Where(item => item.Event.Occasion.Date == this.m_Days[i].Value.Date);
+                                  foreach (CalendarItem item in items)
+                                  {
+                                  <span class="tag" style="background-color: @collection.Color">
+                                      @if (item.Url != null)
+                                      {
+                                          <a href="@item.Url">@item.DisplayText</a>
+                                      }
+                                      else
+                                      {
+                                          @item.DisplayText
+                                      }
+                                  </span>
+                                  }
+                              }
+                          }
+                      }
+                  </td>
+            }
+
+            @if (i % 7 == 0)
+            {
+            @:</tr>
+        }
+        }
+    </table>
+}
+
+@code
+{
+    //TODO oda-vissza a kezdődátumnak!
+
+    [Parameter]
+    public List<CalendarItemCollection> ItemCollections { get; set; }
+
+    private List<DateTime?> m_Days { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Task.Run(() =>
+        {
+            this.m_Days = new List<DateTime?>();
+            DateTime firstDayOfTheMonth = DateTime.Today.AddDays(-DateTime.Today.Day + 1).Date;
+            DateTime lastDayOfTheMonth = firstDayOfTheMonth;
+            int days = DateTime.DaysInMonth(firstDayOfTheMonth.Year, firstDayOfTheMonth.Month);
+            int dow = (int)firstDayOfTheMonth.DayOfWeek - 1;
+            if (dow == -1)
+            {
+                dow = 6;
+            }
+
+            for (int i = 0; i < dow; i++)
+            {
+                this.m_Days.Add(null);
+            }
+            for (int i = 0; i < days; i++)
+            {
+                this.m_Days.Add(lastDayOfTheMonth);
+                lastDayOfTheMonth = lastDayOfTheMonth.AddDays(1);
+            }
+            while (this.m_Days.Count % 7 != 0)
+            {
+                this.m_Days.Add(null);
+            }
+
+            foreach(CalendarItemCollection collection in this.ItemCollections)
+            {
+                collection.CollectedItems = collection.Collect();
+            }
+        });
+    }
+}

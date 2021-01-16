@@ -12,38 +12,45 @@
             {
                 <option value="0">-</option>
             }
-            @foreach (ItemType item in Items)
+            @if (this.ShowAsTree)
             {
-                if (!item.Equals(this.Owner) || this.NoNullValue)
+                @(this.RenderLevel(default(ItemType), 0));
+            }
+            else
+            {
+                foreach (ItemType item in Items)
                 {
-                    string val;
-                    string display;
+                    if (!item.Equals(this.Owner) || this.NoNullValue)
+                    {
+                        string val;
+                        string display;
 
-                    if (item is IEntity)
-                    {
-                        val = (item as IEntity).Id.ToString();
-                        display = (item as IEntity).DisplayValue;
-                    }
-                    else if(item is Enum)
-                    {
-                        val = item.ToString();
-                        display = item.ToString();
-                    }
-                    else
-                    {
-                        val = item.ToString();
-                        display = item.ToString();
-                    }
+                        if (item is IEntity)
+                        {
+                            val = (item as IEntity).Id.ToString();
+                            display = (item as IEntity).DisplayValue;
+                        }
+                        else if (item is Enum)
+                        {
+                            val = item.ToString();
+                            display = item.ToString();
+                        }
+                        else
+                        {
+                            val = item.ToString();
+                            display = item.ToString();
+                        }
 
-                    if (item.Equals(this.Value))
-                    {
-                        <option value="@val" selected>@display</option>
-                    }
-                    else
-                    {
-                        <option value="@val">@display</option>
-                    }
-                }
+                        if (item.Equals(this.Value))
+                        {
+                <option value="@val" selected>@display</option>
+            }
+            else
+            {
+                <option value="@val">@display</option>
+            }
+            }
+            }
             }
         </select>
     </AuthorizedView>
@@ -66,6 +73,12 @@
     [Parameter]
     public bool NoNullValue { get; set; }
 
+    [Parameter]
+    public bool ShowAsTree { get; set; }
+
+    [Parameter]
+    public Func<IEntity, IEntity, bool> TreeFilter { get; set; }
+
     protected override Task OnValueChanged(ChangeEventArgs e)
     {
         if (typeof(ItemType).GetInterfaces().Contains(typeof(IEntity)))
@@ -82,7 +95,7 @@
             {
                 this.Value = (ItemType)e.Value;
             }
-            catch(Exception)
+            catch (Exception)
             {
 
             }
@@ -97,5 +110,32 @@
         {
             return this.OnValueChangedWithRender();
         }
+    }
+
+    private MarkupString RenderLevel(ItemType parent, int level)
+    {
+        string result = "";
+
+        string levelIndent = "";
+        for(int i = 0; i < level; i++)
+        {
+            levelIndent += "&emsp;";
+        }
+        foreach (IEntity item in this.Items)
+        {
+            if (this.TreeFilter(item, parent as IEntity))
+            {
+                if (item.Equals(this.Value))
+                {
+                    result += $"<option value=\"{item.Id}\" selected>{levelIndent}{item.DisplayValue}</option>";
+                }
+                else
+                {
+                    result += $"<option value=\"{item.Id}\">{levelIndent}{item.DisplayValue}</option>";
+                }
+                result += this.RenderLevel((ItemType)item, level + 1);
+            }
+        }
+        return (MarkupString)result;
     }
 }
