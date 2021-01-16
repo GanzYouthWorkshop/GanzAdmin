@@ -6,15 +6,17 @@ using System.Text;
 
 namespace GanzAdmin.Database.Models
 {
-    public class Attendance : IEntity, IEvent
+    public class Payment : IEntity, IEvent
     {
         [BsonId]
         public long Id { get; set; }
 
-        public long MemberId { get; set; }
+        [BsonRef]
+        public Member Member { get; set; }
         
         public DateTime Occasion { get; set; }
-        public TimeSpan Length { get; set; }
+
+        public int Value { get; set; }
 
         [BsonIgnore]
         public string DisplayValue

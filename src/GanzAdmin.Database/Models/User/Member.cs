@@ -42,6 +42,11 @@ namespace GanzAdmin.Database.Models
             get { return this.Name; }
         }
 
+        public override bool Equals(object obj)
+        {
+            return this.IsEqual(obj);
+        }
+
         public static List<Member> Search(IEnumerable<Member> members, List<SearchFragment> expression)
         {
             List<Member> list = new List<Member>();
