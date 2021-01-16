@@ -54,7 +54,7 @@ namespace GanzAdmin.Database
             get
             {
                 return this.m_InnerDb.GetCollection<Payment>()
-                    .Include(BsonExpression.Create("$.Payment[*].Member"));
+                    .Include(BsonExpression.Create("$.Member"));
             }
         }
 

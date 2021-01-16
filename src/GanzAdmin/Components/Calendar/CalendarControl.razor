@@ -1,4 +1,4 @@
-﻿@if (this.m_Items != null)
+﻿@if (this.ItemCollections != null && this.m_Days != null)
 {
     <table class="calendar">
         <tr>
@@ -34,9 +34,29 @@
                       {
                           <span class="tag workshop">Modellezés</span>
                       }
-                      @foreach (IEvent evt in this.m_Items.Where(e => e.Occasion.Date == this.m_Days[i].Value.Date))
+
+                      @if(this.m_Days[i] != null)
                       {
-                          <span class="tag event">@evt.</span>
+                          foreach (CalendarItemCollection collection in this.ItemCollections)
+                          {
+                              if (this.m_Days[i] != null && this.m_Days[i].Value != null)
+                              {
+                                  IEnumerable<CalendarItem> items = collection.CollectedItems.Where(item => item.Event.Occasion.Date == this.m_Days[i].Value.Date);
+                                  foreach (CalendarItem item in items)
+                                  {
+                                  <span class="tag" style="background-color: @collection.Color">
+                                      @if (item.Url != null)
+                                      {
+                                          <a href="@item.Url">@item.DisplayText</a>
+                                      }
+                                      else
+                                      {
+                                          @item.DisplayText
+                                      }
+                                  </span>
+                                  }
+                              }
+                          }
                       }
                   </td>
             }
@@ -51,10 +71,10 @@
 
 @code
 {
+    //TODO oda-vissza a kezdődátumnak!
+
     [Parameter]
     public List<CalendarItemCollection> ItemCollections { get; set; }
-
-    private List<IEvent> m_Items { get; set; }
 
     private List<DateTime?> m_Days { get; set; }
 
@@ -84,6 +104,11 @@
             while (this.m_Days.Count % 7 != 0)
             {
                 this.m_Days.Add(null);
+            }
+
+            foreach(CalendarItemCollection collection in this.ItemCollections)
+            {
+                collection.CollectedItems = collection.Collect();
             }
         });
     }

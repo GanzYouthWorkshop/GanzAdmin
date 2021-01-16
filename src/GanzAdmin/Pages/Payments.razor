@@ -26,9 +26,6 @@
 
                 <EditForm method="post" EditContext="new EditContext(true)" OnValidSubmit="OnDefaultAddEditSubmit">
                     <div class='dynamic'>
-                        -Tag
-                        -Időpont
-                        -Érték
                         <ComboBox AuthOR="@Permissions.EditPayments" ItemType="Member" Items="(GanzAdminDbEngine.Instance.Members.FindAll())" Display="Befizető" NoNullValue @bind-Value="@this.SelectedItem.Temporal.Member" Name="@nameof(Member.MainActivity)"></ComboBox>
                         <SimpleDateField AuthOR="@Permissions.EditPayments" Type="text" Display="Időpont" Name="@nameof(Payment.Occasion)" @bind-Value="this.SelectedItem.Temporal.Occasion" />
                         <SimpleNumberField AuthOR="@Permissions.EditPayments" Type="text" Display="Érték" Name="@nameof(Payment.Value)" @bind-Value="this.SelectedItem.Temporal.Value" />
@@ -62,7 +59,19 @@
 
     private List<CalendarItemCollection> m_Items = new List<CalendarItemCollection>()
     {
-        new CalendarItemCollection(){ ConentType = typeof(Payment), Color = "#123456", DisplayText = (e) => { return (e as Payment).Member.ToString(); } }
+        new CalendarItemCollection()
+        {
+            Color = "#ffe869",
+            Collect = new Func<IEnumerable<CalendarItem>>(() =>
+            {
+                return GanzAdminDbEngine.Instance.GetCollection<Payment>().FindAll().Select(p => new CalendarItem()
+                {
+                    DisplayText = $"{p.Member.Name} : {p.Value} Ft",
+                    Event = p,
+                    Url = $"payments/{p.Id}"
+                });
+            })
+        }
     };
 
     protected override bool BeforeAdd()

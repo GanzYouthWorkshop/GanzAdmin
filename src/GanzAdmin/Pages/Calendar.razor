@@ -8,61 +8,7 @@
 </aside>
 
 <main class='@(this.ItemList == null ? "loading" : "")'>
-    @if (this.ItemList != null && this.AttendanceList != null)
-    {
-        <table class="calendar">
-            <tr>
-                <th>Hétfő</th>
-                <th>Kedd</th>
-                <th>Szerda</th>
-                <th>Csütörtök</th>
-                <th>Péntek</th>
-                <th>Szombat</th>
-                <th>Vasárnap</th>
-            </tr>
-
-            @for(int i = 0; i < this.Days.Count; i++)
-            {
-                @if(i % 7 == 0)
-                {
-                    @:<tr>
-                }
-
-                @if(this.Days[i] == null)
-                {
-                      <td class="inactive"></td>
-                }
-                else
-                {
-                      <td class="@(this.Days[i] == DateTime.Today ? "today" : "")">
-                          <span>@(this.Days[i].Value.ToString("MM.dd"))</span>
-                          @if (this.Days[i].Value.DayOfWeek == DayOfWeek.Saturday)
-                          {
-                              <span class="tag workshop">Elektronika</span>
-                          }
-                          else if (this.Days[i].Value.DayOfWeek == DayOfWeek.Monday || this.Days[i].Value.DayOfWeek == DayOfWeek.Wednesday || this.Days[i].Value.DayOfWeek == DayOfWeek.Friday)
-                          {
-                              <span class="tag workshop">Modellezés</span>
-                          }
-                          @foreach (Event ev in this.ItemList.Where(e => e.Start <= this.Days[i].Value && (e.Start + e.Duration) > this.Days[i].Value))
-                          {
-                              <span class="tag event">@ev.Name</span>
-                          }
-                          @if (this.AttendanceList.Count(a => a.Occasion.Date == this.Days[i].Value.Date) > 0)
-                          {
-                              int a = this.AttendanceList.Count(a => a.Occasion.Date == this.Days[i].Value.Date);
-                              <span class="tag attendance">@a megjelent tag</span>
-                          }
-                      </td>
-                }
-
-                @if(i % 7 == 0)
-                {
-                    @:</tr>
-                }
-            }
-        </table>
-    }
+    <CalendarControl ItemCollections="this.m_Items" />
 </main>
 
 @if (this.SelectedItem != null)
@@ -95,6 +41,23 @@
     #region Közös dolgok
     private const string BASELINK = "calendar";
     private const string DATANAME = "esemény";
+
+    private List<CalendarItemCollection> m_Items = new List<CalendarItemCollection>()
+    {
+        new CalendarItemCollection<Attendance>()
+        {
+            Color = "#299900",
+            Collect = new Func<IEnumerable<CalendarItem>>(() =>
+            {
+                return GanzAdminDbEngine.Instance.GetCollection<Attendance>().FindAll().GroupBy(a => a.Occasion.Date).Select(a => new CalendarItem()
+                {
+                    DisplayText = $"{a.Count()} megjelent tag",
+                    Event = new GeneralEvent(){ Occasion = a.Key },
+                    Url = null
+                });
+            })
+        }
+    };
 
     [Inject]
     private NavigationManager NavMan { get; set; }
