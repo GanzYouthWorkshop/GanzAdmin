@@ -21,7 +21,7 @@ namespace GanzAdmin.Database.Models
 
         public List<Stockpile> Stock { get; set; } = new List<Stockpile>();
         public int MinimumStock { get; set; } = 0;
-        public string StockUnit { get; set; }
+        public string StockUnit { get; set; } = "db";
 
         public List<SupplySource> SupplySources { get; set; } = new List<SupplySource>();
         
