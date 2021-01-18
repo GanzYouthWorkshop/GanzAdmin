@@ -1,30 +1,23 @@
 ﻿@if (this.ItemCollections != null && this.m_Days != null)
 {
-    <table class="calendar">
-        <tr>
-            <th>Hétfő</th>
-            <th>Kedd</th>
-            <th>Szerda</th>
-            <th>Csütörtök</th>
-            <th>Péntek</th>
-            <th>Szombat</th>
-            <th>Vasárnap</th>
-        </tr>
+    <div class="calendar">
+        <div class="header"><span>Hétfő</span></div>
+        <div class="header"><span>Kedd</span></div>
+        <div class="header"><span>Szerda</span></div>
+        <div class="header"><span>Csütörtök</span></div>
+        <div class="header"><span>Péntek</span></div>
+        <div class="header"><span>Szombat</span></div>
+        <div class="header"><span>Vasárnap</span></div>
 
         @for (int i = 0; i < this.m_Days.Count; i++)
         {
-            @if (i % 7 == 0)
-            {
-                @:<tr>
-                }
-
             @if (this.m_Days[i] == null)
             {
-                <td class="inactive"></td>
+                <div class="inactive"></div>
             }
             else
             {
-                  <td class="@(this.m_Days[i] == DateTime.Today ? "today" : "")">
+                  <div class="@(this.m_Days[i] == DateTime.Today ? "today" : "")">
                       <span>@(this.m_Days[i].Value.ToString("MM.dd"))</span>
                       @if (this.m_Days[i].Value.DayOfWeek == DayOfWeek.Saturday)
                       {
@@ -58,15 +51,10 @@
                               }
                           }
                       }
-                  </td>
+                  </div>
             }
-
-            @if (i % 7 == 0)
-            {
-            @:</tr>
         }
-        }
-    </table>
+    </div>
 }
 
 @code
