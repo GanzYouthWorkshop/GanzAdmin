@@ -876,6 +876,10 @@ form.login button, form.login button:hover
 	color: #FFFFFF;
 	text-transform: uppercase;
 	border: 0;
+	font-size: 1.6em;
+	display: grid;
+	justify-content: center;
+
 }
 
 .calendar .header span
