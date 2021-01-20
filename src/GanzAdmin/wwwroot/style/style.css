@@ -854,22 +854,45 @@ form.login button, form.login button:hover
 /*#endregion*/
 
 /*#region Naptár*/
-table.calendar
+.calendar
 {
-	position: absolute;
-	top: 0;
-	bottom: 0;
-	right: 0;
-	left: 0;
+	display: grid;
+	grid-template-rows: auto 17% 17% 17% 17% 17%;
+	grid-template-columns: 14.3% 14.3% 14.3% 14.3% 14.3% 14.3% auto;
 	height: 100%;
 }
 
-table.calendar td.inactive
+.calendar div
+{
+	border-left: 1px solid #DFDFDF;
+	border-bottom: 1px solid #DFDFDF;
+}
+
+.calendar .header
+{
+	text-align:center;
+	padding: auto;
+	background-color: #00838f;
+	color: #FFFFFF;
+	text-transform: uppercase;
+	border: 0;
+	font-size: 1.6em;
+	display: grid;
+	justify-content: center;
+
+}
+
+.calendar .header span
+{
+	margin: auto 0;
+}
+
+.calendar .inactive
 {
 	background-color: #CCCCCC;
 }
 
-table.calendar span
+.calendar span
 {
 	display: block;
 	padding: 0.3em;
@@ -877,30 +900,30 @@ table.calendar span
 	font-size: 0.6em;
 }
 
-table.calendar span.tag
+.calendar span.tag
 {
 	border-radius: 2px;
 }
 
-table.calendar span.tag.workshop
+.calendar span.tag.workshop
 {
 	color: #FFFFFF;
 	background-color: mediumvioletred;
 }
 
-table.calendar span.tag.event
+.calendar span.tag.event
 {
 	color: #FFFFFF;
 	background-color: indianred;
 }
 
-table.calendar span.tag.attendance
+.calendar span.tag.attendance
 {
 	color: #FFFFFF;
 	background-color: forestgreen;
 }
 
-table.calendar td.today
+.calendar .today
 {
 	background-color: #ffcdd2;
 }
