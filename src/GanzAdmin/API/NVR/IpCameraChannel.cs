@@ -15,7 +15,7 @@ namespace GanzAdmin.API.NVR
         {
             get
             {
-                return this.m_FfmpegProcess != null && this.m_FfmpegProcess.Responding && !this.m_FfmpegProcess.HasExited;
+                return this.m_FfmpegProcess != null && !this.m_FfmpegProcess.HasExited;
             }
         }
 
@@ -69,52 +69,65 @@ namespace GanzAdmin.API.NVR
                 };
                 this.m_FfmpegProcess.Start();
 
-                this.m_FsWatcher = new Thread(new ThreadStart(this.DeleteOldFiles));
+                this.m_FsWatcher = new Thread(new ThreadStart(this.DeleteOldFilesRunning));
                 this.m_FsWatcher.Start();
             }
         }
 
-        private void DeleteOldFiles()
+        public void Stop()
+        {
+            if (this.m_FfmpegProcess != null)
+            {
+                this.m_FfmpegProcess.Close();
+
+                while (!this.m_FfmpegProcess.HasExited)
+                {
+                    this.m_FfmpegProcess.Refresh();
+                    Thread.Sleep(100);
+                }
+            }
+        }
+
+        private void DeleteOldFilesRunning()
         {
             while(this.Runnning)
             {
-                string streamFile = $@"{GanzAdminConfiguration.Instance.NvrFolder}\{this.HandlerName}_{this.ChannelId}.m3u8";
+                this.DeleteOldFiles();
+                Thread.Sleep(10000);
+            }
+        }
 
-                string[] files = Directory.GetFiles(GanzAdminConfiguration.Instance.NvrFolder).Where(s => s.Contains($"{this.HandlerName}_{this.ChannelId}")).ToArray();
+        public void DeleteOldFiles()
+        {
+            string streamFile = $@"{GanzAdminConfiguration.Instance.NvrFolder}\{this.HandlerName}_{this.ChannelId}.m3u8";
+            string[] files = Directory.GetFiles(GanzAdminConfiguration.Instance.NvrFolder).Where(s => s.Contains($"{this.HandlerName}_{this.ChannelId}")).ToArray();
+            DateTime deletionThreshold = DateTime.Now.AddMinutes(-5);
 
-                DateTime deletionThreshold = DateTime.Now.AddMinutes(-5);
+            int counter = 0;
+            if (File.Exists(streamFile))
+            {
+                string streamFileContents = File.ReadAllText(streamFile);
 
-                int counter = 0;
+                List<string> orderedFiles = files.Where(f => !streamFileContents.Contains(f.Split('\\').Last()) && !f.Contains("m3u8")).OrderByDescending(f => f).Skip(4).ToList();
 
-                
-
-                if (File.Exists(streamFile))
+                foreach (string file in orderedFiles)
                 {
-                    string streamFileContents = File.ReadAllText(streamFile);
-
-                    List<string> orderedFiles = files.Where(f => !streamFileContents.Contains(f.Split('\\').Last()) && !f.Contains("m3u8")).OrderByDescending(f => f).Skip(4).ToList();
-
-                    foreach (string file in orderedFiles)
+                    if (File.Exists(file))
                     {
-                        if (File.Exists(file))
+                        try
                         {
-                            try
-                            {
-                                File.Delete(file);
-                                counter++;
-                            }
-                            catch(Exception ex)
-                            {
-                                Console.WriteLine(ex.Message);
-                            }
-                                
+                            File.Delete(file);
+                            counter++;
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine(ex.Message);
                         }
                     }
                 }
-
-                Console.WriteLine($"Régi kamerafájlok ({this.HandlerName}/{this.ChannelId}) közül {counter} törölve");
-                Thread.Sleep(10000);
             }
+
+            Console.WriteLine($"Régi kamerafájlok ({this.HandlerName}/{this.ChannelId}) közül {counter} törölve");
         }
     }
 }

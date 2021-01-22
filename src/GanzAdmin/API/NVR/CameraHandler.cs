@@ -28,12 +28,6 @@ namespace GanzAdmin.API.NVR
             {
                 Name = "g1"
             };
-
-            this.G2Cameras.Open();
-            this.G1MobileCamera.Open();
-
-            this.G1MobileCamera.Ptz(0, 1, 0);
-            this.G1MobileCamera.Ptz(-1, 0, 0);
         }
     }
 }
