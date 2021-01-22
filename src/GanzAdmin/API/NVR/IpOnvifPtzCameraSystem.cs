@@ -38,6 +38,15 @@ namespace GanzAdmin.API.NVR
             }
         }
 
+        public void Close()
+        {
+            foreach (IpCameraChannel channel in this.Channels)
+            {
+                channel.HandlerName = this.Name;
+                channel.Stop();
+            }
+        }
+
         public async void Ptz(float x, float y, float zoom)
         {
             string soap = String.Join("", new string[]

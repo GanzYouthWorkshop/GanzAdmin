@@ -38,5 +38,14 @@ namespace GanzAdmin.API.NVR
             // < source src = "/stream/index.m3u8" type = "application/x-mpegURL" >
             //</ video >
         }
+
+        public void Close()
+        {
+            foreach (IpCameraChannel channel in this.Channels)
+            {
+                channel.HandlerName = this.Name;
+                channel.Stop();
+            }
+        }
     }
 }

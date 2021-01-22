@@ -10,8 +10,10 @@ namespace GanzAdmin.Scheduling
 {
     public class StatisticsScheduledTask : ScheduledTaskBase
     {
-        public override DateTime LastRun { get; set; } = DateTime.Now;
-        public override TimeSpan RunSchedule { get; set; } = new TimeSpan(1, 0, 0, 0, 0);
+        public StatisticsScheduledTask()
+        {
+            this.RunSchedule = new TimeSpan(1, 0, 0, 0, 0);
+        }
 
         public override bool Run(DateTime datetime)
         {
