@@ -29,8 +29,8 @@ namespace GanzAdmin.Database.Models
         public string Phone { get; set; }
         public string Email { get; set; }
         public bool Active { get; set; }
-        public DateTime MemberSince { get; set; }
-        public DateTime PaidUntil { get; set; }
+        public DateTime MemberSince { get; set; } = DateTime.Today;
+        public DateTime PaidUntil { get; set; } = DateTime.Today;
         public List<string> Roles { get; set; } = new List<string>();
 
         [BsonRef]
