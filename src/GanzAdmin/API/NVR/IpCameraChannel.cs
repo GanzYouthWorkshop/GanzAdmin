@@ -15,7 +15,14 @@ namespace GanzAdmin.API.NVR
         {
             get
             {
-                return this.m_FfmpegProcess != null && !this.m_FfmpegProcess.HasExited;
+                try
+                {
+                    return this.m_FfmpegProcess != null && !this.m_FfmpegProcess.HasExited;
+                }
+                catch(Exception ex)
+                {
+                    return false;
+                }
             }
         }
 
@@ -80,11 +87,11 @@ namespace GanzAdmin.API.NVR
         {
             if (this.m_FfmpegProcess != null)
             {
-                this.m_FfmpegProcess.Close();
+                this.m_FfmpegProcess.Kill();
 
-                while (!this.m_FfmpegProcess.HasExited)
+                //while (!this.m_FfmpegProcess.HasExited)
                 {
-                    this.m_FfmpegProcess.Refresh();
+                    //this.m_FfmpegProcess.Refresh();
                     Thread.Sleep(100);
                 }
             }
