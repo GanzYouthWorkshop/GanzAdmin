@@ -28,7 +28,14 @@ namespace GanzAdmin.Scheduling
             allchannels.AddRange(CameraHandler.Instance.G1MobileCamera.Channels);
             foreach(IpCameraChannel channel in allchannels)
             {
-                channel.DeleteOldFiles();
+                try
+                {
+                    channel.DeleteOldFiles();
+                }
+                catch(Exception)
+                {
+
+                }
             }
 
             Console.WriteLine("Restaring all camera handlers...");

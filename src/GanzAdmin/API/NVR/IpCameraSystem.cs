@@ -20,7 +20,8 @@ namespace GanzAdmin.API.NVR
                 {
                     HandlerName = this.Name,
                     HandlerUrl = this.Url,
-                    ChannelId = i + 1
+                    ChannelId = i + 1,
+                    Protocol = "tcp"
                 });
             }
         }

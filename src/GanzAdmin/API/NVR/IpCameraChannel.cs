@@ -15,13 +15,21 @@ namespace GanzAdmin.API.NVR
         {
             get
             {
-                return this.m_FfmpegProcess != null && !this.m_FfmpegProcess.HasExited;
+                try
+                {
+                    return this.m_FfmpegProcess != null && !this.m_FfmpegProcess.HasExited;
+                }
+                catch(Exception ex)
+                {
+                    return false;
+                }
             }
         }
 
         public string HandlerName { get; set; }
         public string HandlerUrl { get; set; }
         public int ChannelId { get; set; }
+        public string Protocol { get; set; }
 
         private Process m_FfmpegProcess;
         private Thread m_FsWatcher;
@@ -37,7 +45,7 @@ namespace GanzAdmin.API.NVR
                 string[] arguments = new string[]
                 {
                     "-fflags nobuffer",
-                    "-rtsp_transport tcp",
+                    $"-rtsp_transport {this.Protocol}",
 
                     $"-i {String.Format(this.HandlerUrl, this.ChannelId)}",
 
@@ -58,12 +66,13 @@ namespace GanzAdmin.API.NVR
                     @$"{streamDirectory}\{this.HandlerName}_{this.ChannelId}_%d.ts",
                 };
 
+                string args = String.Join(' ', arguments);
                 this.m_FfmpegProcess = new Process
                 {
                     StartInfo = new ProcessStartInfo()
                     {
                         FileName = "ffmpeg.exe",
-                        Arguments = String.Join(' ', arguments),
+                        Arguments = args,
                         CreateNoWindow = false,
                     }
                 };
@@ -78,11 +87,11 @@ namespace GanzAdmin.API.NVR
         {
             if (this.m_FfmpegProcess != null)
             {
-                this.m_FfmpegProcess.Close();
+                this.m_FfmpegProcess.Kill();
 
-                while (!this.m_FfmpegProcess.HasExited)
+                //while (!this.m_FfmpegProcess.HasExited)
                 {
-                    this.m_FfmpegProcess.Refresh();
+                    //this.m_FfmpegProcess.Refresh();
                     Thread.Sleep(100);
                 }
             }

@@ -16,13 +16,13 @@
                     <div>
                         <div style="height: 100%;" class="grid x3x3">
                             <span />
-                            <button @onclick="() => CameraHandler.Instance.G1MobileCamera.Ptz(0, 1, 0)" @onclick:preventDefault="true">▲</button>
+                            <a class="button" @onclick="(e) => CameraHandler.Instance.G1MobileCamera.Ptz(0, 1, 0)" @onclick:stopPropagation="true">▲</a>
                             <span />
-                            <button @onclick="() => CameraHandler.Instance.G1MobileCamera.Ptz(-1, 0, 0)" @onclick:preventDefault="true">◄</button>
+                            <a class="button" @onclick="() => CameraHandler.Instance.G1MobileCamera.Ptz(-1, 0, 0)" @onclick:stopPropagation="true">◄</a>
                             <span />
-                            <button @onclick="() => CameraHandler.Instance.G1MobileCamera.Ptz(1, 0, 0)" @onclick:preventDefault="true">►</button>
+                            <a class="button" @onclick="() => CameraHandler.Instance.G1MobileCamera.Ptz(1, 0, 0)" @onclick:stopPropagation="true">►</a>
                             <span />
-                            <button @onclick="() => CameraHandler.Instance.G1MobileCamera.Ptz(0, -1, 0)" @onclick:preventDefault="true">▼</button>
+                            <a class="button" @onclick="() => CameraHandler.Instance.G1MobileCamera.Ptz(0, -1, 0)" @onclick:stopPropagation="true">▼</a>
                             <span />
                         </div>
                     </div>
