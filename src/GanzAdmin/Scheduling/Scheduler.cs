@@ -28,7 +28,7 @@ namespace GanzAdmin.Scheduling
                 DateTime now = DateTime.Now;
                 foreach(ScheduledTaskBase task in Tasks)
                 {
-                    if(task.LastRun.Add(task.RunSchedule) < now)
+                    if(task.LastRun.Add(task.RunSchedule) < now || task.CheckSpecialRunPermission())
                     {
                         task.Run(now);
                         task.LastRun = now;

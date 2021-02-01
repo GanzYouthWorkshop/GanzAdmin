@@ -13,8 +13,8 @@ namespace GanzAdmin.Database.Models
 
         [BsonRef]
         public Member Member { get; set; }
-        
-        public DateTime Occasion { get; set; }
+
+        public DateTime Occasion { get; set; } = DateTime.Today;
 
         public int Value { get; set; }
 

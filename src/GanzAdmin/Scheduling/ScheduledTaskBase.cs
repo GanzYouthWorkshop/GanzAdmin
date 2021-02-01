@@ -11,6 +11,11 @@ namespace GanzAdmin.Scheduling
         public TimeSpan RunSchedule { get; set; }
 
         public abstract bool Run(DateTime datetime);
+
+        public virtual bool CheckSpecialRunPermission()
+        {
+            return false;
+        }
     }
 
 }

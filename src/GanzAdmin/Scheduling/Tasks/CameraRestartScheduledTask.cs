@@ -1,6 +1,7 @@
 ﻿using GanzAdmin.API.NVR;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -8,6 +9,8 @@ namespace GanzAdmin.Scheduling
 {
     public class CameraRestartScheduledTask : ScheduledTaskBase
     {
+        public const int FIFTY_MEGS = 50 * 1024 * 1024;
+
         public CameraRestartScheduledTask()
         {
             this.RunSchedule = new TimeSpan(1, 0, 0, 0, 0);
@@ -33,6 +36,11 @@ namespace GanzAdmin.Scheduling
             CameraHandler.Instance.G2Cameras.Open();
 
             return true;
+        }
+
+        public override bool CheckSpecialRunPermission()
+        {
+            return new DriveInfo("X").AvailableFreeSpace < FIFTY_MEGS;
         }
     }
 }

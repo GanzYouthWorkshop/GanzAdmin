@@ -1,0 +1,34 @@
+﻿@page "/scheduled-tasks"
+
+@using GanzAdmin.Scheduling;
+
+<AuthorizedView NeededRolesOR="@Permissions.Overlord">
+    <aside>
+    </aside>
+
+    <main>
+        @if (Scheduler.Tasks != null)
+        {
+            <div id='table-wrapper'>
+                <table id='data' class="display nowrap">
+                    <thead>
+                        <tr>
+                            <DataGridHeader IsPinnable IsSortable>Típus</DataGridHeader>
+                            <DataGridHeader IsCollapsible IsSortable>Utoljrára futott</DataGridHeader>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @foreach (ScheduledTaskBase item in Scheduler.Tasks)
+                        {
+                            <tr>
+                                <td>@item.GetType().ToString()</td>
+                                <td>@item.LastRun</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </main>
+</AuthorizedView>
