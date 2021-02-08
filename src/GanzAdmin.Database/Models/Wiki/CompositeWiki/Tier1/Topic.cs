@@ -11,9 +11,8 @@ namespace GanzAdmin.Database.Models
         public long Id { get; set; }
 
         public string Name { get; set; }
-        public int Difficulty { get; set; } //todo
-
-        public List<ContentFragment> Fragments { get; } = new List<ContentFragment>();
+        public List<Module> Modules { get; set; } = new List<Module>();
+        public List<string> Tags { get; set; } = new List<string>();
 
         [BsonIgnore]
         public string DisplayValue
