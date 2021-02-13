@@ -1,5 +1,6 @@
 ﻿@page "/parts"
 @page "/parts/{PopupDisplay}"
+@page "/parts/filter/{FilterId}"
 
 @inherits DataHandlingController<Part>
 
@@ -7,9 +8,10 @@
     <aside class='@(this.ItemList == null ? "loading" : "")'>
         @if (this.ItemList != null)
         {
-            @*<TreeLevel Items="@(this.ItemList.ToEntities<Part>())"
+            <TreeLevel Items="@(GanzAdminDbEngine.Instance.Categories.FindAll().ToList().ToEntities<Category>())"
                 Root="@null"
-                Filter="@((e, r) => (e as Part).Category == null && r == null || (e as Part).Category?.Id == r?.Id)" />*@
+                Filter="@((e, r) => (e as Category).ParentCategory == null && r == null || (e as Category).ParentCategory?.Id == r?.Id)"
+                UrlTemplate="@((e) => $"/{this.BaseLink}/filter/{e.Id}")" />
         }
         <AuthorizedView NeededRolesOR="@Permissions.EditParts">
             <NavLink class="addlink" href="@($"/{this.BaseLink}/add")">Új @this.DataName</NavLink>
@@ -37,7 +39,12 @@
                     </thead>
 
                     <tbody>
-                        @foreach (Part item in this.ItemList)
+                        @{
+                            int filter = this.FilterId == null ? -1 : int.Parse(this.FilterId);
+                            List<Part> iterationCollection = filter < 0 ? this.ItemList : this.ItemList.Where(i => i.Category?.Id == filter).ToList();
+                        }
+
+                        @foreach (Part item in iterationCollection)
                         {
                             <tr>
                                 <td><input type="checkbox" @onchange="(e) => this.ToolProvider.AddRemove(item)" /></td>
@@ -292,6 +299,9 @@
 {
     protected override string BaseLink { get; set; } = "parts";
     protected override string DataName { get; set; } = "alkatrész";
+
+    [Parameter]
+    public string FilterId { get; set; } = int.MinValue.ToString();
 
     private void CategoryChanged()
     {
