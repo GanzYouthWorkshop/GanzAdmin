@@ -1,0 +1,63 @@
+﻿<h3>Kiválasztott tagok</h3>
+@if (this.StandardMembers != null)
+{
+    @foreach (Member member in this.StandardMembers)
+    {
+        <div>
+            @member.Email
+        </div>
+    }
+}
+<hr />
+
+<h3>Egyéb emailcímek megadása</h3>
+@foreach (AdditionalEmail mail in this.Additionals)
+{
+    <div>
+        <SimpleTextField Type="text"
+                           Display="@($"Email: ")"
+                           @bind-Value="mail.Value" />
+    </div>
+    <a @onclick="() => this.Additionals.Remove(mail)"><i></i></a>
+}
+<a @onclick="() => this.Additionals.Add(new AdditionalEmail())">Új email</a>
+
+<button @onclick="() => this.GotoGmail()">Küldés</button>
+
+@inherits ToolBase
+
+@code
+{
+    [Inject]
+    protected NavigationManager NavMan { get; set; }
+
+    private class AdditionalEmail
+    {
+        public string Value { get; set; }
+    }
+
+    private List<Member> StandardMembers { get; set; }
+    private List<AdditionalEmail> Additionals { get; set; } = new List<AdditionalEmail>();
+
+    public SendEmailTool()
+    {
+        this.Icon = "";
+        this.Name = "Csoport email küldés";
+        this.Description = "Az összes kiválasztott tagnak köremailt küld Gmail segítségével.";
+        this.SupportedEntities = new List<Type> { typeof(Member) };
+    }
+
+    protected override void OnInitialized()
+    {
+        this.Entities = this.ToolProvider.CheckedItems;
+        this.StandardMembers = this.Entities.FromEntities<Member>();
+    }
+
+    private void GotoGmail()
+    {
+        string recipients = Uri.EscapeDataString(String.Join(',', this.StandardMembers.Select(m => m.Email).Concat(this.Additionals.Select(a => a.Value))));
+        string urlTemplate = $"https://mail.google.com/mail/?extsrc=mailto&url=mailto:{recipients}";
+
+        this.NavMan.NavigateTo(urlTemplate);
+    }
+}
