@@ -18,6 +18,7 @@
                 <table id='data' class="display nowrap">
                     <thead>
                         <tr>
+                            <DataGridHeader></DataGridHeader>
                             <DataGridHeader IsPinnable IsSortable>Név</DataGridHeader>
                             <DataGridHeader IsCollapsible IsSortable>Foglalkozás</DataGridHeader>
                             <DataGridHeader IsCollapsible IsSortable>Aktív?</DataGridHeader>
@@ -30,6 +31,8 @@
                         @foreach (Member member in this.ItemList)
                         {
                             <tr>
+                                <td><input type="checkbox" @onchange="(e) => this.ToolProvider.AddRemove(member)" /></td>
+
                                 <td><NavLink href="@($"/{this.BaseLink}/{member.Id}")">@member.Name</NavLink></td>
                                 <td>@(this.ActivityText(member.MainActivity))</td>
                                 <td>@(member.Active ? "🟩 Igen" : "🟥 Nem")</td>
