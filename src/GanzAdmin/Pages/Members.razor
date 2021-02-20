@@ -22,36 +22,50 @@
                             <DataGridHeader IsPinnable IsSortable>Név</DataGridHeader>
                             <DataGridHeader IsCollapsible IsSortable>Foglalkozás</DataGridHeader>
                             <DataGridHeader IsCollapsible IsSortable>Aktív?</DataGridHeader>
+                            <DataGridHeader IsCollapsible IsSortable>Utolsó jelenlét</DataGridHeader>
                             <DataGridHeader IsCollapsible IsSortable>Tagdíj befizetve</DataGridHeader>
-                            <DataGridHeader IsCollapsible IsSortable>Foglalkozásra bejegyzés</DataGridHeader>
+                            <AuthorizedView NeededRolesOR="@Permissions.EditMembers">
+                                <DataGridHeader IsCollapsible IsSortable>Foglalkozásra bejegyzés</DataGridHeader>
+                            </AuthorizedView>
                         </tr>
                     </thead>
 
                     <tbody>
                         @foreach (Member member in this.ItemList)
                         {
-                            <tr>
-                                <td><input type="checkbox" @onchange="(e) => this.ToolProvider.AddRemove(member)" /></td>
+                        <tr>
+                            <td><input type="checkbox" @onchange="(e) => this.ToolProvider.AddRemove(member)" /></td>
 
-                                <td><NavLink href="@($"/{this.BaseLink}/{member.Id}")">@member.Name</NavLink></td>
-                                <td>@(this.ActivityText(member.MainActivity))</td>
-                                <td>@(member.Active ? "🟩 Igen" : "🟥 Nem")</td>
-                                <td>
-                                    @member.PaidUntil
-                                    @if (member.Active && member.PaidUntil < DateTime.Now)
+                            <td><NavLink href="@($"/{this.BaseLink}/{member.Id}")">@member.Name</NavLink></td>
+                            <td>@(this.ActivityText(member.MainActivity))</td>
+                            <td>@(member.Active ? "🟩 Igen" : "🟥 Nem")</td>
+                            <td>
+                                @{
+                                    Attendance att = GanzAdminDbEngine.Instance.Attendances.FindAll().Where(a => a.MemberId == member.Id).OrderByDescending(a => a.Occasion).FirstOrDefault();
+                                    if (att != null)
                                     {
-                                        <span> ❗</span>
+                                        <span>@att.Occasion</span>
                                     }
-                                </td>
+                                }
+                            </td>
+                            <td>
+                                @member.PaidUntil
+                                @if (member.Active && member.PaidUntil < DateTime.Now)
+                                {
+                                    <span> ❗</span>
+                                }
+                            </td>
+                            <AuthorizedView NeededRolesOR="@Permissions.EditMembers">
                                 <td>
-                                    <AuthorizedView NeededRolesOR="@Permissions.EditParts">
-                                        @if (!member.Attendances.Exists(a => a.Occasion.Date == DateTime.Today))
-                                        {
-                                            <a @onclick="() => this.OnLogAttenance(member)">Jelenléti ív kitöltés</a>
-                                        }
-                                    </AuthorizedView>
+
+                                    @if (!member.Attendances.Exists(a => a.Occasion.Date == DateTime.Today))
+                                    {
+                                        <a @onclick="() => this.OnLogAttenance(member)">Jelenléti ív kitöltés</a>
+                                    }
+
                                 </td>
-                            </tr>
+                            </AuthorizedView>
+                        </tr>
                         }
                     </tbody>
                 </table>
