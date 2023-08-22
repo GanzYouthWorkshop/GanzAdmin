@@ -1,0 +1,166 @@
+﻿@using  System.Text.Json;
+
+@{
+    int i = -1;
+    foreach (JsonElement element in this.JsonSource.RootElement.GetProperty("blocks").EnumerateArray())
+    {
+        i++;
+        if(this.LimitCompnents > -1 && i >= this.LimitCompnents)
+        {
+            break;
+        }
+        JsonElement data = element.GetProperty("data");
+        switch (element.GetProperty("type").GetString())
+        {
+            case "paragraph":
+                string paragraph = data.GetProperty("text").GetString();
+                if (this.LimitParagraphChars > 0 && paragraph.Length > this.LimitParagraphChars)
+                {
+                    paragraph = paragraph.Substring(0, this.LimitParagraphChars) + "...";
+                }
+                <p>@((MarkupString)paragraph)</p>
+                break;
+
+            case "header":
+                string level = data.GetProperty("level").ToString();
+                string text = data.GetProperty("text").GetString();
+                int levelNum = 0;
+                int.TryParse(level, out levelNum);
+                @((MarkupString)$"<h{level} id='{UrlUtils.ToAnchor(text)}'>{text}</h{level}>")
+                @if(this.AddDelimiterAfterHeaderLevel > 0 && levelNum >= AddDelimiterAfterHeaderLevel )
+                {
+                    <hr />
+                }
+                break;
+
+            case "delimiter":
+                <hr />
+                break;
+
+            case "code":
+                <code><pre>@data.GetProperty("code").GetString()</pre></code>
+                break;
+
+            case "raw":
+                <div>@((MarkupString)data.GetProperty("html").GetString())</div>
+                break;
+
+            case "quote":
+                <blockquote>@((MarkupString)data.GetProperty("text").GetString())</blockquote>
+                <p>@((MarkupString)data.GetProperty("caption").GetString())</p>
+                break;
+
+            case "warning":
+                string htmlClass = "";
+                string title = data.GetProperty("title").GetString();
+                if(title.ToLower().Contains("figyelem"))
+                {
+                    htmlClass = "warning";
+                }
+                else if (title.ToLower().Contains("tipp"))
+                {
+                    htmlClass = "info";
+                }
+                <div class="@(htmlClass + " box")">
+                    <p><b>@((MarkupString)data.GetProperty("title").GetString())</b></p>
+                    <p>@((MarkupString)data.GetProperty("message").GetString())</p>
+                </div>
+                break;
+
+            case "list":
+                if (data.GetProperty("style").GetString() == "ordered")
+                {
+                    <ol>
+                        @foreach (JsonElement le in data.GetProperty("items").EnumerateArray())
+                        {
+                            <li>@((MarkupString)le.GetString())</li>
+                        }
+                    </ol>
+                }
+                else
+                {
+                    <ul>
+                        @foreach (JsonElement le in data.GetProperty("items").EnumerateArray())
+                        {
+                            <li>@((MarkupString)le.GetString())</li>
+                        }
+                    </ul>
+                }
+                break;
+
+            case "checklist":
+                <ul>
+                    @foreach (JsonElement le in data.GetProperty("items").EnumerateArray())
+                    {
+                        @*@(le.GetProperty("checked").GetBoolean())*@
+                        <li>@((MarkupString)le.GetProperty("text").GetString())</li>
+                    }
+                </ul>
+                break;
+
+            case "table":
+                <table>
+                    @foreach (JsonElement row in data.GetProperty("content").EnumerateArray())
+                    {
+                        <tr>
+                            @foreach (JsonElement cell in row.EnumerateArray())
+                            {
+                                <td>@((MarkupString)cell.GetString())</td>
+                            }
+                        </tr>
+                    }
+                </table>
+                break;
+
+            case "image":
+                <img src="@(data.GetProperty("file").GetProperty("url").GetString())">
+                string caption = data.GetProperty("caption").GetString();
+                if(caption != null)
+                {
+                    <p>@caption</p>
+                }
+                break;
+
+            case "embed":
+                <iframe width="@data.GetProperty("width").GetRawText()"
+                        height="@data.GetProperty("height").GetRawText()"
+                        src="@data.GetProperty("embed").GetString()" allowfullscreen></iframe>
+                break;
+        }
+    }
+}
+
+@code
+{
+    [Parameter]
+    public string Source { get; set; }
+
+    [Parameter]
+    public int LimitCompnents { get; set; } = -1;
+
+    [Parameter]
+    public int LimitParagraphChars { get; set; } = -1;
+
+    [Parameter]
+    public int AddDelimiterAfterHeaderLevel { get; set; }
+
+    public JsonDocument JsonSource
+    {
+        get
+        {
+            if (this.Source == null)
+            {
+                this.Source = "{\"blocks\": []}";
+            }
+
+            try
+            {
+                return JsonDocument.Parse(this.Source, new JsonDocumentOptions { AllowTrailingCommas = true });
+            }
+            catch(Exception ex)
+            {
+                return JsonDocument.Parse("{\"blocks\": []}");
+            }
+        }
+    }
+}

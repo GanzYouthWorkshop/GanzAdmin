@@ -225,10 +225,10 @@ else
     {
         get
         {
-            if (this.SelectedItem.Original.Members.Contains(this.AuthManager.CurrentMember) ||
-                this.AuthManager.CurrentMember.Roles.Contains(Permissions.EditAnyProject) ||
+            if (this.SelectedItem.Original.Members.Contains(this.AuthManager.CurrentMember) || this.AuthManager.CheckAuth($"{Permissions.EditAnyProject} {Permissions.Overlord}", ""))
+@*                this.AuthManager.CurrentMember.Roles.Contains(Permissions.EditAnyProject) ||
                 this.AuthManager.CurrentMember.Roles.Contains(Permissions.Overlord))
-            {
+*@            {
                 return true;
             }
 

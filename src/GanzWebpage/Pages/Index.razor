@@ -1,0 +1,73 @@
+﻿@page "/"
+@using GanzAdmin.Database;
+@using GanzAdmin.Database.Models;
+@using GanzNet.Common
+
+<ImageBanner>
+	<video loop mute autoplay poster="./img/start_poster.png">
+		<source src="./img/start.mp4" type="video/mp4" >
+	</video>
+</ImageBanner>
+
+<section class="uk-section">
+
+    <div class="uk-text-center uk-container uk-container-xsmall">
+        <h1 class="uk-article-title">Üdvözlünk!</h1>
+        <p class="uk-text-lead">Üdvözlünk a GIM honlapján!.</p>
+    </div>
+
+    <div class="uk-container uk-container-small">
+        <hr class="uk-margin-large-top uk-margin-large-bottom">
+
+        <div class="timeline uk-margin-large-top">
+
+            @foreach (Tuple<MemberProject, LogEntry> entry in this.Entries)
+            {
+                <div class="timeline-entry">
+                    <div class="timeline-time">
+                        <h5>@(entry.Item2.StartTime.ToString("yyyy.MM.dd, hh:mm"))</h5>
+                    </div>
+                    <div class="timeline-body">
+                        <h3 class="text-400">@entry.Item1.Name</h3>
+                        <WysiwygContentViewer Source="@entry.Item2.Content" LimitCompnents="1" />
+                    </div>
+                </div>
+
+            }
+        </div>
+    </div>
+</section>
+
+<div class="uk-container">
+    <hr class="uk-margin-remove">
+    <div class="uk-grid-large uk-flex-middle uk-margin-large-top uk-margin-large-bottom uk-grid" data-uk-grid="" data-uk-scrollspy="cls: uk-animation-slide-bottom; repeat: true">
+        <div class="uk-width-auto@m uk-first-column">
+            <h3 class="uk-text-center uk-text-left@m">Kérdésed van? Vedd fel velünk a kapcsolatot!</h3>
+        </div>
+        <div class="uk-width-expand@m">
+            <a class="uk-button uk-button-primary uk-button-large uk-align-right@m" target="_blank" href="https://www.facebook.com/messages/t/285347364852147">Írok Messengeren</a>
+        </div>
+    </div>
+</div>
+
+
+@code
+{
+    protected List<Tuple<MemberProject, LogEntry>> Entries { get; set; } = new List<Tuple<MemberProject, LogEntry>>();
+
+    protected override Task OnInitializedAsync()
+    {
+        using (GanzAdminDbEngine db = GanzAdminDbEngine.GetInstance())
+        {
+            var items = db.GetCollection<MemberProject>()
+                                .FindAll()
+                                .OrderBy(t => t.DisplayValue)
+                                .SelectMany(p => p.ProjectLog, (p, value) => Tuple.Create(p, value))
+                                .OrderByDescending(l => l.Item2.StartTime)
+                                .Take(5)
+                                .ToList();
+            Entries.AddRange(items);
+        }
+        return base.OnInitializedAsync();
+    }
+}

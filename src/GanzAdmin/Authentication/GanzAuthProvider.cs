@@ -45,13 +45,14 @@ namespace GanzAdmin.Authentication
             }
         }
 
-        public GanzAuthProvider(SessionManager sessionManager, IHttpContextAccessor httpProxy, IJSRuntime jsRuntime)
+        public AuthProvider(SessionManager sessionManager, IAuthUnitProvider unitProvider, IHttpContextAccessor httpProxy, IJSRuntime jsRuntime)
         {
             this.m_SessionManager = sessionManager;
             this.m_Http = httpProxy;
             this.m_Javascript = jsRuntime;
+            this.UnitProvider = unitProvider;
 
-            if(this.m_Http.HttpContext != null)
+            if (this.m_Http.HttpContext != null)
             {
                 IRequestCookieCollection cookies = this.m_Http.HttpContext.Request.Cookies;
 
@@ -122,7 +123,7 @@ namespace GanzAdmin.Authentication
 
         public void SignIn(Member member, int daysUntilExpiration, bool remind)
         {
-            SessionManager.Session session = this.m_SessionManager.RegisterNewSession(member.Id, daysUntilExpiration, remind);
+            SessionManager.Session session = this.m_SessionManager.RegisterNewSession(member.Uid, daysUntilExpiration, remind);
             this.CurrentSession = session;
             this.MakeCookie(AUTH_COOKIE, session.SecurityToken, daysUntilExpiration);
         }

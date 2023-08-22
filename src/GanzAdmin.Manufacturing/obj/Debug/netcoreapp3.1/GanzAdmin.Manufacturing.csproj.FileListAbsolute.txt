@@ -1,0 +1,4 @@
+C:\Users\Szlatyka\Documents\GIT\GanzAdmin\src\GanzAdmin.Manufacturing\obj\Debug\netcoreapp3.1\GanzAdmin.Manufacturing.csproj.AssemblyReference.cache
+C:\Users\Szlatyka\Documents\GIT\GanzAdmin\src\GanzAdmin.Manufacturing\obj\Debug\netcoreapp3.1\GanzAdmin.Manufacturing.AssemblyInfoInputs.cache
+C:\Users\Szlatyka\Documents\GIT\GanzAdmin\src\GanzAdmin.Manufacturing\obj\Debug\netcoreapp3.1\GanzAdmin.Manufacturing.AssemblyInfo.cs
+C:\Users\Szlatyka\Documents\GIT\GanzAdmin\src\GanzAdmin.Manufacturing\obj\Debug\netcoreapp3.1\GanzAdmin.Manufacturing.csproj.CoreCompileInputs.cache

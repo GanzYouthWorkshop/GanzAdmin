@@ -115,9 +115,11 @@
                 this.Days.Add(null);
             }
 
-            this.ItemList = GanzAdminDbEngine.Instance.Events.FindAll().ToList();
-
-            this.AttendanceList = GanzAdminDbEngine.Instance.Attendances.Find(a => a.Occasion.Date >= firstDayOfTheMonth && a.Occasion <= lastDayOfTheMonth).ToList();
+            using (GanzAdminDbEngine db = GanzAdminDbEngine.GetInstance())
+            {
+                this.ItemList = db.Events.FindAll().ToList();
+                this.AttendanceList = db.Attendances.Find(a => a.Occasion.Date >= firstDayOfTheMonth && a.Occasion <= lastDayOfTheMonth).ToList();
+            }
         });
     }
 
@@ -163,8 +165,10 @@
 
     private void Add()
     {
-        GanzAdminDbEngine.Instance.Events.Insert(this.SelectedItem.FoldBack());
-
+        using (GanzAdminDbEngine db = GanzAdminDbEngine.GetInstance())
+        {
+            db.Events.Insert(this.SelectedItem.FoldBack());
+        }
         this.JS.InvokeVoidAsync("alertify.success", "Tag hozzáadva!");
     }
 

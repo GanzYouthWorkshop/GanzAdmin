@@ -7,10 +7,11 @@ using System.Text;
 
 namespace GanzAdmin.Database
 {
-    public class GanzAdminDbEngine
+    public class GanzAdminDbEngine : IDisposable
     {
         private bool m_IsDisposing;
 
+        private static string s_StandardConnectionString;
         private LiteDatabase m_InnerDb;
 
         public static GanzAdminDbEngine Instance { get; set; }
@@ -39,6 +40,11 @@ namespace GanzAdmin.Database
             get { return this.m_InnerDb.GetCollection<MemberProject>().Include(i => i.Members); }
         }
 
+        public ILiteCollection<LogEntry> LogEntries
+        {
+            get { return this.m_InnerDb.GetCollection<LogEntry>().Include(i => i.Writer); }
+        }
+
         public ILiteCollection<Kit> Kits
         {
             get
@@ -61,14 +67,24 @@ namespace GanzAdmin.Database
 
         public void Dispose()
         {
-            this.Transact();
-
             if (!this.m_IsDisposing)
             {
+                this.Transact();
+
                 this.m_InnerDb.Dispose();
 
                 this.m_IsDisposing = true;
             }
+        }
+
+        public static void InitializeSystem(string connectionString)
+        {
+            s_StandardConnectionString = connectionString;
+        }
+
+        public static GanzAdminDbEngine GetInstance()
+        {
+            return Instance;// new GanzAdminDbEngine(s_StandardConnectionString);
         }
 
         public GanzAdminDbEngine(string connectionString)
@@ -97,7 +113,7 @@ namespace GanzAdmin.Database
                 });
             }
 
-            this.m_InnerDb.Checkpoint();
+            this.Transact();
         }
 
         public ILiteCollection<T> GetCollection<T>()
@@ -118,6 +134,10 @@ namespace GanzAdmin.Database
             {
                 return (ILiteCollection<T>)this.Kits;
             }
+            if (typeof(T).Equals(typeof(LogEntry)))
+            {
+                return (ILiteCollection<T>)this.LogEntries;
+            }
             if (typeof(T).Equals(typeof(Payment)))
             {
                 return (ILiteCollection<T>)this.Payments;
@@ -125,9 +145,9 @@ namespace GanzAdmin.Database
             return this.m_InnerDb.GetCollection<T>();
         }
 
-        public void BeginTransaction()
+        public bool BeginTransaction()
         {
-            this.m_InnerDb.BeginTrans();
+            return this.m_InnerDb.BeginTrans();
         }
 
         public void Transact()

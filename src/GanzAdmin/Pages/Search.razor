@@ -134,46 +134,51 @@
 
     private void DoSearch()
     {
-        List<SearchFragment> fragments = this.ParseExpression();
+        using (GanzAdminDbEngine db = GanzAdminDbEngine.GetInstance())
+        {
 
-        this.ItemList = null;
+            List<SearchFragment> fragments = this.ParseExpression();
 
-        List<SearchResult> result = new List<SearchResult>();
-        result.AddRange(Part.Search(GanzAdminDbEngine.Instance.Parts.FindAll(), fragments).Select(p => new SearchResult()
-        {
-            DataType = typeof(Part),
-            Display = p.Name, Url = $"./parts/{p.Id}",
-            Information = $"{p.ShortDescription}, {p.SumInStock} {p.StockUnit} raktáron",
-        }));
-        result.AddRange(WikiPage.Search(GanzAdminDbEngine.Instance.GetCollection<WikiPage>().FindAll(), fragments).Select(w => new SearchResult()
-        {
-            DataType = typeof(WikiPage),
-            Display = w.Name,
-            Url = $"./curriculum/{w.Id}",
-            Information = $"{w.Name}",
-        }));
-        result.AddRange(Member.Search(GanzAdminDbEngine.Instance.GetCollection<Member>().FindAll(), fragments).Select(m => new SearchResult()
-        {
-            DataType = typeof(Member),
-            Display = m.Name,
-            Url = $"./members/{m.Id}",
-            Information = $"{m.Name}, {m.Email}",
-        }));
-        result.AddRange(Kit.Search(GanzAdminDbEngine.Instance.GetCollection<Kit>().FindAll(), fragments).Select(m => new SearchResult()
-        {
-            DataType = typeof(Kit),
-            Display = m.Name,
-            Url = $"./members/{m.Id}",
-            Information = $"{m.Name}, " + (m.IsAvailableForBuild ? "megépíthető" : "nem építhető meg"),
-        }));
-        result.AddRange(MemberProject.Search(GanzAdminDbEngine.Instance.GetCollection<MemberProject>().FindAll(), fragments).Select(m => new SearchResult()
-        {
-            DataType = typeof(MemberProject),
-            Display = m.Name,
-            Url = $"./members/{m.Id}",
-            Information = $"{m.Name}, " + (m.IsFinished ? "befejezett" : "folyamatban"),
-        }));
+            this.ItemList = null;
 
-        this.ItemList = result;
+            List<SearchResult> result = new List<SearchResult>();
+            result.AddRange(Part.Search(db.Parts.FindAll(), fragments).Select(p => new SearchResult()
+            {
+                DataType = typeof(Part),
+                Display = p.Name,
+                Url = $"./parts/{p.Id}",
+                Information = $"{p.ShortDescription}, {p.SumInStock} {p.StockUnit} raktáron",
+            }));
+            result.AddRange(WikiPage.Search(db.GetCollection<WikiPage>().FindAll(), fragments).Select(w => new SearchResult()
+            {
+                DataType = typeof(WikiPage),
+                Display = w.Name,
+                Url = $"./curriculum/{w.Id}",
+                Information = $"{w.Name}",
+            }));
+            result.AddRange(Member.Search(db.GetCollection<Member>().FindAll(), fragments).Select(m => new SearchResult()
+            {
+                DataType = typeof(Member),
+                Display = m.Name,
+                Url = $"./members/{m.Id}",
+                Information = $"{m.Name}, {m.Email}",
+            }));
+            result.AddRange(Kit.Search(db.GetCollection<Kit>().FindAll(), fragments).Select(m => new SearchResult()
+            {
+                DataType = typeof(Kit),
+                Display = m.Name,
+                Url = $"./members/{m.Id}",
+                Information = $"{m.Name}, " + (m.IsAvailableForBuild ? "megépíthető" : "nem építhető meg"),
+            }));
+            result.AddRange(MemberProject.Search(db.GetCollection<MemberProject>().FindAll(), fragments).Select(m => new SearchResult()
+            {
+                DataType = typeof(MemberProject),
+                Display = m.Name,
+                Url = $"./members/{m.Id}",
+                Information = $"{m.Name}, " + (m.IsFinished ? "befejezett" : "folyamatban"),
+            }));
+
+            this.ItemList = result;
+        }
     }
 }

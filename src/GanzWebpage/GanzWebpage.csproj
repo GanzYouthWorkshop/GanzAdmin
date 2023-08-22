@@ -1,0 +1,13 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\_submodules\GEV-Common-Library\src\GEV Common Library\GEV Common Library.csproj" />
+    <ProjectReference Include="..\GanzAdmin.Database\GanzAdmin.Database.csproj" />
+    <ProjectReference Include="..\GanzNet.Common\GanzNet.Common.csproj" />
+  </ItemGroup>
+
+</Project>

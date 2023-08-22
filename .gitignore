@@ -17,3 +17,9 @@ src/GanzAdmin.ServerAdministration/obj
 src/GanzAdmin/config.xml
 *.user
 src/GanzAdmin/wwwroot/filestorage
+src/GanzNet.Authentication/bin
+src/GanzNet.Common/bin
+src/GanzNet.Authentication/obj
+src/GanzNet.Common/obj
+src/GanzWebpage/bin
+src/GanzWebpage/obj

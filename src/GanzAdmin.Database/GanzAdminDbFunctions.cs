@@ -17,14 +17,21 @@ namespace GanzAdmin.Database
                 Occasion = date
             };
             member.Attendances.Add(result);
-            GanzAdminDbEngine.Instance.Attendances.Insert(result);
-            GanzAdminDbEngine.Instance.Members.Update(member);
-            GanzAdminDbEngine.Instance.Transact();
+
+            using (GanzAdminDbEngine db = GanzAdminDbEngine.GetInstance())
+            {
+                db.Attendances.Insert(result);
+                db.Members.Update(member);
+                db.Transact();
+            }
         }
 
         public static List<Tuple<int, string>> GetMembersForTags()
         {
-            return MembersToTuples(GanzAdminDbEngine.Instance.Members.FindAll());
+            using (GanzAdminDbEngine db = GanzAdminDbEngine.GetInstance())
+            {
+                return MembersToTuples(db.Members.FindAll());
+            }
         }
 
         public static List<Tuple<int, string>> MembersToTuples(IEnumerable<Member> members)

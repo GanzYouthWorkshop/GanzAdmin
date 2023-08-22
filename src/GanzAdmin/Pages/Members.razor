@@ -165,7 +165,7 @@
     {
         if(this.PasswordChanged)
         {
-            if(this.SelectedItem.Original.Roles.Contains(Permissions.Overlord) && !this.AuthManager.CurrentMember.Roles.Contains(Permissions.Overlord))
+            if(this.SelectedItem.Original.Roles.Contains(Permissions.Overlord) && !this.AuthManager.CheckAuth(Permissions.Overlord, ""))
             {
                 //Ha a sz editált user overlord és az editáló nem az, ne legyen jelszó átírás!
                 return true;
@@ -185,7 +185,7 @@
 
     protected override bool BeforeDelete()
     {
-        if (this.SelectedItem.Original.Roles.Contains(Permissions.Overlord) && !this.AuthManager.CurrentMember.Roles.Contains(Permissions.Overlord))
+        if (this.SelectedItem.Original.Roles.Contains(Permissions.Overlord) && !this.AuthManager.CheckAuth(Permissions.Overlord, ""))
         {
             return false;
         }

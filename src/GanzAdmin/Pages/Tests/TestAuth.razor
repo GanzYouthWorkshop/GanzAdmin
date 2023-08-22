@@ -56,7 +56,10 @@
     {
         get
         {
-            return GanzAdmin.Database.GanzAdminDbEngine.Instance.Members.FindAll().Select(m => new Tuple<int, string>((int)m.Id, m.Name)).ToList();
+            using(GanzAdminDbEngine db = GanzAdminDbEngine.GetInstance())
+            {
+                return db.Members.FindAll().Select(m => new Tuple<int, string>((int)m.Id, m.Name)).ToList();
+            }
         }
     }
 

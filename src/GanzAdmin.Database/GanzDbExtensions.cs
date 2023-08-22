@@ -1,7 +1,10 @@
 ﻿using GanzAdmin.Database.Models;
+using Microsoft.VisualBasic;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace GanzAdmin.Database
 {
@@ -35,5 +38,27 @@ namespace GanzAdmin.Database
             }
             return false;          
         }
-    }
+
+        public static string ToDisplayUrl(this IEntity entity)
+        {
+            char[] fromReplace = { 'á', 'é', 'í', 'ö', 'ü', 'ó', 'ő', 'ú', 'ű', 'ä', '/', ' ' };
+            char[] toReplace =   { 'a', 'e', 'i', 'o', 'u', 'o', 'o', 'u', 'u', 'a', '-', '-' };
+
+			string displayUrl = entity.DisplayValue.ToLower();
+            displayUrl = Regex.Replace(displayUrl, @"[^\u0000-\u007F]+", string.Empty).Trim();
+            for (int i = 0; i < fromReplace.Length; i++)
+            {
+                displayUrl = displayUrl.Replace(fromReplace[i], toReplace[i]);
+			}
+			displayUrl = Regex.Replace(displayUrl, @"[^\u0000-\u007F]+", string.Empty).Trim();
+
+            return $"{entity.Id}-{displayUrl}";
+		}
+
+		public static int FromDisplayUrl(this string displayUrl)
+        {
+            return int.Parse(displayUrl.Split('-').First());
+        }
+
+	}
 }

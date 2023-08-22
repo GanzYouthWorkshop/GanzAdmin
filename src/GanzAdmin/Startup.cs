@@ -20,6 +20,8 @@ using GanzAdmin.Configuration;
 using GanzAdmin.API.NVR;
 using GanzAdmin.Tools;
 using GanzAdmin.Scheduling;
+using GanzNet.Authentication;
+using GanzAdmin.API.Auth;
 
 namespace GanzAdmin
 {
@@ -44,7 +46,8 @@ namespace GanzAdmin
             
             services.AddHttpContextAccessor();
             services.AddSingleton<SessionManager>();
-            services.AddScoped<GanzAuthProvider>();
+            services.AddScoped<IAuthUnitProvider, AuthUnitProvider>();
+            services.AddScoped<IAuthProvider, AuthProvider>();
             services.AddScoped<ToolService>();
         }
 
@@ -53,8 +56,13 @@ namespace GanzAdmin
         {
             GanzAdminConfiguration.Instance = GanzAdminConfiguration.Load("config.xml");
 
-            GanzAdminDbEngine.Instance = new GanzAdminDbEngine(GanzAdminConfiguration.Instance.DatabaseConnectionString);
-            GanzAdminDbEngine.Instance.EnsureCreated();
+
+            GanzAdminDbEngine.InitializeSystem(GanzAdminConfiguration.Instance.DatabaseConnectionString);
+            GanzAdminDbEngine.Instance = GanzAdminDbEngine.GetInstance();
+            using (GanzAdminDbEngine db = GanzAdminDbEngine.GetInstance())
+            {
+                db.EnsureCreated();
+            }
 
             CameraHandler.Start();
 

@@ -1,0 +1,13 @@
+@using GanzWebpage.Layout;
+@using GanzWebpage.Shared.Errors
+
+<Router AppAssembly="@typeof(Program).Assembly" PreferExactMatches="@true">
+    <Found Context="routeData">
+        <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
+    </Found>
+    <NotFound>
+        <LayoutView Layout="@typeof(MainLayout)">
+            <Error404 />
+        </LayoutView>
+    </NotFound>
+</Router>

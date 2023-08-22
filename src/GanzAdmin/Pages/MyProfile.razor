@@ -27,7 +27,7 @@
 @code
 {
     [Inject]
-    protected GanzAuthProvider AuthManager { get; set; }
+    protected IAuthProvider AuthManager { get; set; }
 
     [Inject]
     protected IJSRuntime JS { get; set; }
@@ -58,7 +58,7 @@
         {
             if(this.AuthManager.CurrentMember != null)
             {
-                this.SelectedItem = new TemporalObject<Member>(this.AuthManager.CurrentMember);
+                this.SelectedItem = new TemporalObject<Member>(this.AuthManager.CurrentMember as Member);
 
 
             }

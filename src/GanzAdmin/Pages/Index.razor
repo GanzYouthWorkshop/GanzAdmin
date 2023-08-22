@@ -149,7 +149,10 @@
     private IJSRuntime JS { get; set; }
 
     [Inject]
-    public GanzAuthProvider AuthProvider { get; set; }
+    public IAuthProvider AuthProvider { get; set; }
+
+    [Inject]
+    public IAuthUnitProvider UnitProvider { get; set; }
 
     [Inject]
     protected IHttpContextAccessor Http { get; set; }
@@ -170,10 +173,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        await Task.Run(() =>
-        {
-            this.CurrentUser = GanzAdminDbEngine.Instance.Members.FindById(this.AuthProvider.CurrentSession.MemberId);
-        });
+        this.CurrentUser = this.UnitProvider.ProvideAuthUnit(this.AuthProvider.CurrentSession.MemberId) as Member;
     }
 
     private void OnLogAttenance()
