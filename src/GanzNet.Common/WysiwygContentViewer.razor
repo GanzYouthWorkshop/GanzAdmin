@@ -2,23 +2,27 @@
 
 @{
     int i = -1;
+
     foreach (JsonElement element in this.JsonSource.RootElement.GetProperty("blocks").EnumerateArray())
     {
         i++;
-        if(this.LimitCompnents > -1 && i >= this.LimitCompnents)
+        if (this.LimitComponents != -1 && this.LimitComponents <= i)
         {
             break;
         }
+
         JsonElement data = element.GetProperty("data");
         switch (element.GetProperty("type").GetString())
         {
             case "paragraph":
-                string paragraph = data.GetProperty("text").GetString();
-                if (this.LimitParagraphChars > 0 && paragraph.Length > this.LimitParagraphChars)
                 {
-                    paragraph = paragraph.Substring(0, this.LimitParagraphChars) + "...";
+                    string s = data.GetProperty("text").GetString();
+                    if (this.LimitParagraphChars != -1 && this.LimitParagraphChars < s.Length)
+                    {
+                        s = s.Substring(0, this.LimitParagraphChars) + "...";
+                    }
+                    <p>@((MarkupString)s)</p>
                 }
-                <p>@((MarkupString)paragraph)</p>
                 break;
 
             case "header":
@@ -136,13 +140,13 @@
     public string Source { get; set; }
 
     [Parameter]
-    public int LimitCompnents { get; set; } = -1;
+    public int AddDelimiterAfterHeaderLevel { get; set; }
+
+    [Parameter]
+    public int LimitComponents { get; set; } = -1;
 
     [Parameter]
     public int LimitParagraphChars { get; set; } = -1;
-
-    [Parameter]
-    public int AddDelimiterAfterHeaderLevel { get; set; }
 
     public JsonDocument JsonSource
     {
@@ -152,15 +156,7 @@
             {
                 this.Source = "{\"blocks\": []}";
             }
-
-            try
-            {
-                return JsonDocument.Parse(this.Source, new JsonDocumentOptions { AllowTrailingCommas = true });
-            }
-            catch(Exception ex)
-            {
-                return JsonDocument.Parse("{\"blocks\": []}");
-            }
+            return JsonDocument.Parse(this.Source, new JsonDocumentOptions { AllowTrailingCommas = true });
         }
     }
 }

@@ -34,6 +34,7 @@
     <ProjectReference Include="..\..\_submodules\GEV-Common-Library\src\GEV Common Library\GEV Common Library.csproj" />
     <ProjectReference Include="..\GanzAdmin.Database\GanzAdmin.Database.csproj" />
     <ProjectReference Include="..\GanzAdmin.Utils\GanzAdmin.Utils.csproj" />
+    <ProjectReference Include="..\GanzNet.Common\GanzNet.Common.csproj" />
   </ItemGroup>
 
   <ItemGroup>

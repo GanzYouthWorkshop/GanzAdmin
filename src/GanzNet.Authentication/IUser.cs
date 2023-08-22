@@ -8,8 +8,7 @@ namespace GanzNet.Authentication
 {
     public interface IUser
     {
-        long Uid { get; }
-
+        long Id { get; }
         string Username { get; }
         string Password { get; }
     }

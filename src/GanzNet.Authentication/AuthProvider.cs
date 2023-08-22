@@ -1,6 +1,4 @@
-﻿using GanzAdmin.Database;
-using GanzAdmin.Database.Models;
-using GanzAdmin.Utils;
+﻿using GanzAdmin.Utils;
 using Microsoft.AspNetCore.Http;
 using System;
 using System.Web;
@@ -11,14 +9,16 @@ using System.Security.Permissions;
 using System.Threading.Tasks;
 using Microsoft.JSInterop;
 
-namespace GanzAdmin.Authentication
+namespace GanzNet.Authentication
 {
-    public class GanzAuthProvider
+    public class AuthProvider : IAuthProvider
     {
         //Folyamat:
         //-initialize-ban meg kell nézni a sütikat, ha van és érvényes -> bejelentkezés
         //-in-scope: ha van bejelentkezés, új süti létrehozása
         //-ha van kijelentkezés süzi törlése, bejelentkezés törlése
+
+        //public const string OVERLORD_PREMISSION = "Overlord";
 
         public const string AUTH_COOKIE = "GanzAuth.Session";
         public const string JS_MAKE_COOKIE = "Blazor0.createCookie";
@@ -28,15 +28,17 @@ namespace GanzAdmin.Authentication
         private IJSRuntime m_Javascript { get; set; }
         private IHttpContextAccessor m_Http;
 
+        public IAuthUnitProvider UnitProvider { get; set; }
+
         public SessionManager.Session CurrentSession { get; private set; }
 
-        public Member CurrentMember
+        public IUser CurrentMember
         {
             get
             {
                 if(this.CurrentSession != null)
                 {
-                    return GanzAdminDbEngine.Instance.Members.FindById(this.CurrentSession.MemberId);
+                    return this.UnitProvider.ProvideAuthUnit(this.CurrentSession.MemberId);
                 }
                 else
                 {
@@ -45,14 +47,13 @@ namespace GanzAdmin.Authentication
             }
         }
 
-        public AuthProvider(SessionManager sessionManager, IAuthUnitProvider unitProvider, IHttpContextAccessor httpProxy, IJSRuntime jsRuntime)
+        public AuthProvider(SessionManager sessionManager, IHttpContextAccessor httpProxy, IJSRuntime jsRuntime)
         {
             this.m_SessionManager = sessionManager;
             this.m_Http = httpProxy;
             this.m_Javascript = jsRuntime;
-            this.UnitProvider = unitProvider;
 
-            if (this.m_Http.HttpContext != null)
+            if(this.m_Http.HttpContext != null)
             {
                 IRequestCookieCollection cookies = this.m_Http.HttpContext.Request.Cookies;
 
@@ -71,17 +72,18 @@ namespace GanzAdmin.Authentication
 
             if (this.CurrentSession != null && this.CurrentSession.MemberId > 0)
             {
-                GanzAdminDbEngine db = GanzAdminDbEngine.Instance;
-                Member member = db.Members.FindById(this.CurrentSession.MemberId);
-                if(string.IsNullOrEmpty(OrRoles) && string.IsNullOrEmpty(AndRoles))
+                IUser member = this.UnitProvider.ProvideAuthUnit(this.CurrentSession.MemberId);
+                List<string> permissions = this.UnitProvider.GetPermissions(member);
+
+                if (string.IsNullOrEmpty(OrRoles) && string.IsNullOrEmpty(AndRoles))
                 {
                     return true;
                 }
-                else if (OrRoles != null && (member.Roles.ContainsAny(OrRoles.Split(' ').ToList()) || member.Roles.Contains(Permissions.Overlord)))
+                else if (OrRoles != null && (permissions.ContainsAny(OrRoles.Split(' ').ToList()) || permissions.Contains(this.UnitProvider.EnableAllPermission)))
                 {
                     return true;
                 }
-                else if (AndRoles != null && (member.Roles.ContainsAll(AndRoles.Split(' ').ToList()) || member.Roles.Contains(Permissions.Overlord)))
+                else if (AndRoles != null && (permissions.ContainsAll(AndRoles.Split(' ').ToList()) || permissions.Contains(this.UnitProvider.EnableAllPermission)))
                 {
                     return true;
                 }
@@ -110,8 +112,7 @@ namespace GanzAdmin.Authentication
         {
             bool result = false;
 
-            GanzAdminDbEngine db = GanzAdminDbEngine.Instance;
-            Member member = db.Members.FindOne(m => m.Username.ToLower() == user.ToLower());
+            IUser member = this.UnitProvider.Find(user);
             if(member != null && member.Password == GanzUtils.Sha256(pass))
             {
                 this.SignIn(member, remindMe ? 30 : 1, remindMe);
@@ -121,9 +122,9 @@ namespace GanzAdmin.Authentication
             return result;
         }
 
-        public void SignIn(Member member, int daysUntilExpiration, bool remind)
+        public void SignIn(IUser member, int daysUntilExpiration, bool remind)
         {
-            SessionManager.Session session = this.m_SessionManager.RegisterNewSession(member.Uid, daysUntilExpiration, remind);
+            SessionManager.Session session = this.m_SessionManager.RegisterNewSession(member.Id, daysUntilExpiration, remind);
             this.CurrentSession = session;
             this.MakeCookie(AUTH_COOKIE, session.SecurityToken, daysUntilExpiration);
         }

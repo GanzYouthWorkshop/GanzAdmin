@@ -4,7 +4,7 @@ using System.Collections.Concurrent;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace GanzAdmin.Authentication
+namespace GanzNet.Authentication
 {
     public class SessionManager
     {
@@ -19,7 +19,7 @@ namespace GanzAdmin.Authentication
         public object m_Lock = false;
         public List<Session> SessionEntries { get; set; } = new List<Session>();
 
-        public List<Session> GetSessionsForMember(int id)
+        public List<Session> GetSessionsForMember(long id)
         {
             List<Session> result = null;
             lock (this.m_Lock)

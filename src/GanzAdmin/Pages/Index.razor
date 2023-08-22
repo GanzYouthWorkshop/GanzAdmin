@@ -1,6 +1,7 @@
 ﻿@page "/"
 
 @using System.Net;
+@using GanzNet.Authentication;
 @using Microsoft.AspNetCore.Http;
 
 <main class="full dashboard @(this.CurrentUser == null ? "loading" : "")">
@@ -149,7 +150,7 @@
     private IJSRuntime JS { get; set; }
 
     [Inject]
-    public IAuthProvider AuthProvider { get; set; }
+    public AuthProvider AuthProvider { get; set; }
 
     [Inject]
     public IAuthUnitProvider UnitProvider { get; set; }

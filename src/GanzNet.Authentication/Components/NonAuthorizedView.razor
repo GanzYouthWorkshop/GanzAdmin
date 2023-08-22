@@ -1,11 +1,9 @@
 ﻿@using Microsoft.AspNetCore.Http;
-@using GanzAdmin.Authentication;
-@using GanzAdmin.Database;
-@using GanzAdmin.Database.Models;
+@using GanzNet.Authentication;
 
 @namespace GanzAdmin.Authentication.Components
 
-@if (this.AuthenticationProvider.CheckAuth(this.NeededRolesOR, this.NeededRolesAND))
+@if (!this.AuthenticationProvider.CheckAuth(this.NeededRolesOR, this.NeededRolesAND))
 {
     @ChildContent
 }
@@ -13,7 +11,7 @@
 @code
 {
     [Inject]
-    protected GanzAuthProvider AuthenticationProvider { get; set; }
+    protected IAuthProvider AuthenticationProvider { get; set; }
 
     [Parameter]
     public RenderFragment ChildContent { get; set; }

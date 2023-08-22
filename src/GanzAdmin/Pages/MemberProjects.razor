@@ -294,7 +294,7 @@ else
                     this.SelectedLogEntry.Temporal.Id = 1;
                 }
                 this.SelectedLogEntry.Temporal.StartTime = DateTime.Now;
-                this.SelectedLogEntry.Temporal.Writer = this.AuthManager.CurrentMember;
+                this.SelectedLogEntry.Temporal.Writer = this.AuthManager.CurrentMember as Member;
                 this.SelectedItem.Temporal.ProjectLog.Add(this.SelectedLogEntry.Temporal);
 
                 this.m_Collection.Update(this.SelectedItem.FoldBack());

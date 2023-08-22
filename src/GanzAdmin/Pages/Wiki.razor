@@ -1,4 +1,6 @@
-﻿@page "/curriculum"
+﻿@using GanzNet.Common
+
+@page "/curriculum"
 @page "/curriculum/{PopupDisplay}"
 @page "/curriculum/{PopupDisplay}/{Edit}"
 
@@ -81,7 +83,7 @@
             </AuthorizedView>
             @if (!this.SelectedItem.Original.IsCoded)
             {
-                <WysiwygViewer Source="@this.SelectedItem.Original.Content"></WysiwygViewer>
+                <WysiwygContentViewer Source="@this.SelectedItem.Original.Content"></WysiwygContentViewer>
             }
             else
             {

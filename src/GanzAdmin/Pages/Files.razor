@@ -5,6 +5,7 @@
 
 @using GanzAdmin.Components.FileBrowser;
 @using System.IO;
+@using GanzNet.Authentication;
 @using Microsoft.AspNetCore.Hosting;
 
 <AuthorizedView NeededRolesOR="@($"{Permissions.AccessOwnFileStorage} {Permissions.AccessSecretFileStorage} {Permissions.AccessSharedFileStorage}")">
@@ -71,7 +72,7 @@
     protected NavigationManager NavMan { get; set; }
 
     [Inject]
-    protected IAuthProvider Auth { get; set; }
+    protected AuthProvider Auth { get; set; }
 
     private bool m_Loaded;
 

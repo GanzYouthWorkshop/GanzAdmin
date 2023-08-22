@@ -22,7 +22,7 @@
                     {
                         <tr>
                             <td><NavLink href="@item.Url" target="_blank">@item.Display <i></i></NavLink></td>
-                            <td>@item.TypeDisplay</td>
+                            <td>@this.TypeDisplay(item.DataType)</td>
                             <td>@item.Information.</td>
                         </tr>
                     }
@@ -180,5 +180,22 @@
 
             this.ItemList = result;
         }
+    }
+
+    private string TypeDisplay(Type t)
+    {
+        string result = "";
+
+        switch(t.Name)
+        {
+            case nameof(Part): result = "Alkatrész";  break;
+            case nameof(Category): result = "Kategória"; break;
+            case nameof(WikiPage): result = "Wiki"; break;
+            case nameof(Member): result = "Tag"; break;
+            case nameof(Kit): result = "Kit"; break;
+            case nameof(MemberProject): result = "Projekt"; break;
+        }
+
+        return result;
     }
 }

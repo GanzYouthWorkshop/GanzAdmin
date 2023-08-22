@@ -15,13 +15,14 @@ using Microsoft.AspNetCore.Http;
 using GanzAdmin.Tools;
 using Microsoft.AspNetCore.Hosting;
 using System.IO;
+using GanzNet.Authentication;
 
 namespace GanzAdmin.DataHandling
 {
     public abstract class DataHandlingController<T> : ComponentBase where T : class, IEntity, new()
     {
         [Inject]
-        protected IAuthProvider AuthManager { get; set; }
+        protected AuthProvider AuthManager { get; set; }
 
         [Inject]
         protected NavigationManager NavMan { get; set; }

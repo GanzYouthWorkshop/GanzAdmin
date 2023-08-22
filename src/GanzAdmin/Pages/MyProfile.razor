@@ -1,4 +1,5 @@
 ﻿@page "/my-profile"
+@using GanzNet.Authentication;
 
 
 <main class='@($"full " + (this.SelectedItem == null ? "loading" : ""))'>
@@ -27,7 +28,7 @@
 @code
 {
     [Inject]
-    protected IAuthProvider AuthManager { get; set; }
+    protected AuthProvider AuthManager { get; set; }
 
     [Inject]
     protected IJSRuntime JS { get; set; }
