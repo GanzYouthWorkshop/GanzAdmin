@@ -57,8 +57,7 @@ namespace GanzAdmin
             GanzAdminConfiguration.Instance = GanzAdminConfiguration.Load("config.xml");
 
 
-            GanzAdminDbEngine.InitializeSystem(GanzAdminConfiguration.Instance.DatabaseConnectionString);
-            GanzAdminDbEngine.Instance = GanzAdminDbEngine.GetInstance();
+            GanzAdminDbEngine.Instance = new GanzAdminDbEngine(GanzAdminConfiguration.Instance.DatabaseConnectionString);
             using (GanzAdminDbEngine db = GanzAdminDbEngine.GetInstance())
             {
                 db.EnsureCreated();
