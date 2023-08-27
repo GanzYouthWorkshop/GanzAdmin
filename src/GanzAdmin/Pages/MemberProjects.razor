@@ -5,6 +5,7 @@
 @page "/member-projects/{PopupDisplay}/{PopupDisplay2}/{LogPopupDisplay}"
 
 @using  GanzAdmin.Components.Edit;
+@using GanzNet.Common;
 
 @inherits DataHandlingController<MemberProject>
 
@@ -67,7 +68,7 @@ else
                             <span>@member.Name, </span>
                         }
                     </p>
-                    <WysiwygViewer Source="@this.SelectedItem.Original.Description"></WysiwygViewer>
+                    <WysiwygContentViewer Source="@this.SelectedItem.Original.Description" />
                     <h3>Fejlesztési napló</h3>
                     <ul class='timeline'>
                         @foreach (LogEntry entry in this.SelectedItem.Original.ProjectLog.OrderByDescending(log => log.StartTime).Take(5))
@@ -84,7 +85,7 @@ else
                                     {
                                         <NavLink class="button" href="@($"/{this.BaseLink}/{this.SelectedItem.Original.Id}/log/{entry.Id}")">Szerkesztés</NavLink>
                                     }
-                                    <WysiwygViewer Source="@entry.Content"></WysiwygViewer>
+                                    <WysiwygContentViewer Source="@entry.Content" />
                                 </div>
                             </li>
                         }
@@ -304,6 +305,7 @@ else
             }
             else
             {
+                this.SelectedLogEntry.FoldBack();
                 this.m_Collection.Update(this.SelectedItem.FoldBack());
                 GanzAdminDbEngine.Instance.Transact();
 
