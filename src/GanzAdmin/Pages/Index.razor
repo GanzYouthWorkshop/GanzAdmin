@@ -150,7 +150,7 @@
     private IJSRuntime JS { get; set; }
 
     [Inject]
-    public AuthProvider AuthProvider { get; set; }
+    public IAuthProvider AuthProvider { get; set; }
 
     [Inject]
     public IAuthUnitProvider UnitProvider { get; set; }
@@ -174,7 +174,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        this.CurrentUser = this.UnitProvider.ProvideAuthUnit(this.AuthProvider.CurrentSession.MemberId) as Member;
+        this.CurrentUser = this.AuthProvider.CurrentUser as Member;
     }
 
     private void OnLogAttenance()

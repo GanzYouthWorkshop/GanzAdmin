@@ -32,7 +32,7 @@ namespace GanzNet.Authentication
 
         public SessionManager.Session CurrentSession { get; private set; }
 
-        public IUser CurrentMember
+        public IUser CurrentUser
         {
             get
             {
@@ -47,9 +47,10 @@ namespace GanzNet.Authentication
             }
         }
 
-        public AuthProvider(SessionManager sessionManager, IHttpContextAccessor httpProxy, IJSRuntime jsRuntime)
+        public AuthProvider(SessionManager sessionManager, IAuthUnitProvider unitProvider, IHttpContextAccessor httpProxy, IJSRuntime jsRuntime)
         {
             this.m_SessionManager = sessionManager;
+            this.UnitProvider = unitProvider;
             this.m_Http = httpProxy;
             this.m_Javascript = jsRuntime;
 

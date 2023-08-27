@@ -66,7 +66,7 @@ namespace GanzAdmin
             CameraHandler.Start();
 
             Scheduler.Tasks.Add(new StatisticsScheduledTask());
-            Scheduler.Tasks.Add(new CameraRestartScheduledTask());
+            //Scheduler.Tasks.Add(new CameraRestartScheduledTask());
             Scheduler.Start();
 
             if (env.IsDevelopment())

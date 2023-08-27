@@ -22,7 +22,7 @@ namespace GanzAdmin.DataHandling
     public abstract class DataHandlingController<T> : ComponentBase where T : class, IEntity, new()
     {
         [Inject]
-        protected AuthProvider AuthManager { get; set; }
+        protected IAuthProvider AuthManager { get; set; }
 
         [Inject]
         protected NavigationManager NavMan { get; set; }
