@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.29613.14
+# Visual Studio Version 17
+VisualStudioVersion = 17.6.33801.468
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GanzAdmin", "GanzAdmin\GanzAdmin.csproj", "{7727429D-EC11-42AE-B4EC-C480F8BC5742}"
 EndProject
@@ -18,6 +18,14 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Git externals", "Git externals", "{620F3039-54E9-4EEF-A82A-B523435EF925}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GEV Common Library", "..\_submodules\GEV-Common-Library\src\GEV Common Library\GEV Common Library.csproj", "{CB307FCC-19FE-4138-BEAF-20FEC5D9D6B7}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GanzWebpage", "GanzWebpage\GanzWebpage.csproj", "{EE1495FD-8DAA-42D9-A41F-0A689C408FC4}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Libraries", "Libraries", "{F515EC02-104F-425F-BEB6-3D056796CD45}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GanzNet.Authentication", "GanzNet.Authentication\GanzNet.Authentication.csproj", "{5FD4D0EF-5CB9-4421-B6E9-FE9AC8FE89B6}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GanzNet.Common", "GanzNet.Common\GanzNet.Common.csproj", "{2365D17B-FB70-4CD5-90F2-106E50946DCC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,16 +53,29 @@ Global
 		{CB307FCC-19FE-4138-BEAF-20FEC5D9D6B7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CB307FCC-19FE-4138-BEAF-20FEC5D9D6B7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CB307FCC-19FE-4138-BEAF-20FEC5D9D6B7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EE1495FD-8DAA-42D9-A41F-0A689C408FC4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EE1495FD-8DAA-42D9-A41F-0A689C408FC4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EE1495FD-8DAA-42D9-A41F-0A689C408FC4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EE1495FD-8DAA-42D9-A41F-0A689C408FC4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5FD4D0EF-5CB9-4421-B6E9-FE9AC8FE89B6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5FD4D0EF-5CB9-4421-B6E9-FE9AC8FE89B6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5FD4D0EF-5CB9-4421-B6E9-FE9AC8FE89B6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5FD4D0EF-5CB9-4421-B6E9-FE9AC8FE89B6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2365D17B-FB70-4CD5-90F2-106E50946DCC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2365D17B-FB70-4CD5-90F2-106E50946DCC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2365D17B-FB70-4CD5-90F2-106E50946DCC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2365D17B-FB70-4CD5-90F2-106E50946DCC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{7727429D-EC11-42AE-B4EC-C480F8BC5742} = {700C96C6-9CAE-4459-A090-134A09C73A6A}
-		{5DA2E70B-E684-4498-88B8-13E41C4409B6} = {700C96C6-9CAE-4459-A090-134A09C73A6A}
-		{D1F42547-121E-4624-A199-66BFF21EA2F5} = {700C96C6-9CAE-4459-A090-134A09C73A6A}
+		{5DA2E70B-E684-4498-88B8-13E41C4409B6} = {F515EC02-104F-425F-BEB6-3D056796CD45}
+		{D1F42547-121E-4624-A199-66BFF21EA2F5} = {F515EC02-104F-425F-BEB6-3D056796CD45}
 		{A30F99CD-6FF2-4968-BDF3-8BD169302038} = {95345B4F-84CC-4B97-977C-BB5A47CD35E0}
 		{CB307FCC-19FE-4138-BEAF-20FEC5D9D6B7} = {620F3039-54E9-4EEF-A82A-B523435EF925}
+		{EE1495FD-8DAA-42D9-A41F-0A689C408FC4} = {700C96C6-9CAE-4459-A090-134A09C73A6A}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E749833F-B1B5-4CA4-88B1-B28F67E18BF2}

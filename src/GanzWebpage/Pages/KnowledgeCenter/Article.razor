@@ -1,0 +1,118 @@
+﻿@page "/tudasbazis/{*PageRoute}"
+
+@using GanzAdmin.Database
+@using GanzAdmin.Database.Models
+@using GanzAdmin.Utils
+@using GanzNet.Common
+
+@if (this.SelectedItem != null)
+{
+    <div class="uk-container">
+        <div class="uk-section uk-section-xsmall border-bottom">
+            <div data-uk-grid="" class="uk-grid">
+                <BreadCrumb Items="@this.GenerateBreadCrumb(this.SelectedItem.Original)" />
+                <Search SubmitUrl="/tudasbazis/kereses/####" />
+            </div>
+        </div>
+    </div>
+
+
+    <section class="uk-section">
+        <div class="uk-container">
+            <div class="uk-grid-large uk-grid" data-uk-grid="">
+                <div class="uk-width-expand@m padding-right@m padding-large-right@l">
+                    <article class="uk-article">
+                        <h1 class="uk-article-title uk-margin-large-bottom">@this.SelectedItem.Original.Name</h1>
+                        @if(!this.SelectedItem.Original.IsCoded)
+                        {
+                            <p><span>Utoljára frissítve:</span> @this.SelectedItem.Original.LastModified</p>
+                            <div class="toc">
+                                <span class="head">Tartalom</span>
+                                <WysiwygTocViewer Source="@this.SelectedItem.Original.Content" />
+                            </div>
+                            <WysiwygContentViewer Source="@this.SelectedItem.Original.Content" AddDelimiterAfterHeaderLevel="2" />
+                        }
+                        else
+                        {
+                            <iframe class="scripted-page" src="@this.GetHtmlFromValue()" onload="setScriptedPageHeight(this)"></iframe>
+                        }
+                    </article>
+                </div>
+            </div>
+        </div>
+    </section>
+}
+@code
+{
+    [Parameter]
+	public string PageRoute { get; set; }
+
+    protected TemporalObject<WikiPage> SelectedItem { get; set; }
+
+    private List<Tuple<string, string>> GenerateBreadCrumb(WikiPage page)
+    {
+        List<WikiPage> tmpResult = new List<WikiPage>();
+
+        WikiPage current = page;
+        while(current != null)
+        {
+            tmpResult.Add(current);
+            current = current.ParentPage;
+        }
+
+        tmpResult.Reverse();
+
+        List<Tuple<string, string>> result = new List<Tuple<string, string>>();
+        string url = "/tudasbazis";
+        result.Add(new Tuple<string, string>("/", "Kezdőlap"));
+        result.Add(new Tuple<string, string>(url, "Tudásbázis"));
+        for(int i = 0; i < tmpResult.Count; i++)
+        {
+            string anchor = UrlUtils.ToAnchor(tmpResult[i].DisplayValue);
+            string urlLocal = url + "/" + tmpResult[i].Id + "-" +anchor;
+            url += "/" + anchor;
+            
+            result.Add(new Tuple<string, string>(urlLocal, tmpResult[i].DisplayValue));
+        }
+
+        return result;
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await Task.Run(() =>
+        {
+            this.SelectedItem = null;
+
+            int showId = 0;
+            if (int.TryParse(this.PageRoute.Split('/').Last().Split('-').First(), out showId))
+            {
+                using (GanzAdminDbEngine db = GanzAdminDbEngine.GetInstance())
+                {
+                    WikiPage item = db.GetCollection<WikiPage>().FindById(showId);
+                    this.SelectedItem = new TemporalObject<WikiPage>(item);
+                }
+            }
+        });
+    }
+
+    public const string CODE_SEPARATOR = "\n{{}}\n";
+
+    protected string GetHtmlFromValue()
+    {
+        string[] frags = this.SelectedItem.Temporal.Content.Split(CODE_SEPARATOR);
+
+        string html = "";
+        if (frags.Length > 2)
+        {
+            html = $"<html><head><meta charset='utf-8'><style>{frags[1]}</style></head><body>{frags[0]} <script src='https://code.jquery.com/jquery-3.5.1.slim.min.js'></script><script>{frags[2]}</script></body></html>";
+        }
+        else
+        {
+            html = $"<html><head><meta charset='utf-8'></head><body>{frags[0]}</body></html>";
+        }
+
+        return GanzUtils.CreateDataUrl(html, "text/html");
+    }
+
+}

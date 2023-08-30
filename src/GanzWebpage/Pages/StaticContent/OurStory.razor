@@ -1,0 +1,90 @@
+﻿@page "/tortenet"
+
+<div class="uk-container">
+	<div class="uk-section uk-section-xsmall border-bottom">
+		<div data-uk-grid="" class="uk-grid">
+			<BreadCrumb Items="this.MenuList" />
+		</div>
+	</div>
+</div>
+
+
+<section class="uk-section">
+    <div class="uk-container">
+        <div class="uk-grid-large uk-grid" data-uk-grid="">
+            <div class="uk-width-auto@m uk-first-column">
+                <div class="boundary-align">
+                    <div class="uk-visible@m uk-text-primary icon-category">
+						<span data-uk-icon="icon: cog; ratio: 3" class="uk-icon">
+							<img src="/img/history.svg" width="60" height="60" />
+						</span>
+					</div>
+                </div>
+            </div>
+
+            <div class="uk-width-expand@m padding-right@m padding-large-right@l">
+				<h1>Történetünk</h1>
+				<p>
+					A Ganz Ifjúsági Műhelyt 1984-ben Balázs Lajos nyugdíjazott villamosmérnök hozta létre a Ganz és az egyes számú szövetkezet elnökének 
+					támogatásával. A műhely célja a lézengő és unatkozó gyerekeknek, akik érdeklődtek a modellezés vagy az elektronika iránt, tartalmas 
+					ugyanakkor jó kikapcsolódási és szórakozási lehetőséget is nyújtson. A kezdeményezés olyannyira sikeres volt, hogy egyre több gyerek kezdett 
+					járni, majd felfigyelt ránk az Óbudai önkormányzat.
+				</p>
+				<p>
+					1990-ben a Ganz Műveket felvásárolta az Ansaldo és így megszakadt a Ganzzal való együttműködés. Az Ansaldó még eprt is indított az 
+					Egyesület ellen, de elvesztette és minket arra kértek, hogy védjük meg a GANZ nevet az utókor számára.
+				</p>
+				<p>
+					1997-ben a műhely egyesült a Békásmegyeri Lakótelep Amatőr Számítástechnikai Klubjával. 1999-ben felfigyeltek ránk a kanadaiak és a 
+					’99 karácsonyi ünnepélyünkre ellátogatott hozzánk a Kanada Szövetségi Állam hazánkba akkreditált nagykövete. És ez a látogatás olyannyira 
+					jól sikerült, hogy egy év múlva újra ellátogatott hozzánk. Kanada anyagi segítsége révén tudtuk felújítani akkoriba a gép parkunkat és 
+					még sok mást is.
+				</p>
+				<p>
+					2004-ben felgyújtották a műhelyt. Mind a két helyiséget.Pont ebben az évben lett volna a GIM 20. évfordulója. Sok féle történet kering a 
+					tűz esetről, Lajos bácsi mesélt a történtekről:
+				</p>
+				<blockquote>
+					Volt egy 40 éves úriember aki le akart volna járni, de nem engedtem, mert a műhely fiataloknak szól. Erre a kedves úriember két molotov 
+					koktéllal felgyújtotta a helyiségeket.
+				</blockquote>
+				<p>
+					Az anyagi kárt 22 millió forintra becsülték, de az eszmei kár, 20 év munkája felbescsülhetetlen. Sok olyan modell és tervrajz égett el 
+					ami csak nekünk volt meg, nekünk volt megrajzolva.De a tagok körében a megdöbbenés hamar elhatározásba fordult: „ Történjék bármi, mi 
+					újjáépítjük a műhelyt!”. Az Önkormányzat akkor is hatalmas segítséget nyújtott nekünk. Állta a helyiségek felújításának költségét, 
+					anyagi támogatást nyújtott nekünk az újrakezdéshez, és így alig egy év alatt újra megnyitottuk a Ganz Ifjúsági Műhely ajtaját, 
+					visszatért az élet.
+				</p>
+				<p>
+					2011-ig folyamatosan működött a műhely, egészen Lajos bácsi megbetegedéséig. Harcát a betegség ellen 2012. augusztus 30-án sajnos 
+					elvesztette, de élete 82 éve alatt egy hihetetlen életművet hagyott hátra.
+				</p>
+				<p>
+					A műhely vezetését Kövesdy Csaba vette át, és ezzel a Lajos bácsi életműve fennmarad egészen addig, míg a gyerekek szeretnének barkácsolni.
+				</p>
+				<p>
+					2017-ben, a tűzeset óta először újra két helyiséggel rendelkezünk. Azóta második műhelyünk ad teret folyamatosan bővülő modern 
+					méréstechnikai és automatikus gyártótechnológiai eszközeinknek.
+				</p>
+				<p>
+					Szeretnénk megemlékezni arról, hogy Balázs Lajos nélkül nem jöhetett volna létre se a régi, se az új műhely. Az ő szeretete, 
+					megértése a gyerekek iránt határtalan volt, végtelen energiákat szabadított fel a gyerek részére, hogy minél többet tudjon tanítani 
+					nekik. Évtizedeket szánt arra, hogy segítse a "Ganzosokat", mindezt anélkül, hogy bármilyen juttatást kapott volna. Van egy buta 
+					közmondás, hogy mindenki pótolható. De ez nem igaz, mert Lajos bácsit nem lehet. Életműve előtt Óbuda-Békásmegyer Önkormányzatának 
+					2013-ban létrehozott legmagasabb civil díja, a Balázs Lajos Óbudai Civil Díj tiszteleg.
+				</p>
+			</div>
+		</div>
+	</div>
+</section>
+
+
+@code
+{
+	protected List<Tuple<string, string>> MenuList = new List<Tuple<string, string>>()
+	{
+		new Tuple<string, string>("/", "Kezdőlap"),
+		new Tuple<string, string>("/tortenet", "Történetünk"),
+	};
+
+}

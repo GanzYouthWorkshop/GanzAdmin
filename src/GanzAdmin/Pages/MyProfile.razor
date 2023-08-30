@@ -1,4 +1,5 @@
 ﻿@page "/my-profile"
+@using GanzNet.Authentication;
 
 
 <main class='@($"full " + (this.SelectedItem == null ? "loading" : ""))'>
@@ -27,7 +28,7 @@
 @code
 {
     [Inject]
-    protected GanzAuthProvider AuthManager { get; set; }
+    protected IAuthProvider AuthManager { get; set; }
 
     [Inject]
     protected IJSRuntime JS { get; set; }
@@ -56,9 +57,9 @@
     {
         await Task.Run(() =>
         {
-            if(this.AuthManager.CurrentMember != null)
+            if (this.AuthManager.CurrentUser != null)
             {
-                this.SelectedItem = new TemporalObject<Member>(this.AuthManager.CurrentMember);
+                this.SelectedItem = new TemporalObject<Member>(this.AuthManager.CurrentUser as Member);
 
 
             }

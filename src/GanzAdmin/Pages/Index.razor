@@ -1,6 +1,7 @@
 ﻿@page "/"
 
 @using System.Net;
+@using GanzNet.Authentication;
 @using Microsoft.AspNetCore.Http;
 
 <main class="full dashboard @(this.CurrentUser == null ? "loading" : "")">
@@ -149,7 +150,10 @@
     private IJSRuntime JS { get; set; }
 
     [Inject]
-    public GanzAuthProvider AuthProvider { get; set; }
+    public IAuthProvider AuthProvider { get; set; }
+
+    [Inject]
+    public IAuthUnitProvider UnitProvider { get; set; }
 
     [Inject]
     protected IHttpContextAccessor Http { get; set; }
@@ -170,10 +174,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        await Task.Run(() =>
-        {
-            this.CurrentUser = GanzAdminDbEngine.Instance.Members.FindById(this.AuthProvider.CurrentSession.MemberId);
-        });
+        this.CurrentUser = this.AuthProvider.CurrentUser as Member;
     }
 
     private void OnLogAttenance()

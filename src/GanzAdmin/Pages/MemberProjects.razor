@@ -5,6 +5,7 @@
 @page "/member-projects/{PopupDisplay}/{PopupDisplay2}/{LogPopupDisplay}"
 
 @using  GanzAdmin.Components.Edit;
+@using GanzNet.Common;
 
 @inherits DataHandlingController<MemberProject>
 
@@ -67,7 +68,7 @@ else
                             <span>@member.Name, </span>
                         }
                     </p>
-                    <WysiwygViewer Source="@this.SelectedItem.Original.Description"></WysiwygViewer>
+                    <WysiwygContentViewer Source="@this.SelectedItem.Original.Description" />
                     <h3>Fejlesztési napló</h3>
                     <ul class='timeline'>
                         @foreach (LogEntry entry in this.SelectedItem.Original.ProjectLog.OrderByDescending(log => log.StartTime).Take(5))
@@ -84,7 +85,7 @@ else
                                     {
                                         <NavLink class="button" href="@($"/{this.BaseLink}/{this.SelectedItem.Original.Id}/log/{entry.Id}")">Szerkesztés</NavLink>
                                     }
-                                    <WysiwygViewer Source="@entry.Content"></WysiwygViewer>
+                                    <WysiwygContentViewer Source="@entry.Content" />
                                 </div>
                             </li>
                         }
@@ -225,10 +226,10 @@ else
     {
         get
         {
-            if (this.SelectedItem.Original.Members.Contains(this.AuthManager.CurrentMember) ||
-                this.AuthManager.CurrentMember.Roles.Contains(Permissions.EditAnyProject) ||
+            if (this.SelectedItem.Original.Members.Contains(this.AuthManager.CurrentUser) || this.AuthManager.CheckAuth($"{Permissions.EditAnyProject} {Permissions.Overlord}", ""))
+@*                this.AuthManager.CurrentMember.Roles.Contains(Permissions.EditAnyProject) ||
                 this.AuthManager.CurrentMember.Roles.Contains(Permissions.Overlord))
-            {
+*@            {
                 return true;
             }
 
@@ -294,7 +295,7 @@ else
                     this.SelectedLogEntry.Temporal.Id = 1;
                 }
                 this.SelectedLogEntry.Temporal.StartTime = DateTime.Now;
-                this.SelectedLogEntry.Temporal.Writer = this.AuthManager.CurrentMember;
+                this.SelectedLogEntry.Temporal.Writer = this.AuthManager.CurrentUser as Member;
                 this.SelectedItem.Temporal.ProjectLog.Add(this.SelectedLogEntry.Temporal);
 
                 this.m_Collection.Update(this.SelectedItem.FoldBack());
@@ -304,6 +305,7 @@ else
             }
             else
             {
+                this.SelectedLogEntry.FoldBack();
                 this.m_Collection.Update(this.SelectedItem.FoldBack());
                 GanzAdminDbEngine.Instance.Transact();
 

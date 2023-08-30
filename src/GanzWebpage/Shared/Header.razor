@@ -1,0 +1,49 @@
+﻿@using GanzAdmin.Database
+@using GanzAdmin.Database.Models
+@using GanzNet.Common
+@using LiteDB
+
+<nav class="uk-background-muted">
+	<div class="uk-container">
+		<div data-uk-navbar="" class="uk-navbar">
+			<div class="uk-navbar-left">
+				<a class="uk-navbar-item uk-logo" href="/">
+					<img src="img/logo.png" />
+				</a>
+			</div>
+			<div class="uk-navbar-right">
+
+				<ul class="uk-navbar-nav uk-visible@m">
+					<li><NavLink href="/" Match="NavLinkMatch.All">Hírek</NavLink></li>
+					<li><NavLink href="/projektek">Projektek</NavLink></li>
+					<li><NavLink href="/tortenet">Történetünk</NavLink></li>
+					<li><NavLink href="/szakkorok">Szakkörök</NavLink></li>
+					<li><NavLink href="/letoltesek">Letöltések</NavLink></li>
+					<li><NavLink href="/kapcsolat">Kapcsolat</NavLink></li>
+					<li>
+						<div class="uk-navbar-item uk-visible@m">
+							<a href="/tudasbazis" class="uk-button uk-button-primary">Tudásbázis</a>
+						</div>
+					</li>
+				</ul>
+
+
+				<a class="uk-navbar-toggle uk-hidden@m uk-navbar-toggle-icon uk-icon" href="#offcanvas" data-uk-navbar-toggle-icon="" data-uk-toggle=""><svg width="20" height="20" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" data-svg="navbar-toggle-icon"><rect y="9" width="20" height="2"></rect><rect y="3" width="20" height="2"></rect><rect y="15" width="20" height="2"></rect></svg></a>
+			</div>
+		</div>
+	</div>
+</nav>
+
+@code
+{
+	protected List<LogEntry> BlogMenus { get; set; } = new List<LogEntry>();
+
+	protected override Task OnInitializedAsync()
+	{
+		using (GanzAdminDbEngine db = GanzAdminDbEngine.GetInstance())
+		{
+			BlogMenus.AddRange(db.GetCollection<MemberProject>().FindAll().SelectMany(p => p.ProjectLog).OrderByDescending(e => e.StartTime).Take(3));
+		}
+		return base.OnInitializedAsync();
+	}
+}

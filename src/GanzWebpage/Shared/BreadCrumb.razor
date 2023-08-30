@@ -1,0 +1,21 @@
+﻿<div class="uk-width-2-3@m uk-flex uk-flex-middle uk-first-column">
+    <ul class="uk-breadcrumb">
+        @for (int i = 0; i < this.Items.Count; i++)
+        {
+            if (i == this.Items.Count - 1)
+            {
+                <li class="active">@this.Items[i].Item2</li>
+            }
+            else
+            {
+                <li><a href="@this.Items[i].Item1">@this.Items[i].Item2</a></li>
+            }
+        }
+    </ul>
+</div>
+
+@code
+{
+    [Parameter]
+    public List<Tuple<string, string>> Items { get; set; } = new List<Tuple<string, string>>();
+}

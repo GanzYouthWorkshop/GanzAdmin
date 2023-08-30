@@ -1,0 +1,48 @@
+﻿.uk-navbar-nav > li > a.active
+{
+    color: rgb(59, 202, 169);
+}
+
+.uk-icon
+{
+    font-size: 60px;
+    font-family: 'Segoe UI';
+}
+
+.uk-grid-match > div
+{
+    margin-bottom: 1em;
+}
+
+.toc
+{
+    margin: 1em 0;
+    padding: 1em;
+    border: 1px solid #CCCCCC;
+    display: inline-block;
+}
+
+.toc .head
+{
+    text-transform: uppercase;
+    margin-bottom: 1em;
+    font-size: 1.2em;
+    display: block;
+}
+
+.timeline-body img
+{
+    max-width: 100%;
+    max-height: 100%;
+}
+
+.scripted-page
+{
+    width: 100%;
+    height: 40vw;
+}
+
+#blazor-error-ui
+{
+    display: none;
+}

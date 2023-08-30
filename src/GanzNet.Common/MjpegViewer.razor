@@ -1,0 +1,30 @@
+﻿@using Microsoft.JSInterop;
+
+﻿ <section class="entry-item">
+    <h2>@this.Title</h2>
+    <img src="@this.SourceUrl" @ref="this.m_ImageElement" />
+</section>
+
+@code
+{
+    [Parameter]
+    public string Title { get; set; }
+
+    [Parameter]
+    public string SourceUrl { get; set; }
+
+    private ElementReference m_ImageElement;
+
+    [Inject]
+    private IJSRuntime JS { get; set; }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        base.OnAfterRender(firstRender);
+
+        if (firstRender)
+        {
+            this.JS.InvokeVoidAsync("motionjpeg", this.m_ImageElement);
+        }
+    }
+}

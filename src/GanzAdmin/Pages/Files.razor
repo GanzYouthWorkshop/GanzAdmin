@@ -5,6 +5,7 @@
 
 @using GanzAdmin.Components.FileBrowser;
 @using System.IO;
+@using GanzNet.Authentication;
 @using Microsoft.AspNetCore.Hosting;
 
 <AuthorizedView NeededRolesOR="@($"{Permissions.AccessOwnFileStorage} {Permissions.AccessSecretFileStorage} {Permissions.AccessSharedFileStorage}")">
@@ -71,7 +72,7 @@
     protected NavigationManager NavMan { get; set; }
 
     [Inject]
-    protected GanzAuthProvider Auth { get; set; }
+    protected IAuthProvider Auth { get; set; }
 
     private bool m_Loaded;
 
@@ -94,7 +95,7 @@
         {
             if (this.NavMan.Uri.Contains("own"))
             {
-                string member = this.Auth.CurrentMember.Username;
+                string member = this.Auth.CurrentUser.Username;
                 this.WebBase = @$"\filestorage\own\{member}";
                 Directory.CreateDirectory(this.LocalPath);
             }

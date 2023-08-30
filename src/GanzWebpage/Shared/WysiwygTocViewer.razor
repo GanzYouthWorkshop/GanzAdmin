@@ -1,0 +1,34 @@
+﻿@using  System.Text.Json;
+
+@foreach (JsonElement element in this.JsonSource.RootElement.GetProperty("blocks").EnumerateArray())
+{
+    JsonElement data = element.GetProperty("data");
+    switch (element.GetProperty("type").GetString())
+    {
+        case "header":
+            string text = data.GetProperty("text").GetString();
+            <li><a href="@NavMan.Uri#@text"><i class="icon icon-clipboard-list"></i><span>@text</span></a></li>
+            break;
+    }
+ }
+
+@code
+{
+    [Inject]
+	public NavigationManager NavMan { get; set; }
+
+    [Parameter]
+    public string Source { get; set; }
+
+    public JsonDocument JsonSource
+    {
+        get
+        {
+            if (this.Source == null)
+            {
+                this.Source = "{\"blocks\": []}";
+            }
+            return JsonDocument.Parse(this.Source, new JsonDocumentOptions { AllowTrailingCommas = true });
+        }
+    }
+}

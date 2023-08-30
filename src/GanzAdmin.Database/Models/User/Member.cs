@@ -1,4 +1,5 @@
 ﻿using GanzAdmin.Utils;
+using GanzNet.Authentication;
 using LiteDB;
 using System;
 using System.Collections.Generic;
@@ -9,7 +10,7 @@ using System.Text;
 
 namespace GanzAdmin.Database.Models
 {
-    public class Member : IEntity
+    public class Member : IEntity, IUser
     {
         public enum Activities
         {
@@ -42,6 +43,8 @@ namespace GanzAdmin.Database.Models
             get { return this.Name; }
         }
 
+        public long Uid { get { return this.Id; } }
+        
         public override bool Equals(object obj)
         {
             return this.IsEqual(obj);

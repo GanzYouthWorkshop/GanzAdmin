@@ -1,11 +1,17 @@
 ﻿@page "/me"
 @page "/members"
 @page "/members/{PopupDisplay}"
+@page "/members/filter/{FilterId}"
 
 @inherits DataHandlingController<Member>
 
 <AuthorizedView NeededRolesOR="@Permissions.ListMembers">
-    <aside class='loading'>
+    <aside class='@(this.ItemList == null ? "loading" : "")'>
+        <ul>
+            <li><a href="@($"/{this.BaseLink}/filter/active")">Aktív tagok</a></li>
+            <li> <a href="@($"/{this.BaseLink}/filter/electro")">Elektro tagok</a></li>
+            <li><a href="@($"/{this.BaseLink}/filter/model")">Modellezés tagok</a></li>
+        </ul>
         <AuthorizedView NeededRolesOR="@Permissions.EditMembers">
             <NavLink class="addlink" href="@($"/{this.BaseLink}/add")">Új @this.DataName</NavLink>
         </AuthorizedView>
@@ -31,7 +37,18 @@
                     </thead>
 
                     <tbody>
-                        @foreach (Member member in this.ItemList)
+                        @{
+                            List<Member> iterationCollection = this.ItemList;
+                            switch (this.FilterId)
+                            {
+                                case "active": iterationCollection = this.ItemList.Where(i => i.Active).ToList(); break;
+                                case "electro": iterationCollection = this.ItemList.Where(i => i.MainActivity == Member.Activities.Electronics || i.MainActivity == Member.Activities.Tutor).ToList(); break;
+                                case "model": iterationCollection = this.ItemList.Where(i => i.MainActivity == Member.Activities.Modelling || i.MainActivity == Member.Activities.Tutor).ToList(); break;
+
+                            }
+                        }
+
+                        @foreach (Member member in iterationCollection)
                         {
                         <tr>
                             <td><input type="checkbox" @onchange="(e) => this.ToolProvider.AddRemove(member)" /></td>
@@ -145,6 +162,9 @@
     protected override string BaseLink { get; set; } = "members";
     protected override string DataName { get; set; } = "tag";
 
+    [Parameter]
+    public string FilterId { get; set; } = null;
+
     private bool PasswordChanged { get; set; }
 
     private string Password
@@ -165,7 +185,7 @@
     {
         if(this.PasswordChanged)
         {
-            if(this.SelectedItem.Original.Roles.Contains(Permissions.Overlord) && !this.AuthManager.CurrentMember.Roles.Contains(Permissions.Overlord))
+            if(this.SelectedItem.Original.Roles.Contains(Permissions.Overlord) && !this.AuthManager.CheckAuth(Permissions.Overlord, ""))
             {
                 //Ha a sz editált user overlord és az editáló nem az, ne legyen jelszó átírás!
                 return true;
@@ -185,7 +205,7 @@
 
     protected override bool BeforeDelete()
     {
-        if (this.SelectedItem.Original.Roles.Contains(Permissions.Overlord) && !this.AuthManager.CurrentMember.Roles.Contains(Permissions.Overlord))
+        if (this.SelectedItem.Original.Roles.Contains(Permissions.Overlord) && !this.AuthManager.CheckAuth(Permissions.Overlord, ""))
         {
             return false;
         }

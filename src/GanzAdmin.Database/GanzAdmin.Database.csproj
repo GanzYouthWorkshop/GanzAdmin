@@ -1,15 +1,16 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="LiteDB" Version="5.0.3" />
+    <PackageReference Include="LiteDB" Version="5.0.17" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\GanzAdmin.Utils\GanzAdmin.Utils.csproj" />
+    <ProjectReference Include="..\GanzNet.Authentication\GanzNet.Authentication.csproj" />
   </ItemGroup>
 
 </Project>

@@ -15,13 +15,14 @@ using Microsoft.AspNetCore.Http;
 using GanzAdmin.Tools;
 using Microsoft.AspNetCore.Hosting;
 using System.IO;
+using GanzNet.Authentication;
 
 namespace GanzAdmin.DataHandling
 {
     public abstract class DataHandlingController<T> : ComponentBase where T : class, IEntity, new()
     {
         [Inject]
-        protected GanzAuthProvider AuthManager { get; set; }
+        protected IAuthProvider AuthManager { get; set; }
 
         [Inject]
         protected NavigationManager NavMan { get; set; }
@@ -54,7 +55,6 @@ namespace GanzAdmin.DataHandling
 
         public DataHandlingController()
         {
-            this.m_Collection = GanzAdminDbEngine.Instance.GetCollection<T>();
         }
 
         #region Közös alap funkcionalitások
@@ -62,10 +62,15 @@ namespace GanzAdmin.DataHandling
         {
             await Task.Run(() =>
             {
-                this.ItemList = this.m_Collection.FindAll().OrderBy(t => t.DisplayValue).ToList();
-                this.ToolProvider.Reset(typeof(T));
+                using (GanzAdminDbEngine db = GanzAdminDbEngine.GetInstance())
+                {
+                    this.m_Collection = GanzAdminDbEngine.GetInstance().GetCollection<T>();
 
-                this.Init();
+                    this.ItemList = this.m_Collection.FindAll().OrderBy(t => t.DisplayValue).ToList();
+                    this.ToolProvider.Reset(typeof(T));
+
+                    this.Init();
+                }
             });
         }
         
@@ -129,8 +134,11 @@ namespace GanzAdmin.DataHandling
         {
             if (this.BeforeAdd())
             {
-                this.m_Collection.Insert(this.SelectedItem.FoldBack());
-                GanzAdminDbEngine.Instance.Transact();
+                using (GanzAdminDbEngine db = GanzAdminDbEngine.GetInstance())
+                {
+                    this.m_Collection.Insert(this.SelectedItem.FoldBack());
+                    db.Transact();
+                }
 
                 this.ItemList.Add(this.SelectedItem.Original);
 
@@ -142,8 +150,11 @@ namespace GanzAdmin.DataHandling
         {
             if (this.BeforeEdit())
             {
-                this.m_Collection.Update(this.SelectedItem.FoldBack());
-                GanzAdminDbEngine.Instance.Transact();
+                using (GanzAdminDbEngine db = GanzAdminDbEngine.GetInstance())
+                {
+                    this.m_Collection.Update(this.SelectedItem.FoldBack());
+                    db.Transact();
+                }
 
                 this.JS.InvokeVoidAsync("alertify.success", $"{this.DataName.ToCapital()} módosítva!");
             }
@@ -153,8 +164,11 @@ namespace GanzAdmin.DataHandling
         {
             if (this.BeforeDelete())
             {
-                this.m_Collection.Delete(this.SelectedItem.Original.Id);
-                GanzAdminDbEngine.Instance.Transact();
+                using (GanzAdminDbEngine db = GanzAdminDbEngine.GetInstance())
+                {
+                    this.m_Collection.Delete(this.SelectedItem.Original.Id);
+                    db.Transact();
+                }
 
                 this.ItemList.Remove(this.SelectedItem.Original);
 

@@ -1,0 +1,221 @@
+﻿@using GanzAdmin.Database
+@using GanzAdmin.Database.Models
+@using GanzAdmin.Utils
+@using System.Globalization;
+@using GanzNet.Common
+
+@page "/tudasbazis"
+@page "/wiki"
+@page "/tudasbazis/kereses"
+@page "/wiki/kereses"
+
+@page "/tudasbazis/kereses/{SearchText}"
+@page "/wiki/kereses/{SearchText}"
+
+
+@if(this.SearchText == null)
+{
+	<Search IsFullSize SubmitUrl="/tudasbazis/kereses/####" />
+
+    <section class="uk-section uk-background-muted">
+        <div class="uk-container uk-text-center">
+
+            <h1 class="uk-heading-primary uk-margin-medium-bottom uk-scrollspy-inview uk-animation-slide-bottom-medium" data-uk-scrollspy="cls: uk-animation-slide-bottom-medium;" style="">Mit keresel?</h1>
+
+            <div class="uk-grid-collapse uk-child-width-1-2@s uk-child-width-1-3@m uk-child-width-1-4@l uk-grid-match uk-text-center uk-grid uk-scrollspy-inview uk-animation-slide-bottom-medium" data-uk-grid="" data-uk-scrollspy="cls: uk-animation-slide-bottom-medium; delay: 80" style="">
+                @foreach (WikiPage category in this.Categories)
+                {
+                    if (category.Name == null)
+                    {
+                        continue;
+                    }
+                    string[] display = this.GetDisplay(category.Name);
+                    <div class="uk-first-column">
+                        <a href="/tudasbazis/kategoria/@category.ToDisplayUrl()" class="uk-card card-box uk-card-body uk-border-rounded">
+                            <span data-uk-icon="icon: cog; ratio: 3" class="uk-icon">
+                                @display[0]
+                            </span>
+                            <p class="uk-margin-medium-top">@display[1]</p>
+                        </a>
+                    </div>
+                }
+            </div>
+        </div>
+    </section>
+
+}
+else
+{
+	@if (this.ItemList != null)
+    {
+        <div class="uk-container">
+            <div class="uk-section uk-section-xsmall border-bottom">
+                <div data-uk-grid="" class="uk-grid">
+                    <BreadCrumb Items="this.MenuList" />
+                    <Search SearchExpression="@this.SearchText" SubmitUrl="/tudasbazis/kereses/####" />
+                </div>
+            </div>
+        </div>
+
+        <section class="uk-section">
+            <div class="uk-container">
+                <div class="uk-grid-large uk-grid" data-uk-grid="">
+                    <div class="uk-width-auto@m uk-first-column">
+                        <div class="boundary-align">
+                            <div class="uk-visible@m uk-text-primary icon-category">
+                                <span data-uk-icon="icon: cog; ratio: 3" class="uk-icon">
+                                    <img src="/img/search.svg" width="60" height="60" />
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="uk-width-expand@m padding-right@m padding-large-right@l">
+                        <h1>Keresési eredmények: "@this.SearchText"</h1>
+                        @foreach (SearchResult item in this.ItemList)
+                        {
+                            string icon = item.DataType.Equals(typeof(WikiPage)) ? "wiki" : "projects";
+                            <article class="uk-article">
+                                <h2 class="uk-h3 uk-margin-bottom">
+                                    <img width="24" height="24" src="./img/@(icon).svg" />
+                                    <a href="@item.Url">@item.Display</a>
+                                </h2>
+                                <div class="article-content">
+                                    <p>
+                                        <WysiwygContentViewer Source="@item.Information" LimitComponents="1" />
+                                    </p>
+                                </div>
+                                <div>
+                                    <a class="button-link uk-text-small" href="@item.Url">Olvass tovább</a>
+                                </div>
+                            </article>
+                        }
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+@*        <div class="content-wrapper">
+	        <div class="container">
+		        <div class="col-lg-10 mx-md-auto ">
+			        <article class="post">
+                        @foreach (SearchResult item in this.ItemList)
+                        {
+                            <div>
+                                <h4><NavLink href="@item.Url">@item.Display</NavLink></h4>
+                                <span>@item.Information.</span>
+                            </div>
+                            <hr>
+                        }
+        			</article>
+		        </div>
+	        </div>
+        </div>
+*@    }
+}
+
+@code
+{
+    [Parameter]
+    public string SearchText { get; set; }
+
+    protected List<SearchResult> ItemList { get; set; }
+
+    protected List<Tuple<string, string>> MenuList = new List<Tuple<string, string>>()
+    {
+        new Tuple<string, string>("/tudasbazis", "Kezdőlap"),
+        new Tuple<string, string>("/", "Keresési eredmények"),
+    };
+
+    private List<WikiPage> Categories { get; set; } = new List<WikiPage>();
+
+    protected override Task OnInitializedAsync()
+    {
+        using (GanzAdminDbEngine db = GanzAdminDbEngine.GetInstance())
+        {
+            var items = db.GetCollection<WikiPage>()
+                                .Query()
+                                .Where(p => p.ParentPage == null)
+                                .ToList();
+            this.Categories.AddRange(items);
+        }
+
+        return base.OnInitializedAsync();
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await Task.Run(() =>
+        {
+            if (!string.IsNullOrEmpty(SearchText))
+            {
+                this.DoSearch();
+            }
+        });
+    }
+
+    private void DoSearch()
+    {
+        List<SearchFragment> fragments = new List<SearchFragment>()
+        {
+            new SearchFragment()
+            {
+                Key = this.SearchText.Trim(),
+                Type = SearchFragment.ExpressionType.Main,
+                Value = null
+            }
+        };
+
+        using (GanzAdminDbEngine db = GanzAdminDbEngine.GetInstance())
+        {
+            this.ItemList = null;
+
+            List<SearchResult> result = new List<SearchResult>();
+            //result.AddRange(Part.Search(GanzAdminDbEngine.Instance.Parts.FindAll(), fragments).Select(p => new SearchResult()
+            //{
+            //    DataType = typeof(Part),
+            //    Display = p.Name,
+            //    Url = $"./parts/{p.Id}",
+            //    Information = $"{p.ShortDescription}, {p.SumInStock} {p.StockUnit} raktáron",
+            //}));
+            result.AddRange(WikiPage.Search(db.GetCollection<WikiPage>().Query().Where(w => w.ParentPage != null).ToEnumerable(), fragments).Select(w => new SearchResult()
+            {
+                DataType = typeof(WikiPage),
+                Display = w.Name,
+                Url = $"./tudasbazis/{w.ToDisplayUrl()}",
+                Information = w.IsCoded ? "" : w.Content,
+            }));
+            //result.AddRange(MemberProject.Search(db.GetCollection<MemberProject>().FindAll(), fragments).Select(m => new SearchResult()
+            //{
+            //    DataType = typeof(MemberProject),
+            //    Display = m.Name,
+            //    Url = $"./projektek/{m.Id}",
+            //    Information = m.Description,
+            //}));
+
+            this.ItemList = result;
+        }
+    }
+
+    private string[] GetDisplay(string s)
+    {
+        string[] result = new string[2];
+
+        StringInfo si = new StringInfo(s);
+        var substring = si.SubstringByTextElements(0, 1);
+
+        if (substring.Length > 1 || substring[0] > 255)
+        {
+            result[0] = substring;
+            result[1] = s.Substring(substring.Length).Trim();
+        }
+        else
+        {
+            result[0] = "📖";
+            result[1] = s;
+        }
+
+        return result;
+    }
+}
