@@ -134,6 +134,8 @@ else
                         <EditForm EditContext="new EditContext(true)" OnSubmit="OnLogAddEditSubmit">
                             <h2>Naplóbejegyzés szerkesztése</h2>
 
+                            <SimpleDateField Type="text" Display="Kelt" Name="@nameof(LogEntry.StartTime)" @bind-Value="this.SelectedLogEntry.Temporal.StartTime"></SimpleDateField>
+
                             <WysiwygEditor @bind-Value="this.SelectedLogEntry.Temporal.Content"></WysiwygEditor>
 
                             <button type='submit'>Küldés</button>
@@ -229,7 +231,8 @@ else
             if (this.SelectedItem.Original.Members.Contains(this.AuthManager.CurrentUser) || this.AuthManager.CheckAuth($"{Permissions.EditAnyProject} {Permissions.Overlord}", ""))
 @*                this.AuthManager.CurrentMember.Roles.Contains(Permissions.EditAnyProject) ||
                 this.AuthManager.CurrentMember.Roles.Contains(Permissions.Overlord))
-*@            {
+*@
+            {
                 return true;
             }
 
@@ -261,7 +264,7 @@ else
             {
                 if (this.LogPopupDisplay == "add")
                 {
-                    this.SelectedLogEntry = new TemporalObject<LogEntry>(new LogEntry());
+                    this.SelectedLogEntry = new TemporalObject<LogEntry>(new LogEntry() { StartTime = DateTime.Now });
                 }
                 else if (this.LogPopupDisplay != null)
                 {

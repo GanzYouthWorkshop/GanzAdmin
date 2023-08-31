@@ -40,7 +40,10 @@
                         </h2>
                         <div class="article-content">
                             <p>
-                                <WysiwygContentViewer Source="@item.Content" LimitComponents="1" />
+                                @if (!item.IsCoded)
+                                {
+                                    <WysiwygContentViewer Source="@item.Content" LimitComponents="1" />
+                                }
                             </p>
                         </div>
                         <div>

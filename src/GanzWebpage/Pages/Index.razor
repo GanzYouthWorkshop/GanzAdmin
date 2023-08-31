@@ -25,11 +25,14 @@
             {
                 <div class="timeline-entry">
                     <div class="timeline-time">
-                        <h5>@(entry.Item2.StartTime.ToString("yyyy.MM.dd, hh:mm"))</h5>
+                        <h5>@(entry.Item2.StartTime.ToString("yyyy.MM.dd, HH:mm"))</h5>
                     </div>
                     <div class="timeline-body">
                         <h3 class="text-400">@entry.Item1.Name</h3>
                         <WysiwygContentViewer Source="@entry.Item2.Content" LimitComponents="1" />
+                        <p>
+                            <a class="button-link uk-text-small" href="/projektek/@entry.Item1.ToDisplayUrl()">Olvass tovább</a>
+                        </p>
                     </div>
                 </div>
 

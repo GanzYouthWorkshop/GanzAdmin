@@ -73,6 +73,7 @@
                             </div>
                             <div class="timeline-body">
                                 <WysiwygContentViewer Source="@entry.Content" />
+                                <hr />
                             </div>
                         </div>
 
@@ -123,8 +124,8 @@
             using (GanzAdminDbEngine db = GanzAdminDbEngine.GetInstance())
             {
                 var items = db.GetCollection<MemberProject>()
-                                    .Query()
-                                    .OrderByDescending(t => t.ProjectLog.Last().StartTime)
+                                    .FindAll()
+                                    .OrderByDescending(t => t.ProjectLog.Count > 0 ? t.ProjectLog.Last().StartTime : new DateTime())
                                     .ToList();
                 this.MemberProjects.Clear();
                 this.MemberProjects.AddRange(items);
