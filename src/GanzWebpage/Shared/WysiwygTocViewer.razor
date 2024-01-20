@@ -1,16 +1,33 @@
 ﻿@using  System.Text.Json;
 
-@foreach (JsonElement element in this.JsonSource.RootElement.GetProperty("blocks").EnumerateArray())
-{
-    JsonElement data = element.GetProperty("data");
-    switch (element.GetProperty("type").GetString())
+<ul>
+@{
+    int prevLevel = 1;
+    
+    foreach (JsonElement element in this.JsonSource.RootElement.GetProperty("blocks").EnumerateArray())
     {
-        case "header":
-            string text = data.GetProperty("text").GetString();
-            <li><a href="@NavMan.Uri#@text"><i class="icon icon-clipboard-list"></i><span>@text</span></a></li>
-            break;
+        JsonElement data = element.GetProperty("data");
+        switch (element.GetProperty("type").GetString())
+        {
+            case "header":
+                int level = int.Parse(data.GetProperty("level").ToString());
+                string text = data.GetProperty("text").GetString();
+
+                if (level > prevLevel)
+                {
+                    @((MarkupString)"<ul>")
+                }
+                else if (level < prevLevel)
+                {
+                    @((MarkupString)"</ul>")
+                }
+
+                <li><a href="@NavMan.Uri#@text"><i class="icon icon-clipboard-list"></i><span>@text</span></a></li>
+                break;
+        }
     }
- }
+}
+</ul>
 
 @code
 {

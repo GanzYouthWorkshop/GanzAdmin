@@ -7,6 +7,13 @@
 
 @if (this.SelectedItem != null)
 {
+    <PageTitle>@(this.SelectedItem.Original.Name) - Ganz Ifjúsági Műhely Egyesület</PageTitle>
+    <MergedHeadContent>
+        <meta property="og:title" content="@(this.SelectedItem.Original.Name)" />
+        <meta property='og:type' content='article' />
+        <meta property="og:url" content="http://www.ganzmuhely.hu/tudasbazis/@(PageRoute)" />
+    </MergedHeadContent>
+
     <div class="uk-container">
         <div class="uk-section uk-section-xsmall border-bottom">
             <div data-uk-grid="" class="uk-grid">
@@ -30,7 +37,18 @@
                                 <span class="head">Tartalom</span>
                                 <WysiwygTocViewer Source="@this.SelectedItem.Original.Content" />
                             </div>
-                            <WysiwygContentViewer Source="@this.SelectedItem.Original.Content" AddDelimiterAfterHeaderLevel="2" />
+                            <WysiwygContentViewer Source="@this.SelectedItem.Original.Content" AddDelimiterAfterHeaderLevel="2">
+                                <FirstImage>
+                                    <MergedHeadContent>
+                                        <meta property="og:image" content="@context.Url" />
+                                    </MergedHeadContent>
+                                </FirstImage>
+                                <FirstParagraph>
+                                    <MergedHeadContent>
+                                        <meta property="og:description" content="@context">
+                                    </MergedHeadContent>
+                                </FirstParagraph>
+                            </WysiwygContentViewer>
                         }
                         else
                         {

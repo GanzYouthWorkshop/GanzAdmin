@@ -1,5 +1,6 @@
 ﻿@page "/"
 @namespace GanzWebpage.Pages
+@using Microsoft.AspNetCore.Components.Web;
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @{
     Layout = null;
@@ -20,6 +21,8 @@
     <link rel="stylesheet" href="/css/main.css">
     <link rel="stylesheet" href="/css/css.css">
     <link rel="stylesheet" href="/css/custom.css">
+
+    <component type="typeof(HeadOutlet)" render-mode="ServerPrerendered" />
 </head>
 <body>
     <component type="typeof(App)" render-mode="ServerPrerendered" />

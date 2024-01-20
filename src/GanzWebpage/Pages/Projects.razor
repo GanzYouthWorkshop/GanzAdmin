@@ -29,6 +29,13 @@
             <div class="uk-width-expand@m padding-right@m padding-large-right@l">
                 @if (this.SelectedProject == null)
                 {
+                    <PageTitle>Projetkjeink - Ganz Ifjúsági Műhely Egyesület</PageTitle>
+                    <MergedHeadContent Master>
+                        <meta property="og:title" content="Projetkjeink" />
+                        <meta property='og:type' content='website' />
+                        <meta property="og:url" content="http://www.ganzmuhely.hu/projektek" />
+                    </MergedHeadContent>
+
                     <h1>Projetkjeink</h1>
                     <div class="uk-child-width-1-2@m uk-grid-match uk-grid-small uk-margin-medium-top uk-grid" data-uk-grid="">
                         @foreach (MemberProject project in this.MemberProjects)
@@ -59,8 +66,30 @@
                 }
                 else
                 {
+                    <PageTitle>@(this.SelectedProject.Name) - Ganz Ifjúsági Műhely Egyesület</PageTitle>
+                    <MergedHeadContent Master>
+                        <meta property="og:title" content="@(this.SelectedProject.Name)" />
+                        <meta property='og:type' content='article' />
+                        <meta property="og:url" content="http://www.ganzmuhely.hu/projektek/@(this.Id)" />
+                        @if (!string.IsNullOrEmpty(this.SelectedProject.Logo))
+                        {
+                            <meta property="og:image" content="ttp://www.ganzmuhely.hu/@this.SelectedProject.Logo" />
+                        }
+                    </MergedHeadContent>
+
                     <h1>@this.SelectedProject.Name</h1>
-                    <GanzNet.Common.WysiwygContentViewer Source="@this.SelectedProject.Description" />
+                    <GanzNet.Common.WysiwygContentViewer Source="@this.SelectedProject.Description">
+                        <FirstImage>
+                            <MergedHeadContent>
+                                <meta property="og:image" content="@context.Url" />
+                            </MergedHeadContent>
+                        </FirstImage>
+                        <FirstParagraph>
+                            <MergedHeadContent>
+                                <meta property="og:description" content="@context">
+                            </MergedHeadContent>
+                        </FirstParagraph>
+                    </GanzNet.Common.WysiwygContentViewer>
                     <hr class="uk-margin-large-top uk-margin-large-bottom">
 
                     <div class="timeline uk-margin-large-top">

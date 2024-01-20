@@ -2,6 +2,8 @@
 
 @{
     int i = -1;
+    bool firstImageFound = false;
+    bool firstParagraphFound = false;
 
     foreach (JsonElement element in this.JsonSource.RootElement.GetProperty("blocks").EnumerateArray())
     {
@@ -22,6 +24,13 @@
                         s = s.Substring(0, this.LimitParagraphChars) + "...";
                     }
                     <p>@((MarkupString)s)</p>
+
+                    if (!firstParagraphFound && this.FirstParagraph != null)
+                    {
+                        @FirstParagraph(s)
+                        firstParagraphFound = true;
+                    }
+
                 }
                 break;
 
@@ -117,11 +126,20 @@
                 break;
 
             case "image":
-                <img src="@(data.GetProperty("file").GetProperty("url").GetString())">
-                string caption = data.GetProperty("caption").GetString();
-                if(caption != null)
+                WysiwygImage image = new WysiwygImage()
                 {
-                    <p>@caption</p>
+                    Url = data.GetProperty("file").GetProperty("url").GetString(),
+                    Caption = data.GetProperty("caption").GetString()
+                };
+                <img src="@(image.Url)">
+                if (image.Caption != null)
+                {
+                    <p>@image.Caption</p>
+                }
+                if(!firstImageFound && this.FirstImage != null)
+                {
+                    @FirstImage(image)
+                    firstImageFound = true;
                 }
                 break;
 
@@ -147,6 +165,12 @@
 
     [Parameter]
     public int LimitParagraphChars { get; set; } = -1;
+
+    [Parameter]
+    public RenderFragment<WysiwygImage> FirstImage { get; set; }
+
+    [Parameter]
+    public RenderFragment<string> FirstParagraph { get; set; }
 
     public JsonDocument JsonSource
     {

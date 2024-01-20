@@ -1,0 +1,52 @@
+﻿@using Microsoft.AspNetCore.Components.Web
+
+@if(this.Master)
+{
+    <HeadContent>
+        @foreach (RenderFragment fragment in m_Data)
+        {
+            @fragment
+        }
+    </HeadContent>
+}
+
+@code
+{
+    private static List<RenderFragment> m_Data = new List<RenderFragment>();
+    private static MergedHeadContent m_MasterContainer;
+
+    [Parameter]
+    public bool Master
+    {
+        get { return this.m_Master; }
+        set
+        {
+            this.m_Master = value;
+            if(value)
+            {
+                m_MasterContainer = this;
+                m_Data.Clear();
+            }
+        }
+    }
+    private bool m_Master { get; set; }
+
+    [Parameter]
+    public RenderFragment ChildContent
+    {
+        get { return this.m_ChildContent; }
+        set
+        {
+            this.m_ChildContent = value;
+            m_Data.Add(value);
+            m_MasterContainer.StateHasChanged();
+        }
+    }
+    private RenderFragment m_ChildContent;
+
+
+    protected override Task OnInitializedAsync()
+    {
+        return base.OnInitializedAsync();
+    }
+}
