@@ -20,5 +20,6 @@ namespace GanzAdmin.Configuration
         public string OwnFleFolder { get; set; } = "";
 
         public string NvrFolder { get; set; } = @"X:\";
+        public string OpenClosedFolder { get; set; } = @"C:\WEB\OpenClosed\";
     }
 }

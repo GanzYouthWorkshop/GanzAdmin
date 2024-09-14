@@ -1,8 +1,10 @@
 ﻿@page "/"
 
 @using System.Net;
+@using GanzAdmin.Configuration;
 @using GanzNet.Authentication;
 @using Microsoft.AspNetCore.Http;
+@using System.IO;
 
 <main class="full dashboard @(this.CurrentUser == null ? "loading" : "")">
     @if (this.CurrentUser != null)
@@ -28,6 +30,29 @@
                     <i></i>
                     <p>Naptár</p>
                 </NavLink>
+
+                <AuthorizedView NeededRolesOR="@Permissions.OpenCloseWorkshop">
+                    @{
+                        string[] locations = new string[2] { "g1", "g2" };
+                        foreach (string location in locations)
+                        {
+                            @if (CheckOpenClosed(location))
+                            {
+                                <NavLink @onclick="() => OpenClose(location, false)">
+                                    <i>&#xF023;</i>
+                                    <p>@location.ToUpper() bezárás</p>
+                                </NavLink>
+                            }
+                            else
+                            {
+                                <NavLink @onclick="() => OpenClose(location, true)">
+                                    <i>&#xF09C;</i>
+                                    <p>@location.ToUpper() kiniytás</p>
+                                </NavLink>
+                            }
+                        }
+                    }
+                </AuthorizedView>
 
                 @if (this.CanAttend)
                 {
@@ -115,7 +140,6 @@
                         <p>Hálózat</p>
                     </NavLink>
                 </AuthorizedView>
-
                 <NavLink href="/statistics">
                     <i></i>
                     <p>Statisztika</p>
@@ -181,5 +205,30 @@
     {
         GanzAdminDbFunctions.LogAttendance(this.CurrentUser, DateTime.Today);
         this.JS.InvokeVoidAsync("alertify.success", "Jelenléti ív frissítve!");
+    }
+
+    private bool CheckOpenClosed(string locationCode)
+    {
+        string file = GanzAdminConfiguration.Instance.OpenClosedFolder + locationCode + ".json";
+
+        if(File.Exists(file))
+        {
+            return File.ReadAllText(file).Contains("true");
+        }
+
+        return false;
+    }
+
+    private void OpenClose(string locationCode, bool value)
+    {
+        string file = GanzAdminConfiguration.Instance.OpenClosedFolder + locationCode + ".json";
+        string json = value.ToString().ToLower();
+
+        if(File.Exists(file))
+        {
+            File.WriteAllText(file, $"{{ \"open\": {json} }}");
+        }
+
+        this.StateHasChanged();
     }
 }

@@ -53,6 +53,8 @@ namespace GanzAdmin.Database.Models
 
         public const string AccessSeurityCameras = nameof(AccessSeurityCameras);
         public const string AccessNetworkDiagnostics = nameof(AccessNetworkDiagnostics);
+        
+        public const string OpenCloseWorkshop = nameof(OpenCloseWorkshop);
 
         public const string Overlord = nameof(Overlord);
 
@@ -106,6 +108,7 @@ namespace GanzAdmin.Database.Models
             AccessNetworkDiagnostics,
             _Placeholder,
 
+            OpenCloseWorkshop,
             Overlord,
         };
         #endregion
