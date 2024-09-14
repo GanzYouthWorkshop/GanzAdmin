@@ -1,9 +1,12 @@
-﻿@using  System.Text.Json;
+﻿@using System.Text.Json;
+@using GanzNet.Common;
 
-<ul>
 @{
-    int prevLevel = 1;
-    
+    List<Tree<Tuple<string, string>>> tree = new List<Tree<Tuple<string, string>>>();
+    List<Tree<Tuple<string, string>>> currentLevel = tree;
+    List<Tree<Tuple<string, string>>> prevLevel = null;
+    int prevLevelId = 1;
+
     foreach (JsonElement element in this.JsonSource.RootElement.GetProperty("blocks").EnumerateArray())
     {
         JsonElement data = element.GetProperty("data");
@@ -13,26 +16,45 @@
                 int level = int.Parse(data.GetProperty("level").ToString());
                 string text = data.GetProperty("text").GetString();
 
-                if (level > prevLevel)
+                if (level > prevLevelId)
                 {
-                    @((MarkupString)"<ul>")
+                    prevLevel = currentLevel;
+                    if (currentLevel.Count == 0)
+                    {
+                        currentLevel.Add(new Tree<Tuple<string, string>>());
+                    }
+                    currentLevel = currentLevel.Last().Children;
+                    prevLevelId = level;
                 }
-                else if (level < prevLevel)
+                else if (level < prevLevelId)
                 {
-                    @((MarkupString)"</ul>")
+                    currentLevel = prevLevel;
+                    prevLevelId = level;
                 }
 
-                <li><a href="@NavMan.Uri#@text"><i class="icon icon-clipboard-list"></i><span>@text</span></a></li>
+                currentLevel.Add(new Tree<Tuple<string, string>>
+                {
+                    Item = new Tuple<string, string>($"{NavMan.Uri}#{text}", text),
+                });
                 break;
         }
     }
+    int i = 0;
 }
-</ul>
+
+<TreeLevel T="Tuple<string, string>" Items="tree">
+    <ItemTemplate>
+        @if (context != null)
+        {
+            <a href="@context.Item1">@context.Item2</a>
+        }
+    </ItemTemplate>
+</TreeLevel>
 
 @code
 {
     [Inject]
-	public NavigationManager NavMan { get; set; }
+    public NavigationManager NavMan { get; set; }
 
     [Parameter]
     public string Source { get; set; }

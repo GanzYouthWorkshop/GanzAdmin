@@ -39,7 +39,10 @@
         {
             this.m_ChildContent = value;
             m_Data.Add(value);
-            m_MasterContainer.StateHasChanged();
+            if (m_MasterContainer != null)
+            {
+                m_MasterContainer.InvokeAsync(m_MasterContainer.StateHasChanged);
+            }
         }
     }
     private RenderFragment m_ChildContent;

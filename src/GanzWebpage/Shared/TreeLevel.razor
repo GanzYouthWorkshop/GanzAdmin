@@ -1,0 +1,25 @@
+﻿@using GanzNet.Common;
+
+@typeparam T
+
+<ul>
+    @foreach(Tree<T> item in Items)
+    {
+        <li>
+            @ItemTemplate(item.Item)
+        </li>
+        if(item.HasChildren)
+        {
+            <TreeLevel T="T" Items="item.Children" ItemTemplate="ItemTemplate" />
+        }
+    }
+</ul>
+
+@code
+{
+    [Parameter]
+    public List<Tree<T>> Items {get; set; }
+
+    [Parameter]
+    public RenderFragment<T> ItemTemplate { get; set; }
+}
