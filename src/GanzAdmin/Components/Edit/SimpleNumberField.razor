@@ -6,27 +6,11 @@
 <p class="@(this.Inline ? "inline" : "")">
     <label for="@this.Name">@this.Display:</label>
     <AuthorizedView NeededRolesOR="@this.AuthOR" NeededRolesAND="@this.AuthAND">
-        @switch (this.Type)
-        {
-            case "text":
-                <input type="text" value="@this.Value" name="@this.Name" @onchange="OnValueChanged" />
-                break;
-            case "password":
-                <input type="password" value="@this.Value" name="@this.Name" @onchange="OnValueChanged" />
-                break;
-        }
+        <input type="number" value="@this.Value" name="@this.Name" step="@this.Step" @onchange="OnValueChanged" />
+        <span>@this.Unit</span>
     </AuthorizedView>
     <NonAuthorizedView NeededRolesOR="@this.AuthOR" NeededRolesAND="@this.AuthAND">
-        @switch (this.Type)
-        {
-            case "text":
-                <span>@this.Value</span>
-                break;
-            case "password":
-                <span>*********</span>
-                break;
-        }
-
+        <span>@this.Value @this.Unit</span>
     </NonAuthorizedView>
 </p>
 
@@ -34,6 +18,12 @@
 {
     [Parameter]
     public bool Inline { get; set; }
+
+    [Parameter]
+    public string Unit { get; set; }
+
+    [Parameter]
+    public float Step { get; set; } = 1;
 
     protected override Task OnValueChanged(ChangeEventArgs e)
     {

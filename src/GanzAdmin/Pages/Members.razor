@@ -11,6 +11,7 @@
             <li><a href="@($"/{this.BaseLink}/filter/active")">Aktív tagok</a></li>
             <li> <a href="@($"/{this.BaseLink}/filter/electro")">Elektro tagok</a></li>
             <li><a href="@($"/{this.BaseLink}/filter/model")">Modellezés tagok</a></li>
+            <li><a href="@($"/{this.BaseLink}/filter/payment-necessary")">Fizetés szükséges</a></li>
         </ul>
         <AuthorizedView NeededRolesOR="@Permissions.EditMembers">
             <NavLink class="addlink" href="@($"/{this.BaseLink}/add")">Új @this.DataName</NavLink>
@@ -44,6 +45,7 @@
                                 case "active": iterationCollection = this.ItemList.Where(i => i.Active).ToList(); break;
                                 case "electro": iterationCollection = this.ItemList.Where(i => i.MainActivity == Member.Activities.Electronics || i.MainActivity == Member.Activities.Tutor).ToList(); break;
                                 case "model": iterationCollection = this.ItemList.Where(i => i.MainActivity == Member.Activities.Modelling || i.MainActivity == Member.Activities.Tutor).ToList(); break;
+                                case "payment-necessary": iterationCollection = this.ItemList.Where(i => i.Active && i.PaidUntil < DateTime.Today).ToList(); break;
 
                             }
                         }

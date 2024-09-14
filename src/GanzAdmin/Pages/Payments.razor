@@ -4,7 +4,7 @@
 @inherits DataHandlingController<Payment>
 
 <AuthorizedView NeededRolesOR="@Permissions.ListPayments">
-    <aside class='loading'>
+    <aside class='@(this.ItemList == null ? "loading" : "")'>
         <AuthorizedView NeededRolesOR="@Permissions.EditPayments">
             <NavLink class="addlink" href="@($"/{this.BaseLink}/add")">Új @this.DataName</NavLink>
         </AuthorizedView>
@@ -26,10 +26,11 @@
 
                 <EditForm method="post" EditContext="new EditContext(true)" OnValidSubmit="OnDefaultAddEditSubmit">
                     <div class='dynamic'>
-                        <ComboBox AuthOR="@Permissions.EditPayments" ItemType="Member" Items="(GanzAdminDbEngine.Instance.Members.FindAll())" Display="Befizető" NoNullValue @bind-Value="@this.SelectedItem.Temporal.Member" Name="@nameof(Member.MainActivity)"></ComboBox>
+                        <ComboBox AuthOR="@Permissions.EditPayments" ItemType="Member" Items="(GanzAdminDbEngine.Instance.Members.FindAll().OrderBy(m => m.Name))" Display="Befizető" NoNullValue @bind-Value="@this.SelectedItem.Temporal.Member" Name="@nameof(Member.MainActivity)"></ComboBox>
                         <SimpleDateField AuthOR="@Permissions.EditPayments" Type="text" Display="Időpont" Name="@nameof(Payment.Occasion)" @bind-Value="this.SelectedItem.Temporal.Occasion" />
-                        <SimpleNumberField AuthOR="@Permissions.EditPayments" Type="text" Display="Érték" Name="@nameof(Payment.Value)" @bind-Value="this.SelectedItem.Temporal.Value" />
-
+                        <SimpleNumberField AuthOR="@Permissions.EditPayments" Type="text" Display="Érték" Name="@nameof(Payment.Value)" Step="1" Unit="Ft" @bind-Value="this.SelectedItem.Temporal.Value" />
+                        <SimpleCheckField AuthOR="@Permissions.EditPayments" Type="switch" Display="Befizetett kitolása" @bind-Value="SetPaymentDate" />
+                        <SimpleDateField AuthOR="neveredit" Type="text" Display="Kitolt befizetés" Name="PaidUntil" Value="CalculateNewPaidUntil()" />
                     </div>
 
                     <AuthorizedView NeededRolesOR="@Permissions.EditPayments">
@@ -74,8 +75,23 @@
         }
     };
 
+    public bool SetPaymentDate { get; set; } = true;
+
     protected override bool BeforeAdd()
     {
+        if (SetPaymentDate)
+        {
+            using (GanzAdminDbEngine db = GanzAdminDbEngine.GetInstance())
+            {
+                db.BeginTransaction();
+
+                Member member = db.Members.FindById(this.SelectedItem.Temporal.Member.Id);
+                member.PaidUntil = CalculateNewPaidUntil();
+                db.Members.Update(member);
+
+                db.Transact();
+            }
+        }
         return true;
     }
 
@@ -87,5 +103,13 @@
     protected override bool BeforeDelete()
     {
         return true;
+    }
+
+    private DateTime CalculateNewPaidUntil()
+    {
+        //TODO config
+        double costPerMonth = 6000;
+
+        return DateTime.Today.AddDays(this.SelectedItem.Temporal.Value / costPerMonth * 30);
     }
 }

@@ -27,22 +27,12 @@ namespace GanzAdmin.Components.Edit
 
         [Parameter]
         public bool PreventRenderOnChange { get; set; } = true;
-        
-        [Parameter]
-        public bool ImmediateChangeNotification { get; set; } = false;
 
         [Parameter]
         public T Value
         {
             get { return this.m_Value; }
-            set
-            {
-                this.m_Value = value;
-                if(!this.ImmediateChangeNotification)
-                {
-                    this.ValueChanged.InvokeAsync(this.m_Value);
-                }
-            }
+            set { this.m_Value = value; }
         }
         protected T m_Value;
 
@@ -60,19 +50,18 @@ namespace GanzAdmin.Components.Edit
         #region ValueChanged kezelés
         protected virtual Task OnValueChanged(ChangeEventArgs e)
         {
-            return null;
-            //this.m_Value = (T)e.Value;
+            this.m_Value = (T)e.Value;
 
-            //this.Changed.InvokeAsync(this.m_Value);
+            this.Changed.InvokeAsync(this.m_Value);
 
-            //if(this.PreventRenderOnChange)
-            //{
-            //    return this.OnValueChangedOnly();
-            //}
-            //else
-            //{
-            //    return this.OnValueChangedWithRender();
-            //}
+            if(this.PreventRenderOnChange)
+            {
+                return this.OnValueChangedOnly();
+            }
+            else
+            {
+                return this.OnValueChangedWithRender();
+            }
         }
 
         protected Task OnValueChangedOnly()
