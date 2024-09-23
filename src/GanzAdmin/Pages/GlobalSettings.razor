@@ -1,0 +1,84 @@
+﻿@page "/globalsettings"
+@page "/globalsettings/{PopupDisplay}"
+
+@inherits DataHandlingController<GlobalSetting>
+
+<AuthorizedView NeededRolesOR="@Permissions.Overlord">
+    <aside class='@(this.ItemList == null ? "loading" : "")'>
+        @*         @if (this.ItemList != null)
+        {
+        <TreeLevel Items="@(this.ItemList.ToEntities<GlobalSetting>())"
+        Root="@null"
+        Filter="@((e, r) => (e as Location).ParentLocation == null && r == null || (e as Location).ParentLocation?.Id == r?.Id)"
+        UrlTemplate="@((e) => $"/{this.BaseLink}/{e.Id}")" />
+        }
+        *@        <AuthorizedView NeededRolesOR="@Permissions.Overlord">
+            <NavLink class="addlink" href="@($"/{this.BaseLink}/add")">Új @this.DataName</NavLink>
+        </AuthorizedView>
+    </aside>
+
+    <main class='@(this.ItemList == null ? "loading" : "")'>
+        @if (this.ItemList != null)
+        {
+            <div id='table-wrapper'>
+                <table id='data' class="display nowrap">
+                    <thead>
+                        <tr>
+                            <DataGridHeader IsPinnable IsSortable>Azonosító</DataGridHeader>
+                         <DataGridHeader>Érték</DataGridHeader>
+                     </tr>
+                 </thead>
+
+                 <tbody>
+                     @foreach (GlobalSetting item in this.ItemList)
+                        {
+                            <tr>
+                                <td><NavLink href="@($"/{this.BaseLink}/{item.Id}")">@item.Name</NavLink></td>
+                                <td>@item.Value</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </main>
+
+    @if (this.SelectedItem != null)
+    {
+        <section class='popup' id='content'>
+            <div class='shadow'></div>
+            <div class='body'>
+                <div class='header'>
+                    <h2>@this.PopupTitle</h2>
+                    <a class='button' href="@($"/{this.BaseLink}")"></a>
+                </div>
+
+                <EditForm method="post" EditContext="new EditContext(true)" OnSubmit="OnDefaultAddEditSubmit">
+                    <div class='dynamic'>
+                        <SimpleTextField AuthOR="@Permissions.Overlord" Type="text" Display="Név" Name="@nameof(GlobalSetting.Name)" @bind-Value="this.SelectedItem.Temporal.Name" />
+                        <SimpleTextField AuthOR="@Permissions.Overlord" Type="text" Display="Érték" Name="@nameof(GlobalSetting.Value)" @bind-Value="this.SelectedItem.Temporal.Value" />
+                    </div>
+                    <AuthorizedView NeededRolesOR="@Permissions.Overlord">
+                        <button type='submit'>Küldés</button>
+                    </AuthorizedView>
+                    @if (this.PopupDisplay != "add")
+                    {
+                        <AuthorizedView NeededRolesOR="@Permissions.Overlord">
+                            <input type='button' class="delete" value="Törlés" @onclick="OnDefaultDeleteSubmit" />
+                        </AuthorizedView>
+                    }
+                </EditForm>
+            </div>
+            @if (this.DialogLoading)
+            {
+                <div class='loading'> </div>
+            }
+        </section>
+    }
+</AuthorizedView>
+
+@code
+{
+    protected override string BaseLink { get; set; } = "globalsettings";
+    protected override string DataName { get; set; } = "globális érték";
+}

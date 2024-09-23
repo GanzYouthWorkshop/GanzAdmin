@@ -64,6 +64,7 @@ namespace GanzAdmin.Database
             }
         }
 
+        public ILiteCollection<GlobalSetting> GlobalSettings { get { return this.m_InnerDb.GetCollection<GlobalSetting>(); } }
 
         public void Dispose()
         {
