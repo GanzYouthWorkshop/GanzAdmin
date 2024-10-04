@@ -1,4 +1,5 @@
 ﻿@page "/szakkorok"
+@using GanzAdmin.Database.Models;
 
 <PageTitle>Szakkörök - Ganz Ifjúsági Műhely Egyesület</PageTitle>
 <HeadContent>
@@ -79,6 +80,20 @@
                     </div>
                 </article>
 
+                <article class="uk-article">
+                    <h2 class="uk-h3 uk-margin-bottom">Tagság</h2>
+                    <div class="article-content">
+                        <p>
+                            Egyesületünk tagjai szabadon látogathajták az össze szakkörünket tetszőleges időpontokban. 
+                        </p>
+                        <p>
+                            <b>Havi tagdíj:</b> @GlobalSetting.GetSetting("MemberFee1Month") Ft
+                        </p>
+                        <p>
+                            <b>Háromhavi tagdíj:</b> @GlobalSetting.GetSetting("MemberFee3Month") Ft
+                        </p>
+                    </div>
+                </article>
             </div>
 
         </div>

@@ -108,8 +108,26 @@
     private DateTime CalculateNewPaidUntil()
     {
         //TODO config
-        double costPerMonth = 6000;
+        int costPerMonth = 9000;
+        int costPer3Months = 25000;
 
-        return DateTime.Today.AddDays(this.SelectedItem.Temporal.Value / costPerMonth * 30);
+        string month1 = GlobalSetting.GetSetting("MemberFee1Month");
+        string month3 = GlobalSetting.GetSetting("MemberFee3Month");
+
+        if (!string.IsNullOrEmpty(month1) && int.TryParse(month1, out int tmp))
+        {
+            costPerMonth = tmp;
+        }
+
+        if (!string.IsNullOrEmpty(month3) && int.TryParse(month3, out int tmp2))
+        {
+            costPer3Months = tmp2;
+        }
+
+        int currentPayment = this.SelectedItem.Temporal.Value;
+        int month3Count = currentPayment / costPer3Months * 90;
+        double month1Count = (currentPayment % costPer3Months) / (float)costPerMonth * 30;
+
+        return DateTime.Today.AddDays((int)(month3Count + month1Count));
     }
 }
