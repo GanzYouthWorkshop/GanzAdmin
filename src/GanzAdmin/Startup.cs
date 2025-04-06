@@ -22,6 +22,7 @@ using GanzAdmin.Tools;
 using GanzAdmin.Scheduling;
 using GanzNet.Authentication;
 using GanzAdmin.API.Auth;
+using GanzAdmin.UserMessages;
 
 namespace GanzAdmin
 {
@@ -46,6 +47,7 @@ namespace GanzAdmin
             
             services.AddHttpContextAccessor();
             services.AddSingleton<SessionManager>();
+            services.AddSingleton<UserMessageService>();
             services.AddScoped<IAuthUnitProvider, AuthUnitProvider>();
             services.AddScoped<IAuthProvider, AuthProvider>();
             services.AddScoped<ToolService>();

@@ -1,4 +1,5 @@
 ﻿@using  GanzAdmin.Authentication.Components;
+@using GanzAdmin.UserMessages
 
 @namespace GanzAdmin.Shared
 @inherits LayoutComponentBase
@@ -54,6 +55,9 @@
     [Inject]
     protected NavigationManager NavMan { get; set; }
 
+    [Inject]
+    protected UserMessageService MessageService { get; set; }
+
     private string Search;
 
     private bool m_HasRendered;
@@ -62,6 +66,7 @@
     {
         if (firstRender)
         {
+            MessageService.UserMessageQueued += OnUserMessage;
             JsRuntime.InvokeVoidAsync("onBlazorReady");
             this.m_HasRendered = true;
         }
@@ -74,5 +79,10 @@
     protected void OnSearch()
     {
         this.NavMan.NavigateTo($"search/{this.Search}");
+    }
+
+    protected void OnUserMessage(object sender, UserMessage message)
+    {
+        this.JsRuntime.InvokeVoidAsync("alertify.success", message.Text);
     }
 }

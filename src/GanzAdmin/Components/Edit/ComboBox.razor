@@ -43,14 +43,14 @@
 
                         if (item.Equals(this.Value))
                         {
-                <option value="@val" selected>@display</option>
-            }
-            else
-            {
-                <option value="@val">@display</option>
-            }
-            }
-            }
+                            <option value="@val" selected>@display</option>
+                        }
+                        else
+                        {
+                            <option value="@val">@display</option>
+                        }
+                    }
+                }
             }
         </select>
     </AuthorizedView>
@@ -121,7 +121,9 @@
         {
             levelIndent += "&emsp;";
         }
-        foreach (IEntity item in this.Items)
+
+        List<ItemType> list = this.Items.ToList();
+        foreach (IEntity item in list)
         {
             if (this.TreeFilter(item, parent as IEntity))
             {

@@ -116,6 +116,7 @@
 
                         <SimpleTextField AuthOR="@Permissions.EditMembers" Type="text" Display="Felhasználónév" Name="@nameof(Member.Username)" @bind-Value="this.SelectedItem.Temporal.Username" />
                         <SimpleTextField AuthOR="@Permissions.EditMembers" Type="password" Display="Jelszó" Name="@nameof(Member.Password)" @bind-Value="this.Password" />
+                        <SimpleTextField AuthOR="@Permissions.EditMembers" Type="password" Display="RFID" Name="@nameof(Member.RFID)" @bind-Value="this.SelectedItem.Temporal.RFID" />
 
                         <div class="permissoins-container">
                             @foreach (string permission in Permissions.AllPermissions)
